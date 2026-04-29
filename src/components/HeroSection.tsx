@@ -1,0 +1,117 @@
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+
+const ease = [0.16, 1, 0.3, 1] as const;
+
+export function HeroSection() {
+  return (
+    <section
+      id="top"
+      className="relative min-h-screen flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-20"
+    >
+      {/* Inline aurora blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute aurora-blob-1"
+          style={{
+            top: 0,
+            right: 0,
+            width: "700px",
+            height: "700px",
+            background: "radial-gradient(circle, #E1B07E 0%, #E5BE9E 60%, transparent 70%)",
+            filter: "blur(60px)",
+            opacity: 0.35,
+            transform: "translate(20%, -25%)",
+          }}
+        />
+        <div
+          className="absolute aurora-blob-2"
+          style={{
+            top: 0,
+            left: 0,
+            width: "550px",
+            height: "550px",
+            background: "radial-gradient(circle, #86A397 0%, #CBC0AD 60%, transparent 70%)",
+            filter: "blur(70px)",
+            opacity: 0.3,
+            transform: "translate(-20%, -20%)",
+          }}
+        />
+        <div
+          className="absolute aurora-blob-3"
+          style={{
+            bottom: 0,
+            right: 0,
+            width: "500px",
+            height: "500px",
+            background: "radial-gradient(circle, #361D2E 0%, #86A397 60%, transparent 70%)",
+            filter: "blur(80px)",
+            opacity: 0.25,
+            transform: "translate(15%, 20%)",
+          }}
+        />
+      </div>
+
+      <div className="relative max-w-6xl mx-auto w-full">
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease }}
+          className="font-bold tracking-tight text-foreground"
+          style={{
+            fontSize: "clamp(2.6rem, 7vw, 5.5rem)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.03em",
+          }}
+        >
+          Hi, I'm Cash Johnson. I'm a{" "}
+          <span style={{ color: "#86A397" }}>Strategic Growth Architect</span>{" "}
+          based in Silicon Valley.
+        </motion.h1>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.3, ease }}
+          className="mt-8 flex flex-wrap gap-3"
+        >
+          <a
+            href="#work"
+            className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] font-medium text-foreground transition-all hover:bg-white/80"
+            style={{
+              border: "1px solid rgba(0,0,0,0.15)",
+              background: "rgba(255,255,255,0.6)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            🚀 Featured Work
+          </a>
+          <a
+            href="https://www.linkedin.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[14px] font-medium text-foreground transition-all hover:bg-white/80"
+            style={{
+              border: "1px solid rgba(0,0,0,0.15)",
+              background: "rgba(255,255,255,0.6)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            LinkedIn <ArrowUpRight size={14} />
+          </a>
+          <a
+            href="#cv"
+            className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[14px] font-medium text-foreground transition-all hover:bg-white/80"
+            style={{
+              border: "1px solid rgba(0,0,0,0.15)",
+              background: "rgba(255,255,255,0.6)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            More About Me <ArrowUpRight size={14} />
+          </a>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

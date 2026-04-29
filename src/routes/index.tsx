@@ -1,26 +1,46 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Toaster } from "sonner";
+import { AuroraBackground } from "@/components/AuroraBackground";
+import { Navbar } from "@/components/Navbar";
+import { HeroSection } from "@/components/HeroSection";
+import { FeaturedWork } from "@/components/FeaturedWork";
+import { CVSection } from "@/components/CVSection";
+import { Footer } from "@/components/Footer";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: Home,
+  head: () => ({
+    meta: [
+      { title: "Cash Johnson — Strategic Growth Architect" },
+      {
+        name: "description",
+        content:
+          "Cash Johnson is a Strategic Growth Architect based in Silicon Valley, working at the intersection of operations, partnerships, and go-to-market.",
+      },
+      { property: "og:title", content: "Cash Johnson — Strategic Growth Architect" },
+      {
+        property: "og:description",
+        content:
+          "Portfolio of Cash Johnson — operations, events, and growth across Centene, LinkedIn, and The Intern Ship.",
+      },
+    ],
+  }),
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+function Home() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="relative min-h-screen text-foreground" style={{ background: "#FAFAF9" }}>
+      <AuroraBackground />
+      <Navbar />
+      <main className="relative z-10 pt-14">
+        <HeroSection />
+        <FeaturedWork />
+        <CVSection />
+      </main>
+      <div className="relative z-10">
+        <Footer />
+      </div>
+      <Toaster position="bottom-right" />
     </div>
   );
-}
-
-function Index() {
-  return <PlaceholderIndex />;
 }

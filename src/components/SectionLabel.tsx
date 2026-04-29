@@ -1,0 +1,15 @@
+export function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="uppercase mb-8"
+      style={{
+        fontSize: "10px",
+        letterSpacing: "0.18em",
+        color: "rgba(0,0,0,0.4)",
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
