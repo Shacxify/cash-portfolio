@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogOperationsProjectManagerRoleRouteImport } from './routes/blog.operations-project-manager-role'
+import { Route as BlogHowToDocumentSopsRouteImport } from './routes/blog.how-to-document-sops'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -29,38 +30,56 @@ const BlogOperationsProjectManagerRoleRoute =
     path: '/blog/operations-project-manager-role',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BlogHowToDocumentSopsRoute = BlogHowToDocumentSopsRouteImport.update({
+  id: '/blog/how-to-document-sops',
+  path: '/blog/how-to-document-sops',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/blog/operations-project-manager-role'
+  fullPaths:
+    | '/'
+    | '/sitemap.xml'
+    | '/blog/how-to-document-sops'
+    | '/blog/operations-project-manager-role'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/blog/operations-project-manager-role'
+  to:
+    | '/'
+    | '/sitemap.xml'
+    | '/blog/how-to-document-sops'
+    | '/blog/operations-project-manager-role'
   id:
     | '__root__'
     | '/'
     | '/sitemap.xml'
+    | '/blog/how-to-document-sops'
     | '/blog/operations-project-manager-role'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  BlogHowToDocumentSopsRoute: typeof BlogHowToDocumentSopsRoute
   BlogOperationsProjectManagerRoleRoute: typeof BlogOperationsProjectManagerRoleRoute
 }
 
@@ -87,14 +106,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogOperationsProjectManagerRoleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/how-to-document-sops': {
+      id: '/blog/how-to-document-sops'
+      path: '/blog/how-to-document-sops'
+      fullPath: '/blog/how-to-document-sops'
+      preLoaderRoute: typeof BlogHowToDocumentSopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  BlogHowToDocumentSopsRoute: BlogHowToDocumentSopsRoute,
   BlogOperationsProjectManagerRoleRoute: BlogOperationsProjectManagerRoleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
