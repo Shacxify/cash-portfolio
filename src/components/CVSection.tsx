@@ -117,6 +117,7 @@ export function CVSection() {
       style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
     >
       <div className="max-w-6xl mx-auto">
+        <SectionLabel>About</SectionLabel>
         {/* Profile + Contact row */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
