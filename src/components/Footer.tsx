@@ -11,7 +11,7 @@ export function Footer() {
           <div>
             <div
               className="uppercase mb-2"
-              style={{ fontSize: "10px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.4)" }}
+              style={{ fontSize: "10px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.65)" }}
             >
               Social
             </div>
@@ -28,7 +28,7 @@ export function Footer() {
           <div>
             <div
               className="uppercase mb-2"
-              style={{ fontSize: "10px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.4)" }}
+              style={{ fontSize: "10px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.65)" }}
             >
               Contact
             </div>
@@ -51,7 +51,7 @@ export function Footer() {
 
         <div
           className="md:text-right"
-          style={{ fontSize: "11px", color: "rgba(0,0,0,0.4)" }}
+          style={{ fontSize: "11px", color: "rgba(0,0,0,0.65)" }}
         >
           2026 Cash Johnson ©
         </div>
