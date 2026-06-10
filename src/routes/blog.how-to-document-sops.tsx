@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 const TITLE = "How to Document SOPs in Your PM Tool";
 const DESCRIPTION =
-  "A step-by-step guide to documenting SOPs inside tools like Asana, Notion, or ClickUp — with templates, structure, and workflow tips.";
+  "A step-by-step guide to documenting SOPs inside tools like Asana, Notion, or ClickUp - with templates, structure, and workflow tips.";
 const URL = "https://cashjohnson.net/blog/how-to-document-sops";
 
 export const Route = createFileRoute("/blog/how-to-document-sops")({
@@ -70,7 +70,7 @@ function ArticlePage() {
         <section className="prose-content space-y-6 text-[17px] leading-relaxed" style={{ color: "rgba(0,0,0,0.78)" }}>
           <h2 className="text-2xl font-semibold text-foreground mt-10">Why your project tool is the right home</h2>
           <p>
-            Most teams already have a single source of truth for work — Asana, Notion, ClickUp, Monday, or
+            Most teams already have a single source of truth for work - Asana, Notion, ClickUp, Monday, or
             Linear. Embedding SOPs there removes friction: the procedure is one click away from the task
             it governs. It also creates accountability. When a task owner sees the SOP attached to their
             assignment, compliance becomes a natural part of workflow, not an extra step.
@@ -145,7 +145,7 @@ function ArticlePage() {
 
         <footer className="mt-16 pt-8" style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}>
           <p className="text-sm" style={{ color: "rgba(0,0,0,0.65)" }}>
-            Written by Cash Johnson — Strategic Growth Architect working across sales, events, and
+            Written by Cash Johnson - Strategic Growth Architect working across sales, events, and
             operations.
           </p>
           <Link

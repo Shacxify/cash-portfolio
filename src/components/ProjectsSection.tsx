@@ -8,7 +8,7 @@ const projects = [
     tag: "Inventory · E-commerce · AI",
     year: "2026",
     description:
-      "Production-grade two-sided retail platform built from zero for Black & Brown vintage consignment — customer storefront plus staff portal with an AI-powered resale pricing engine. Replaced 100% of pen-and-paper operations.",
+      "Production-grade two-sided retail platform built from zero for Black & Brown vintage consignment - customer storefront plus staff portal with an AI-powered resale pricing engine. Replaced 100% of pen-and-paper operations.",
     href: "https://bnb.cashjohnson.net",
   },
   {
@@ -16,7 +16,7 @@ const projects = [
     tag: "AI · Product · Social Impact",
     year: "2026",
     description:
-      "AI-powered financial navigation for first-gen SJSU students. I led system-prompt architecture, urgency ranking, and language detection — turning a Spanish-language failure case into a multilingual fix with peer-advisor oversight.",
+      "AI-powered financial navigation for first-gen SJSU students. I led system-prompt architecture, urgency ranking, and language detection - turning a Spanish-language failure case into a multilingual fix with peer-advisor oversight.",
     href: "https://github.com/Shacxify/SJSU-SammysSource",
   },
   {

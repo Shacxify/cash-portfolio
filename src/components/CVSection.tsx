@@ -10,7 +10,7 @@ type Entry = {
 
 const education: Entry[] = [
   {
-    date: "Aug 2022 — Dec 2026",
+    date: "Aug 2022 - Dec 2026",
     title: "San José State University",
     subtitle: "B.S. Business Administration, MIS · GPA 3.52",
     location: "San José, California",
@@ -19,19 +19,19 @@ const education: Entry[] = [
 
 const professional: Entry[] = [
   {
-    date: "May 2025 — Present",
+    date: "May 2025 - Present",
     title: "Operations PM Intern @ Centene",
     subtitle: "Remote · Enterprise Operations",
     location: "Remote",
   },
   {
-    date: "Jan 2025 — Present",
+    date: "Jan 2025 - Present",
     title: "Events Director @ LinkedIn",
     subtitle: "Campus Ambassador Program",
     location: "Sunnyvale, California",
   },
   {
-    date: "Jun 2025 — Jan 2026",
+    date: "Jun 2025 - Jan 2026",
     title: "Director of Event Ops @ The Intern Ship",
     subtitle: "Partnerships & National Programming",
     location: "Remote",
@@ -40,24 +40,24 @@ const professional: Entry[] = [
 
 const organizational: Entry[] = [
   {
-    date: "Jul 2024 — Dec 2025",
+    date: "Jul 2024 - Dec 2025",
     title: "President @ SJSU Marketing Association",
     subtitle: "Lucas College of Business",
     location: "San José, California",
   },
   {
-    date: "2024 — Present",
+    date: "2024 - Present",
     title: "Event Consultant @ Fashion Club SJSU",
     location: "San José, California",
   },
   {
-    date: "2023 — 2024",
+    date: "2023 - 2024",
     title: "Student Affiliate @ Entrepreneurship Club",
     subtitle: "West Valley College",
     location: "Saratoga, California",
   },
   {
-    date: "2023 — 2024",
+    date: "2023 - 2024",
     title: "Merit Scholar @ Alpha Gamma Sigma",
     location: "Saratoga, California",
   },

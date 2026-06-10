@@ -12,17 +12,17 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "Cash Johnson — Strategic Growth Architect" },
+      { title: "Cash Johnson - Strategic Growth Architect" },
       {
         name: "description",
         content:
           "Cash Johnson is a Strategic Growth Architect based in Silicon Valley, working at the intersection of operations, partnerships, and go-to-market.",
       },
-      { property: "og:title", content: "Cash Johnson — Strategic Growth Architect" },
+      { property: "og:title", content: "Cash Johnson - Strategic Growth Architect" },
       {
         property: "og:description",
         content:
-          "Portfolio of Cash Johnson — operations, events, and growth across Centene, LinkedIn, and The Intern Ship.",
+          "Portfolio of Cash Johnson - operations, events, and growth across Centene, LinkedIn, and The Intern Ship.",
       },
       { property: "og:url", content: "https://cashjohnson.net/" },
       { property: "og:image", content: "https://cashjohnson.net/og-home.jpg" },
