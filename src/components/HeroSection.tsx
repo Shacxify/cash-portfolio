@@ -66,6 +66,7 @@ export function HeroSection() {
           width: "auto",
           maskImage: "linear-gradient(to top, transparent 0%, black 12%, black 100%)",
           WebkitMaskImage: "linear-gradient(to top, transparent 0%, black 12%, black 100%)",
+          filter: "drop-shadow(0 10px 30px rgba(0,0,0,0.18))",
         }}
       />
 
