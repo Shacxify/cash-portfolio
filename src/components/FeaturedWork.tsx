@@ -35,7 +35,7 @@ export function FeaturedWork() {
   return (
     <section id="work" className="relative px-6 md:px-10 py-24">
       <div className="max-w-6xl mx-auto">
-        <SectionLabel>Featured Work</SectionLabel>
+        <SectionLabel>Recent Work</SectionLabel>
         <div className="grid gap-4">
           {projects.map((p, i) => (
             <motion.a

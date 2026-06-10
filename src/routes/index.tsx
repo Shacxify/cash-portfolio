@@ -4,6 +4,7 @@ import { AuroraBackground } from "@/components/AuroraBackground";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { FeaturedWork } from "@/components/FeaturedWork";
+import { ProjectsSection } from "@/components/ProjectsSection";
 import { CVSection } from "@/components/CVSection";
 import { Footer } from "@/components/Footer";
 
@@ -35,6 +36,7 @@ function Home() {
       <main className="relative z-10 pt-14">
         <HeroSection />
         <FeaturedWork />
+        <ProjectsSection />
         <CVSection />
       </main>
       <div className="relative z-10">
