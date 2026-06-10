@@ -60,13 +60,13 @@ export function ProjectsSection() {
               <div className="flex items-start justify-between gap-6">
                 <span
                   className="text-[11px] uppercase tracking-[0.14em]"
-                  style={{ color: "rgba(0,0,0,0.65)" }}
+                  style={{ color: "rgba(0,0,0,0.72)" }}
                 >
                   {p.tag}
                 </span>
                 <span
                   className="text-[11px] tabular-nums"
-                  style={{ color: "rgba(0,0,0,0.65)" }}
+                  style={{ color: "rgba(0,0,0,0.72)" }}
                 >
                   {p.year}
                 </span>
@@ -84,7 +84,7 @@ export function ProjectsSection() {
                 </div>
                 <p
                   className="mt-3 text-[15px] leading-relaxed max-w-md"
-                  style={{ color: "rgba(0,0,0,0.6)" }}
+                  style={{ color: "rgba(0,0,0,0.72)" }}
                 >
                   {p.description}
                 </p>

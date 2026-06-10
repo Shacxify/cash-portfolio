@@ -78,7 +78,7 @@ function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
           >
             <div
               className="text-[13px] mb-1.5"
-              style={{ color: "rgba(0,0,0,0.65)" }}
+              style={{ color: "rgba(0,0,0,0.72)" }}
             >
               {e.date}
             </div>
@@ -88,7 +88,7 @@ function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
             {e.subtitle && (
               <div
                 className="text-[14px] mt-1"
-                style={{ color: "rgba(0,0,0,0.65)" }}
+                style={{ color: "rgba(0,0,0,0.72)" }}
               >
                 {e.subtitle}
               </div>
@@ -96,7 +96,7 @@ function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
             {e.location && (
               <div
                 className="text-[13px] mt-1.5 inline-flex items-center gap-1"
-                style={{ color: "rgba(0,0,0,0.65)" }}
+                style={{ color: "rgba(0,0,0,0.72)" }}
               >
                 <span aria-hidden>📍</span>
                 {e.location}
@@ -129,7 +129,7 @@ export function CVSection() {
             <h2 className="text-[15px] font-semibold text-foreground mb-6">Profile</h2>
             <p
               className="text-[17px] md:text-[18px] leading-relaxed max-w-xl"
-              style={{ color: "rgba(0,0,0,0.7)" }}
+              style={{ color: "rgba(0,0,0,0.78)" }}
             >
               Cash Johnson is a Silicon Valley–based growth operator working at
               the intersection of operations, partnerships, and go-to-market.
@@ -143,7 +143,7 @@ export function CVSection() {
               <a
                 href="mailto:cash@example.com"
                 className="inline-flex items-center gap-1.5 text-[17px] md:text-[18px] transition-colors hover:[color:#86A397]"
-                style={{ color: "rgba(0,0,0,0.7)" }}
+                style={{ color: "rgba(0,0,0,0.78)" }}
               >
                 Email me <ArrowUpRight size={18} className="opacity-60" />
               </a>
@@ -152,7 +152,7 @@ export function CVSection() {
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 text-[17px] md:text-[18px] transition-colors hover:[color:#86A397]"
-                style={{ color: "rgba(0,0,0,0.7)" }}
+                style={{ color: "rgba(0,0,0,0.78)" }}
               >
                 LinkedIn <ArrowUpRight size={18} className="opacity-60" />
               </a>
