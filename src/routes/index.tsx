@@ -25,6 +25,23 @@ export const Route = createFileRoute("/")({
           "Portfolio of Cash Johnson — operations, events, and growth across Centene, LinkedIn, and The Intern Ship.",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: "Cash Johnson",
+          jobTitle: "Strategic Growth Architect",
+          url: "https://cashjohnson.net",
+          worksFor: [
+            { "@type": "Organization", name: "Centene" },
+            { "@type": "Organization", name: "LinkedIn" },
+          ],
+          sameAs: "https://www.linkedin.com/",
+        }),
+      },
+    ],
   }),
 });
 
