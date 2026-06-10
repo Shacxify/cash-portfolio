@@ -82,7 +82,10 @@ export function ProjectsSection() {
       <div className="max-w-6xl mx-auto">
         <SectionLabel>Recent Work</SectionLabel>
         <div className="grid sm:grid-cols-2 gap-4">
-          {projects.map((p, i) => (
+          {projects.map((p, i) => {
+            const isOrphan =
+              i === projects.length - 1 && projects.length % 2 === 1;
+            return (
             <motion.a
               key={p.title}
               href={p.href}
@@ -90,7 +93,9 @@ export function ProjectsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.55, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-              className="group relative block overflow-hidden rounded-2xl bg-black"
+              className={`group relative block overflow-hidden rounded-2xl bg-black ${
+                isOrphan ? "sm:col-span-2 sm:mx-auto sm:w-1/2" : ""
+              }`}
             >
               <div className="aspect-[4/3] overflow-hidden">
                 <img
