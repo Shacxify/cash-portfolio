@@ -24,7 +24,12 @@ export const Route = createFileRoute("/")({
         content:
           "Portfolio of Cash Johnson — operations, events, and growth across Centene, LinkedIn, and The Intern Ship.",
       },
+      { property: "og:url", content: "https://cashjohnson.net/" },
+      { property: "og:image", content: "https://cashjohnson.net/og-home.jpg" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://cashjohnson.net/og-home.jpg" },
     ],
+    links: [{ rel: "canonical", href: "https://cashjohnson.net/" }],
     scripts: [
       {
         type: "application/ld+json",
