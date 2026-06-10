@@ -3,7 +3,7 @@ import { Toaster } from "sonner";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
-import { FeaturedWork } from "@/components/FeaturedWork";
+
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { CVSection } from "@/components/CVSection";
 import { Footer } from "@/components/Footer";
