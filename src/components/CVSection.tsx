@@ -1,100 +1,107 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { SectionLabel } from "./SectionLabel";
 
-type Row = { date: string; role: string; org: string; location?: string };
+type Entry = {
+  date: string;
+  title: string;
+  subtitle?: string;
+  location?: string;
+};
 
-const education: Row[] = [
+const education: Entry[] = [
   {
-    date: "Aug 2022 – Dec 2026",
-    role: "B.S. Business Administration, MIS",
-    org: "San José State University · GPA 3.52",
-    location: "San José, CA",
+    date: "Aug 2022 — Dec 2026",
+    title: "San José State University",
+    subtitle: "B.S. Business Administration, MIS · GPA 3.52",
+    location: "San José, California",
   },
 ];
 
-const professional: Row[] = [
+const professional: Entry[] = [
   {
-    date: "May 2025 – Present",
-    role: "Operations Project Management Intern",
-    org: "Centene Corporation",
+    date: "May 2025 — Present",
+    title: "Operations PM Intern @ Centene",
+    subtitle: "Remote · Enterprise Operations",
     location: "Remote",
   },
   {
-    date: "Jan 2025 – Present",
-    role: "Events Director",
-    org: "LinkedIn Campus Ambassador Program",
-    location: "Sunnyvale, CA",
+    date: "Jan 2025 — Present",
+    title: "Events Director @ LinkedIn",
+    subtitle: "Campus Ambassador Program",
+    location: "Sunnyvale, California",
   },
   {
-    date: "Jun 2025 – Jan 2026",
-    role: "Director of Event Operations",
-    org: "The Intern Ship",
+    date: "Jun 2025 — Jan 2026",
+    title: "Director of Event Ops @ The Intern Ship",
+    subtitle: "Partnerships & National Programming",
     location: "Remote",
   },
 ];
 
-const organizational: Row[] = [
+const organizational: Entry[] = [
   {
-    date: "Jul 2024 – Dec 2025",
-    role: "President",
-    org: "SJSU Marketing Association",
-    location: "San José, CA",
+    date: "Jul 2024 — Dec 2025",
+    title: "President @ SJSU Marketing Association",
+    subtitle: "Lucas College of Business",
+    location: "San José, California",
   },
   {
-    date: "2024 – Present",
-    role: "Event Consultant",
-    org: "Fashion Club SJSU",
-    location: "San José, CA",
+    date: "2024 — Present",
+    title: "Event Consultant @ Fashion Club SJSU",
+    location: "San José, California",
   },
   {
-    date: "2023 – 2024",
-    role: "Student Affiliate",
-    org: "Entrepreneurship Club WVC",
-    location: "Saratoga, CA",
+    date: "2023 — 2024",
+    title: "Student Affiliate @ Entrepreneurship Club",
+    subtitle: "West Valley College",
+    location: "Saratoga, California",
   },
   {
-    date: "2023 – 2024",
-    role: "Merit Scholar",
-    org: "Alpha Gamma Sigma",
-    location: "Saratoga, CA",
+    date: "2023 — 2024",
+    title: "Merit Scholar @ Alpha Gamma Sigma",
+    location: "Saratoga, California",
   },
 ];
 
-function CVGroup({ title, rows }: { title: string; rows: Row[] }) {
+function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
   return (
-    <div className="mb-12">
-      <h3 className="text-[13px] font-semibold uppercase tracking-wider mb-4 text-foreground">
-        {title}
-      </h3>
-      <div>
-        {rows.map((r, i) => (
+    <div>
+      <h3 className="text-[15px] font-semibold text-foreground mb-8">{heading}</h3>
+      <div className="space-y-8">
+        {entries.map((e, i) => (
           <motion.div
-            key={r.role + i}
-            initial={{ opacity: 0, y: 20 }}
+            key={e.title + i}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.5, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col md:flex-row md:items-start py-5"
-            style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}
           >
             <div
-              className="md:w-48 shrink-0 mb-1 md:mb-0"
-              style={{ fontSize: "12px", color: "rgba(0,0,0,0.4)" }}
+              className="text-[13px] mb-1.5"
+              style={{ color: "rgba(0,0,0,0.45)" }}
             >
-              {r.date}
+              {e.date}
             </div>
-            <div className="flex-1">
-              <div className="font-semibold text-foreground">{r.role}</div>
-              <div style={{ color: "rgba(0,0,0,0.6)" }} className="text-[15px]">
-                {r.org}
+            <div className="text-[15px] font-semibold text-foreground leading-snug">
+              {e.title}
+            </div>
+            {e.subtitle && (
+              <div
+                className="text-[14px] mt-1"
+                style={{ color: "rgba(0,0,0,0.55)" }}
+              >
+                {e.subtitle}
               </div>
-              {r.location && (
-                <div style={{ fontSize: "12px", color: "rgba(0,0,0,0.4)" }} className="mt-0.5">
-                  {r.location}
-                </div>
-              )}
-            </div>
+            )}
+            {e.location && (
+              <div
+                className="text-[13px] mt-1.5 inline-flex items-center gap-1"
+                style={{ color: "rgba(0,0,0,0.5)" }}
+              >
+                <span aria-hidden>📍</span>
+                {e.location}
+              </div>
+            )}
           </motion.div>
         ))}
       </div>
@@ -104,64 +111,63 @@ function CVGroup({ title, rows }: { title: string; rows: Row[] }) {
 
 export function CVSection() {
   return (
-    <section id="cv" className="relative px-6 md:px-10 py-24">
+    <section
+      id="cv"
+      className="relative px-6 md:px-10 py-24"
+      style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
+    >
       <div className="max-w-6xl mx-auto">
-        <SectionLabel>Profile</SectionLabel>
+        {/* Profile + Contact row */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-6 max-w-4xl"
-          style={{
-            fontSize: "clamp(1.5rem, 3vw, 1.875rem)",
-            fontWeight: 300,
-            lineHeight: 1.4,
-            letterSpacing: "-0.01em",
-          }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="grid md:grid-cols-3 gap-10 md:gap-12 pb-16"
         >
-          <p>
-            I architect growth at the intersection of operations, partnerships, and go-to-market
-            strategy — turning ambitious ideas into measurable outcomes.
-          </p>
-          <p>
-            Currently building at Centene and leading campus events for LinkedIn, while studying
-            Business MIS at San José State.
-          </p>
+          <div className="md:col-span-2">
+            <h3 className="text-[15px] font-semibold text-foreground mb-6">Profile</h3>
+            <p
+              className="text-[17px] md:text-[18px] leading-relaxed max-w-xl"
+              style={{ color: "rgba(0,0,0,0.7)" }}
+            >
+              Cash Johnson is a Silicon Valley–based growth operator working at
+              the intersection of operations, partnerships, and go-to-market.
+              He's currently building at Centene and leading campus events for
+              LinkedIn while studying Business MIS at San José State.
+            </p>
+          </div>
+          <div id="contact">
+            <h3 className="text-[15px] font-semibold text-foreground mb-6">Contact</h3>
+            <div className="flex flex-col gap-3">
+              <a
+                href="mailto:cash@example.com"
+                className="inline-flex items-center gap-1.5 text-[17px] md:text-[18px] transition-colors hover:[color:#86A397]"
+                style={{ color: "rgba(0,0,0,0.7)" }}
+              >
+                Email me <ArrowUpRight size={18} className="opacity-60" />
+              </a>
+              <a
+                href="https://www.linkedin.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-[17px] md:text-[18px] transition-colors hover:[color:#86A397]"
+                style={{ color: "rgba(0,0,0,0.7)" }}
+              >
+                LinkedIn <ArrowUpRight size={18} className="opacity-60" />
+              </a>
+            </div>
+          </div>
         </motion.div>
 
-        <div id="contact" className="mt-16">
-          <SectionLabel>Contact</SectionLabel>
-          <div
-            className="flex flex-wrap gap-x-10 gap-y-4"
-            style={{
-              fontSize: "clamp(1.5rem, 3vw, 1.875rem)",
-              fontWeight: 300,
-              lineHeight: 1.4,
-            }}
-          >
-            <a
-              href="mailto:cash@example.com"
-              className="inline-flex items-center gap-2 transition-colors hover:[color:#86A397]"
-            >
-              Email me <ArrowUpRight className="opacity-60" size={20} />
-            </a>
-            <a
-              href="https://www.linkedin.com/"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 transition-colors hover:[color:#86A397]"
-            >
-              LinkedIn <ArrowUpRight className="opacity-60" size={20} />
-            </a>
-          </div>
-        </div>
-
-        <div className="mt-20">
-          <SectionLabel>Curriculum Vitae</SectionLabel>
-          <CVGroup title="Education" rows={education} />
-          <CVGroup title="Professional Experience" rows={professional} />
-          <CVGroup title="Organizational Experience" rows={organizational} />
+        {/* Three-column CV grid */}
+        <div
+          className="grid md:grid-cols-3 gap-10 md:gap-12 pt-12"
+          style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
+        >
+          <Column heading="Education" entries={education} />
+          <Column heading="Professional Experience" entries={professional} />
+          <Column heading="Organizational Experience" entries={organizational} />
         </div>
       </div>
     </section>
