@@ -11,7 +11,7 @@ export function Footer() {
           <div>
             <div
               className="uppercase mb-2"
-              style={{ fontSize: "10px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.65)" }}
+              style={{ fontSize: "10px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.72)" }}
             >
               Social
             </div>
@@ -20,7 +20,7 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               className="block transition-colors hover:[color:#86A397]"
-              style={{ color: "rgba(0,0,0,0.7)" }}
+              style={{ color: "rgba(0,0,0,0.78)" }}
             >
               LinkedIn
             </a>
@@ -28,21 +28,21 @@ export function Footer() {
           <div>
             <div
               className="uppercase mb-2"
-              style={{ fontSize: "10px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.65)" }}
+              style={{ fontSize: "10px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.72)" }}
             >
               Contact
             </div>
             <a
               href="mailto:cash@example.com"
               className="block transition-colors hover:[color:#86A397]"
-              style={{ color: "rgba(0,0,0,0.7)" }}
+              style={{ color: "rgba(0,0,0,0.78)" }}
             >
               Email
             </a>
             <a
               href="tel:+1"
               className="block transition-colors hover:[color:#86A397]"
-              style={{ color: "rgba(0,0,0,0.7)" }}
+              style={{ color: "rgba(0,0,0,0.78)" }}
             >
               Phone
             </a>
@@ -51,7 +51,7 @@ export function Footer() {
 
         <div
           className="md:text-right"
-          style={{ fontSize: "11px", color: "rgba(0,0,0,0.65)" }}
+          style={{ fontSize: "11px", color: "rgba(0,0,0,0.72)" }}
         >
           2026 Cash Johnson ©
         </div>

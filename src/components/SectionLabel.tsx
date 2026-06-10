@@ -5,7 +5,7 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
       style={{
         fontSize: "10px",
         letterSpacing: "0.18em",
-        color: "rgba(0,0,0,0.65)",
+        color: "rgba(0,0,0,0.72)",
         fontWeight: 500,
       }}
     >
