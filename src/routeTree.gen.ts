@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogPmVsOperationsRouteImport } from './routes/blog.pm-vs-operations'
 import { Route as BlogOperationsProjectManagerRoleRouteImport } from './routes/blog.operations-project-manager-role'
 import { Route as BlogHowToDocumentSopsRouteImport } from './routes/blog.how-to-document-sops'
 
@@ -22,6 +23,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogPmVsOperationsRoute = BlogPmVsOperationsRouteImport.update({
+  id: '/blog/pm-vs-operations',
+  path: '/blog/pm-vs-operations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogOperationsProjectManagerRoleRoute =
@@ -41,12 +47,14 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
+  '/blog/pm-vs-operations': typeof BlogPmVsOperationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
+  '/blog/pm-vs-operations': typeof BlogPmVsOperationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -54,6 +62,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
+  '/blog/pm-vs-operations': typeof BlogPmVsOperationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -62,18 +71,21 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
     | '/blog/operations-project-manager-role'
+    | '/blog/pm-vs-operations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
     | '/blog/operations-project-manager-role'
+    | '/blog/pm-vs-operations'
   id:
     | '__root__'
     | '/'
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
     | '/blog/operations-project-manager-role'
+    | '/blog/pm-vs-operations'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -81,6 +93,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BlogHowToDocumentSopsRoute: typeof BlogHowToDocumentSopsRoute
   BlogOperationsProjectManagerRoleRoute: typeof BlogOperationsProjectManagerRoleRoute
+  BlogPmVsOperationsRoute: typeof BlogPmVsOperationsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -97,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/pm-vs-operations': {
+      id: '/blog/pm-vs-operations'
+      path: '/blog/pm-vs-operations'
+      fullPath: '/blog/pm-vs-operations'
+      preLoaderRoute: typeof BlogPmVsOperationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/operations-project-manager-role': {
@@ -121,16 +141,8 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   BlogHowToDocumentSopsRoute: BlogHowToDocumentSopsRoute,
   BlogOperationsProjectManagerRoleRoute: BlogOperationsProjectManagerRoleRoute,
+  BlogPmVsOperationsRoute: BlogPmVsOperationsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

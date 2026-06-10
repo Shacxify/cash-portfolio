@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-const TITLE = "How to Document Standard Operating Procedures in a Project Management Tool";
+const TITLE = "How to Document SOPs in Your PM Tool";
 const DESCRIPTION =
   "A step-by-step guide to documenting SOPs inside tools like Asana, Notion, or ClickUp — with templates, structure, and workflow tips.";
 const URL = "https://cashjohnson.net/blog/how-to-document-sops";
