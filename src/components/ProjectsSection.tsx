@@ -4,35 +4,59 @@ import { SectionLabel } from "./SectionLabel";
 
 const projects = [
   {
-    title: "Growth Ops Playbook",
-    tag: "Internal Tooling",
+    title: "VNTG OS",
+    tag: "Inventory · E-commerce · AI",
     year: "2026",
     description:
-      "A reusable framework for tracking cross-functional initiatives, owners, and outcomes — adopted across multiple student-led orgs.",
+      "Production-grade two-sided retail platform built from zero for Black & Brown vintage consignment — customer storefront plus staff portal with an AI-powered resale pricing engine. Replaced 100% of pen-and-paper operations.",
+    href: "https://bnb.cashjohnson.net",
+  },
+  {
+    title: "Sammy's Source",
+    tag: "AI · Product · Social Impact",
+    year: "2026",
+    description:
+      "AI-powered financial navigation for first-gen SJSU students. I led system-prompt architecture, urgency ranking, and language detection — turning a Spanish-language failure case into a multilingual fix with peer-advisor oversight.",
+    href: "https://github.com/Shacxify/SJSU-SammysSource",
+  },
+  {
+    title: "Markowitz Investment",
+    tag: "Quant · Portfolio Optimization",
+    year: "2026",
+    description:
+      "Mean-variance optimized portfolio across a 6-asset universe using GRG Nonlinear Solver and the Efficient Frontier. Delivered a 1.23 Sharpe Ratio at 46.5% expected return, validated against a 4% risk-free benchmark.",
     href: "#",
   },
   {
-    title: "Campus Activation Kit",
-    tag: "Event Strategy",
+    title: "LinkedUp",
+    tag: "Product · Competition Winner",
+    year: "2026",
+    description:
+      "Award-winning LinkedIn feature concept for the SJSU PM Club Build-A-Feature competition. Opt-in proximity-based contextual connections, privacy-first by default. Judged as feeling like a feature LinkedIn should have already shipped.",
+    href: "#",
+  },
+  {
+    title: "Stanley 1913",
+    tag: "Brand Strategy · Research",
     year: "2025",
     description:
-      "Modular event runbook used to scale LinkedIn campus programming across 6+ Bay Area universities.",
+      "Marketing performance evaluation and brand case study layering consumer trends, regulatory pressure, and competitive dynamics into a decision-ready growth thesis for Stanley 1913.",
     href: "#",
   },
   {
-    title: "Intern Pipeline Map",
-    tag: "Research",
+    title: "LinkedIn Learning",
+    tag: "Market Analysis · Campus GTM",
     year: "2025",
     description:
-      "Data-driven map of early-career talent flows between Bay Area schools and Fortune 500 internship programs.",
+      "Segmented campus targeting model for the SJSU LinkedIn Campus Ambassadors. Drove a 67% lift in workshop participation and a 2.6x increase in ambassador-led engagement.",
     href: "#",
   },
   {
-    title: "Marketing Assoc. Rebrand",
-    tag: "Brand · Identity",
+    title: "Adobe Cloud for Ralph Lauren",
+    tag: "Experience Strategy",
     year: "2024",
     description:
-      "Led the visual and verbal refresh of the SJSU Marketing Association, doubling member retention year over year.",
+      "Adobe Experience Cloud strategy for Polo Ralph Lauren spanning analytics, personalization, and omnichannel engagement. Projected 28% campaign efficiency lift and 2.1x audience-targeting precision.",
     href: "#",
   },
 ];
