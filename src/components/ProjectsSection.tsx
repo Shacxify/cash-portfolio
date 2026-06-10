@@ -11,7 +11,7 @@ const projects = [
     accent: "#86A397",
     description:
       "Two-sided retail platform for Black & Brown vintage consignment with an AI-powered resale pricing engine. Replaced 100% of pen-and-paper operations.",
-    href: "https://bnb.cashjohnson.net",
+    href: "/projects#vntg-os",
     image: `https://images.unsplash.com/photo-1770012117468-9b1ee7aba977${IMG}`,
   },
   {
@@ -21,7 +21,7 @@ const projects = [
     accent: "#E1B07E",
     description:
       "AI-powered financial navigation for first-gen SJSU students. Led system-prompt architecture, urgency ranking, and multilingual fallback with peer-advisor oversight.",
-    href: "https://github.com/Shacxify/SJSU-SammysSource",
+    href: "/projects#sammys-source",
     image: `https://plus.unsplash.com/premium_photo-1753346515174-109ced2dd7a5${IMG}`,
   },
   {
@@ -31,7 +31,7 @@ const projects = [
     accent: "#361D2E",
     description:
       "Mean-variance optimized portfolio across a 6-asset universe using GRG Nonlinear Solver. Delivered a 1.23 Sharpe Ratio at 46.5% expected return.",
-    href: "#",
+    href: "/projects#markowitz",
     image: `https://images.unsplash.com/photo-1768055104895-e6185762f2a9${IMG}`,
   },
   {
@@ -41,7 +41,7 @@ const projects = [
     accent: "#86A397",
     description:
       "Award-winning LinkedIn feature concept for the SJSU PM Club. Opt-in proximity-based contextual connections, privacy-first by default.",
-    href: "#",
+    href: "/projects#linkedup",
     image: `https://plus.unsplash.com/premium_photo-1723708804518-dd1802a845c7${IMG}`,
   },
   {
@@ -51,7 +51,7 @@ const projects = [
     accent: "#E1B07E",
     description:
       "Marketing performance evaluation and brand case study layering consumer trends, regulatory pressure, and competitive dynamics into a growth thesis.",
-    href: "#",
+    href: "/projects#stanley-1913",
     image: `https://images.unsplash.com/photo-1694372451859-385b400d3609${IMG}`,
   },
   {
@@ -61,7 +61,7 @@ const projects = [
     accent: "#361D2E",
     description:
       "Segmented campus targeting model for SJSU LinkedIn Campus Ambassadors. Drove a 67% lift in workshop participation and 2.6x ambassador-led engagement.",
-    href: "#",
+    href: "/projects#linkedin-learning",
     image: `https://plus.unsplash.com/premium_photo-1663126272028-db3751371c30${IMG}`,
   },
   {
@@ -71,7 +71,7 @@ const projects = [
     accent: "#86A397",
     description:
       "Adobe Experience Cloud strategy spanning analytics, personalization, and omnichannel engagement. Projected 28% campaign efficiency lift and 2.1x targeting precision.",
-    href: "#",
+    href: "/projects#adobe-ralph-lauren",
     image: `https://images.unsplash.com/photo-1578773729184-1cc53e43c7e5${IMG}`,
   },
 ];
