@@ -66,7 +66,7 @@ const organizational: Entry[] = [
 function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
   return (
     <div>
-      <h3 className="text-[15px] font-semibold text-foreground mb-8">{heading}</h3>
+      <h2 className="text-[15px] font-semibold text-foreground mb-8">{heading}</h2>
       <div className="space-y-8">
         {entries.map((e, i) => (
           <motion.div
@@ -126,7 +126,7 @@ export function CVSection() {
           className="grid md:grid-cols-3 gap-10 md:gap-12 pb-16"
         >
           <div className="md:col-span-2">
-            <h3 className="text-[15px] font-semibold text-foreground mb-6">Profile</h3>
+            <h2 className="text-[15px] font-semibold text-foreground mb-6">Profile</h2>
             <p
               className="text-[17px] md:text-[18px] leading-relaxed max-w-xl"
               style={{ color: "rgba(0,0,0,0.7)" }}
@@ -138,7 +138,7 @@ export function CVSection() {
             </p>
           </div>
           <div id="contact">
-            <h3 className="text-[15px] font-semibold text-foreground mb-6">Contact</h3>
+            <h2 className="text-[15px] font-semibold text-foreground mb-6">Contact</h2>
             <div className="flex flex-col gap-3">
               <a
                 href="mailto:cash@example.com"
