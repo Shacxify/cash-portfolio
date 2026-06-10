@@ -7,7 +7,7 @@ export function HeroSection() {
   return (
     <section
       id="top"
-      className="relative min-h-screen flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-20"
+      className="relative min-h-screen flex flex-col justify-start overflow-hidden px-6 md:px-10 pt-32"
     >
       {/* Inline aurora blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -52,7 +52,7 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="relative max-w-6xl mx-auto w-full">
+      <div className="relative max-w-6xl mx-auto w-full text-left">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -84,7 +84,7 @@ export function HeroSection() {
               backdropFilter: "blur(12px)",
             }}
           >
-            🚀 Featured Work
+            Featured Work
           </a>
           <a
             href="https://www.linkedin.com/"
