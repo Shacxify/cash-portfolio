@@ -95,10 +95,9 @@ function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
             )}
             {e.location && (
               <div
-                className="text-[13px] mt-1.5 inline-flex items-center gap-1"
+                className="text-[13px] mt-1.5"
                 style={{ color: "rgba(0,0,0,0.72)" }}
               >
-                <span aria-hidden>📍</span>
                 {e.location}
               </div>
             )}
