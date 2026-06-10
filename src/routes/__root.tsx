@@ -29,6 +29,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "google-site-verification", content: "8kY1dDhckXkX44SrsN6tTnzMbF9URlzT4V04zvsLdag" },
       { title: "Cash Johnson | Sales & Events Growth Architect" },
       { name: "description", content: "A personal portfolio website showcasing professional experience, featured projects, and contact information." },
       { name: "author", content: "Lovable" },
