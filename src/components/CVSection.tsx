@@ -78,7 +78,7 @@ function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
           >
             <div
               className="text-[13px] mb-1.5"
-              style={{ color: "rgba(0,0,0,0.45)" }}
+              style={{ color: "rgba(0,0,0,0.65)" }}
             >
               {e.date}
             </div>
@@ -88,7 +88,7 @@ function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
             {e.subtitle && (
               <div
                 className="text-[14px] mt-1"
-                style={{ color: "rgba(0,0,0,0.55)" }}
+                style={{ color: "rgba(0,0,0,0.65)" }}
               >
                 {e.subtitle}
               </div>
@@ -96,7 +96,7 @@ function Column({ heading, entries }: { heading: string; entries: Entry[] }) {
             {e.location && (
               <div
                 className="text-[13px] mt-1.5 inline-flex items-center gap-1"
-                style={{ color: "rgba(0,0,0,0.5)" }}
+                style={{ color: "rgba(0,0,0,0.65)" }}
               >
                 <span aria-hidden>📍</span>
                 {e.location}

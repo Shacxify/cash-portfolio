@@ -74,7 +74,7 @@ export function FeaturedWork() {
                 <h3 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
                   {p.title}
                 </h3>
-                <p className="mt-2 text-sm md:text-base text-white/75 max-w-xl">
+                <p className="mt-2 text-sm md:text-base text-white/90 max-w-xl">
                   {p.description}
                 </p>
               </div>
