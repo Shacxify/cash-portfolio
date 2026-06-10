@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 const TITLE = "What Does an Operations Project Manager Do?";
 const DESCRIPTION =
-  "A practical guide to the Operations Project Manager role — what they own, the skills required, and how it differs from a traditional project manager or operations manager.";
+  "A guide to the Operations Project Manager role — responsibilities, skills required, and how it differs from traditional PM and operations roles.";
 const URL = "https://cashjohnson.net/blog/operations-project-manager-role";
 
 export const Route = createFileRoute("/blog/operations-project-manager-role")({
