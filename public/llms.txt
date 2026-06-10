@@ -1,0 +1,9 @@
+# Cash Johnson
+
+> Personal portfolio of Cash Johnson — a Strategic Growth Architect based in Silicon Valley, working at the intersection of operations, partnerships, and go-to-market.
+
+This site showcases professional experience across Centene, LinkedIn, and The Intern Ship, along with featured projects, a CV timeline, and contact information.
+
+## Pages
+
+- [Home](/): Portfolio overview with featured work, projects, CV, and contact.
