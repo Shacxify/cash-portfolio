@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { SectionLabel } from "./SectionLabel";
 
 type Entry = {
   date: string;
@@ -116,6 +117,7 @@ export function CVSection() {
       style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
     >
       <div className="max-w-6xl mx-auto">
+        <SectionLabel>About</SectionLabel>
         {/* Profile + Contact row */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -161,12 +163,15 @@ export function CVSection() {
 
         {/* Three-column CV grid */}
         <div
-          className="grid md:grid-cols-3 gap-10 md:gap-12 pt-12"
+          className="pt-12"
           style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
         >
-          <Column heading="Education" entries={education} />
-          <Column heading="Professional Experience" entries={professional} />
-          <Column heading="Organizational Experience" entries={organizational} />
+          <SectionLabel>Curriculum Vitae</SectionLabel>
+          <div className="grid md:grid-cols-3 gap-10 md:gap-12">
+            <Column heading="Education" entries={education} />
+            <Column heading="Professional Experience" entries={professional} />
+            <Column heading="Organizational Experience" entries={organizational} />
+          </div>
         </div>
       </div>
     </section>
