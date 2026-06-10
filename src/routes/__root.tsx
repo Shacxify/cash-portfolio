@@ -39,8 +39,8 @@ export const Route = createRootRoute({
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Cash Johnson | Sales & Events Growth Architect" },
       { name: "twitter:description", content: "A personal portfolio website showcasing professional experience, featured projects, and contact information." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f0ba030-e88c-43f2-a4a0-8470a81a021d/id-preview-d25f4db0--b9492b17-8638-4118-beb1-c328edd3545a.lovable.app-1777578671528.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f0ba030-e88c-43f2-a4a0-8470a81a021d/id-preview-d25f4db0--b9492b17-8638-4118-beb1-c328edd3545a.lovable.app-1777578671528.png" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dbfd4f1a-73f9-4346-9f5a-c356aa2c31c6/id-preview-4794d84c--b9492b17-8638-4118-beb1-c328edd3545a.lovable.app-1781056821064.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dbfd4f1a-73f9-4346-9f5a-c356aa2c31c6/id-preview-4794d84c--b9492b17-8638-4118-beb1-c328edd3545a.lovable.app-1781056821064.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
