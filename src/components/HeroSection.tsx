@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Layers, Linkedin, User } from "lucide-react";
+import portraitAsset from "@/assets/cash-portrait.png.asset.json";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -52,7 +53,23 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="relative max-w-6xl mx-auto w-full text-left">
+      {/* Portrait */}
+      <motion.img
+        src={portraitAsset.url}
+        alt="Portrait of Cash Johnson"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.1, delay: 0.4, ease }}
+        className="pointer-events-none select-none absolute right-0 bottom-0 hidden md:block z-0"
+        style={{
+          height: "min(78vh, 720px)",
+          width: "auto",
+          maskImage: "linear-gradient(to top, transparent 0%, black 12%, black 100%)",
+          WebkitMaskImage: "linear-gradient(to top, transparent 0%, black 12%, black 100%)",
+        }}
+      />
+
+      <div className="relative z-10 max-w-6xl mx-auto w-full text-left md:pr-[40%]">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
