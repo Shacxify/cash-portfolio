@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Layers, Linkedin, User } from "lucide-react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
