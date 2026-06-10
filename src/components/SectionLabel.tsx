@@ -1,6 +1,6 @@
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div
+    <h2
       className="uppercase mb-8"
       style={{
         fontSize: "10px",
@@ -10,6 +10,6 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
-    </div>
+    </h2>
   );
 }
