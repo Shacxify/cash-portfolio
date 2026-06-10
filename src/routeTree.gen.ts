@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogPmVsOperationsRouteImport } from './routes/blog.pm-vs-operations'
 import { Route as BlogOperationsProjectManagerRoleRouteImport } from './routes/blog.operations-project-manager-role'
@@ -18,6 +19,11 @@ import { Route as BlogHowToDocumentSopsRouteImport } from './routes/blog.how-to-
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -44,6 +50,7 @@ const BlogHowToDocumentSopsRoute = BlogHowToDocumentSopsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
@@ -59,6 +67,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/projects'
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
     | '/blog/operations-project-manager-role'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/projects'
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
     | '/blog/operations-project-manager-role'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/projects'
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
     | '/blog/operations-project-manager-role'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProjectsRoute: typeof ProjectsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BlogHowToDocumentSopsRoute: typeof BlogHowToDocumentSopsRoute
   BlogOperationsProjectManagerRoleRoute: typeof BlogOperationsProjectManagerRoleRoute
@@ -103,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -138,6 +158,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProjectsRoute: ProjectsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   BlogHowToDocumentSopsRoute: BlogHowToDocumentSopsRoute,
   BlogOperationsProjectManagerRoleRoute: BlogOperationsProjectManagerRoleRoute,
