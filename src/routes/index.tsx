@@ -57,7 +57,6 @@ function Home() {
       <Navbar />
       <main className="relative z-10 pt-14">
         <HeroSection />
-        <FeaturedWork />
         <ProjectsSection />
         <CVSection />
       </main>
