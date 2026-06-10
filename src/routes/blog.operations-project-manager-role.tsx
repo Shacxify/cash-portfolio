@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 const TITLE = "What Does an Operations Project Manager Do?";
 const DESCRIPTION =
-  "A guide to the Operations Project Manager role — responsibilities, skills required, and how it differs from traditional PM and operations roles.";
+  "A guide to the Operations Project Manager role - responsibilities, skills required, and how it differs from traditional PM and operations roles.";
 const URL = "https://cashjohnson.net/blog/operations-project-manager-role";
 
 export const Route = createFileRoute("/blog/operations-project-manager-role")({
@@ -73,8 +73,8 @@ function ArticlePage() {
           <p>
             An Operations Project Manager plans, executes, and improves cross-functional
             projects that strengthen how a company runs internally. Unlike a traditional
-            project manager — who is often assigned to a single product or client deliverable
-            — an OPM focuses on the operational backbone: workflows, tooling, vendor
+            project manager - who is often assigned to a single product or client deliverable
+            - an OPM focuses on the operational backbone: workflows, tooling, vendor
             relationships, reporting, and the handoffs between teams.
           </p>
 
@@ -88,7 +88,7 @@ function ArticlePage() {
             <li>
               <strong>Owning cross-functional execution.</strong> Coordinating across
               finance, people ops, sales ops, IT, and external vendors so a change actually
-              lands — not just gets announced.
+              lands - not just gets announced.
             </li>
             <li>
               <strong>Standardizing process.</strong> Documenting SOPs, building playbooks,
@@ -124,7 +124,7 @@ function ArticlePage() {
               department.
             </li>
             <li>
-              <strong>Operations Manager:</strong> Owns the steady-state — the recurring
+              <strong>Operations Manager:</strong> Owns the steady-state - the recurring
               work, headcount, and outputs of an operational function. Less project-bounded,
               more "the lights have to stay on."
             </li>
@@ -137,9 +137,9 @@ function ArticlePage() {
           <h2 className="text-2xl font-semibold text-foreground mt-10">Skills that matter most</h2>
           <ul className="list-disc pl-6 space-y-2">
             <li>Process mapping and workflow design (BPMN, swim lanes, RACI).</li>
-            <li>Familiarity with PM methodologies — Agile for iterative rollouts, Lean and Six Sigma for process improvement, traditional waterfall for tightly sequenced changes.</li>
+            <li>Familiarity with PM methodologies - Agile for iterative rollouts, Lean and Six Sigma for process improvement, traditional waterfall for tightly sequenced changes.</li>
             <li>Comfort with project tooling: Asana, Jira, Monday, Linear, ClickUp, Smartsheet.</li>
-            <li>Data fluency — pulling reports, building dashboards, and translating numbers into decisions.</li>
+            <li>Data fluency - pulling reports, building dashboards, and translating numbers into decisions.</li>
             <li>Strong written communication; most operational change lives or dies on the clarity of the rollout doc.</li>
             <li>Stakeholder management across non-technical and technical teams.</li>
           </ul>
@@ -150,7 +150,7 @@ function ArticlePage() {
             migration, write the requirements doc for a new vendor evaluation, review a
             process map with finance, ship an updated onboarding playbook, and pull a
             mid-quarter report on how a recent change is performing. The role is broad on
-            purpose — operational improvements rarely sit inside one team's swim lane.
+            purpose - operational improvements rarely sit inside one team's swim lane.
           </p>
 
           <h2 className="text-2xl font-semibold text-foreground mt-10">
@@ -161,7 +161,7 @@ function ArticlePage() {
             staff, and a generalist ops hire. As headcount grows past roughly 50–100 people,
             the cost of uncoordinated systems shows up: duplicate tools, manual handoffs,
             inconsistent reporting. That's when a dedicated Operations Project Manager pays
-            for itself — the role exists to compound those small fixes into a backbone that
+            for itself - the role exists to compound those small fixes into a backbone that
             scales.
           </p>
 
@@ -170,14 +170,14 @@ function ArticlePage() {
             If you're researching this role, you'll see closely related titles: Business
             Operations Manager, Revenue Operations Project Manager, Strategic Operations
             Lead, Program Manager (Operations), and Chief of Staff. The job description
-            matters more than the title — look for ownership of cross-functional projects
+            matters more than the title - look for ownership of cross-functional projects
             and a mandate to improve internal systems.
           </p>
         </section>
 
         <footer className="mt-16 pt-8" style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}>
           <p className="text-sm" style={{ color: "rgba(0,0,0,0.65)" }}>
-            Written by Cash Johnson — Strategic Growth Architect working across sales,
+            Written by Cash Johnson - Strategic Growth Architect working across sales,
             events, and operations.
           </p>
           <Link

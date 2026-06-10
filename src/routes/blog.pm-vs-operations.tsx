@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 const TITLE = "Project Management vs. Operations Management";
 const DESCRIPTION =
-  "How project management and operations management differ — scope, goals, skills, and which career path fits you best.";
+  "How project management and operations management differ - scope, goals, skills, and which career path fits you best.";
 const URL = "https://cashjohnson.net/blog/pm-vs-operations";
 
 export const Route = createFileRoute("/blog/pm-vs-operations")({
@@ -55,7 +55,7 @@ function ArticlePage() {
             Project Management vs. Operations Management: Which Career Path is Right for You?
           </h1>
           <p className="mt-5 text-[17px] md:text-[18px] leading-relaxed" style={{ color: "rgba(0,0,0,0.7)" }}>
-            Project management and operations management are often confused — both move work
+            Project management and operations management are often confused - both move work
             through a company, both rely on planning and coordination, and many roles draw on
             both skill sets. But the two disciplines have different goals, time horizons, and
             success metrics. Here's how they compare and how to decide which path fits you.
@@ -66,20 +66,20 @@ function ArticlePage() {
           <h2 className="text-2xl font-semibold text-foreground mt-10">The core difference</h2>
           <p>
             <strong>Project management</strong> is the discipline of delivering a temporary,
-            unique initiative — something with a defined start, end, scope, and deliverable.
+            unique initiative - something with a defined start, end, scope, and deliverable.
             A new product launch, a system migration, an event, a building. When the project
             ships, the project ends.
           </p>
           <p>
             <strong>Operations management</strong> is the discipline of running the ongoing,
-            repeatable work that keeps a business going — fulfilling orders, supporting
+            repeatable work that keeps a business going - fulfilling orders, supporting
             customers, processing payroll, manufacturing the same product week after week.
             Operations don't end; they get more efficient.
           </p>
 
           <h2 className="text-2xl font-semibold text-foreground mt-10">Are they the same thing?</h2>
           <p>
-            No — but they overlap. Operations teams run projects all the time (a warehouse
+            No - but they overlap. Operations teams run projects all the time (a warehouse
             automation rollout, a new ERP) and project teams rely on operational systems to
             execute. The simplest test: if the work has a defined end date and a unique
             deliverable, it's a project. If it repeats indefinitely and the goal is
@@ -108,7 +108,7 @@ function ArticlePage() {
             cycles. You'll own KPIs, headcount, and the day-to-day rhythm of a function.
           </p>
           <p>
-            Many people end up doing both — operations roles increasingly include a steady
+            Many people end up doing both - operations roles increasingly include a steady
             stream of projects, and senior PMs often transition into ops leadership. If
             you're early in your career, try both: take a rotation in an ops team and lead a
             cross-functional project. The hybrid skill set is rare and valuable.
