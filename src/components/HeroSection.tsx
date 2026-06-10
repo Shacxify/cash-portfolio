@@ -84,7 +84,7 @@ export function HeroSection() {
               backdropFilter: "blur(12px)",
             }}
           >
-            🚀 Featured Work
+            Featured Work
           </a>
           <a
             href="https://www.linkedin.com/"
