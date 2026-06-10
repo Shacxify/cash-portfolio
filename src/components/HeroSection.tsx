@@ -77,38 +77,41 @@ export function HeroSection() {
         >
           <a
             href="#work"
-            className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] font-medium text-foreground transition-all hover:bg-white/80"
+            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all hover:bg-white/80"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
               backdropFilter: "blur(12px)",
             }}
           >
+            <Layers size={18} strokeWidth={1.5} />
             Featured Work
           </a>
           <a
             href="https://www.linkedin.com/"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[14px] font-medium text-foreground transition-all hover:bg-white/80"
+            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all hover:bg-white/80"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
               backdropFilter: "blur(12px)",
             }}
           >
-            LinkedIn <ArrowUpRight size={14} />
+            <Linkedin size={18} strokeWidth={1.5} />
+            LinkedIn <ArrowUpRight size={16} />
           </a>
           <a
             href="#cv"
-            className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[14px] font-medium text-foreground transition-all hover:bg-white/80"
+            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all hover:bg-white/80"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
               backdropFilter: "blur(12px)",
             }}
           >
-            More About Me <ArrowUpRight size={14} />
+            <User size={18} strokeWidth={1.5} />
+            More About Me <ArrowUpRight size={16} />
           </a>
         </motion.div>
       </div>
