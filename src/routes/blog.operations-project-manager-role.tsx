@@ -14,22 +14,28 @@ export const Route = createFileRoute("/blog/operations-project-manager-role")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "article" },
       { property: "og:url", content: URL },
+      { property: "og:image", content: "https://cashjohnson.net/blog/operations-project-manager.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESCRIPTION },
+      { name: "twitter:image", content: "https://cashjohnson.net/blog/operations-project-manager.jpg" },
+    ],
+    links: [{ rel: "canonical", href: URL }],
+    scripts: [
       {
-        name: "script:ld+json",
-        content: JSON.stringify({
+        type: "application/ld+json",
+        children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Article",
           headline: TITLE,
           description: DESCRIPTION,
+          image: "https://cashjohnson.net/blog/operations-project-manager.jpg",
+          datePublished: "2026-06-10",
           author: { "@type": "Person", name: "Cash Johnson" },
           mainEntityOfPage: URL,
         }),
       },
     ],
-    links: [{ rel: "canonical", href: URL }],
   }),
   component: ArticlePage,
 });
