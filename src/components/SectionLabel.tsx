@@ -3,10 +3,10 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
     <h2
       className="uppercase mb-8"
       style={{
-        fontSize: "10px",
-        letterSpacing: "0.18em",
+        fontSize: "12px",
+        letterSpacing: "0.2em",
         color: "rgba(0,0,0,0.72)",
-        fontWeight: 500,
+        fontWeight: 600,
       }}
     >
       {children}
