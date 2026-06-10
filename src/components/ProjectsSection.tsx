@@ -134,7 +134,8 @@ export function ProjectsSection() {
                 </p>
               </div>
             </motion.a>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
