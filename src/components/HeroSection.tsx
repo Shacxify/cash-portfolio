@@ -60,7 +60,7 @@ export function HeroSection() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.1, delay: 0.4, ease }}
-        className="pointer-events-none select-none absolute right-0 bottom-0 hidden md:block z-0"
+        className="pointer-events-none select-none absolute bottom-0 hidden md:block z-0 right-[8%] lg:right-[14%] xl:right-[18%]"
         style={{
           height: "min(70vh, 640px)",
           width: "auto",
