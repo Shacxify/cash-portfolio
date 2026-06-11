@@ -62,23 +62,23 @@ export function HeroSection() {
         transition={{ duration: 1.1, delay: 0.4, ease }}
         className="pointer-events-none select-none absolute right-0 bottom-0 hidden md:block z-0"
         style={{
-          height: "min(78vh, 720px)",
+          height: "min(70vh, 640px)",
           width: "auto",
           maskImage: "linear-gradient(to top, transparent 0%, black 12%, black 100%)",
           WebkitMaskImage: "linear-gradient(to top, transparent 0%, black 12%, black 100%)",
         }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto w-full text-left md:pr-[40%]">
+      <div className="relative z-10 max-w-6xl mx-auto w-full text-left md:pr-[36%] lg:pr-[32%]">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease }}
-          className="font-bold tracking-tight text-foreground"
+          className="font-bold tracking-tight text-foreground text-balance"
           style={{
-            fontSize: "clamp(2.6rem, 7vw, 5.5rem)",
-            lineHeight: 1.05,
-            letterSpacing: "-0.03em",
+            fontSize: "clamp(2rem, 4.6vw, 4rem)",
+            lineHeight: 1.08,
+            letterSpacing: "-0.025em",
           }}
         >
           Hi, I'm Cash Johnson. I'm a{" "}
