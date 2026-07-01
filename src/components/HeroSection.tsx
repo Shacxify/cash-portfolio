@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Layers, Linkedin, User } from "lucide-react";
-import portraitAsset from "@/assets/cash-portrait.png.asset.json";
+
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
