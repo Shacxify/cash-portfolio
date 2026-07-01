@@ -60,7 +60,7 @@ export function HeroSection() {
           transition={{ duration: 0.9, ease }}
           className="font-bold tracking-tight text-foreground text-balance"
           style={{
-            fontSize: "clamp(2rem, 4.6vw, 4rem)",
+            fontSize: "clamp(2.25rem, 5.4vw, 5rem)",
             lineHeight: 1.08,
             letterSpacing: "-0.025em",
           }}
