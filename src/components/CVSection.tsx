@@ -396,7 +396,7 @@ export function CVSection() {
                 className="group inline-flex items-center gap-1.5 text-[17px] md:text-[18px] transition-colors hover:[color:#86A397]"
                 style={{ color: "rgba(0,0,0,0.78)" }}
               >
-                me@cashjohnson.net
+                Email
                 <ArrowUpRight
                   size={18}
                   className="opacity-60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
