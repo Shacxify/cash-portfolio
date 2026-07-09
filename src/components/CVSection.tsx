@@ -148,22 +148,22 @@ const organizational: Entry[] = [
 
 function DetailPanel({ entry }: { entry: Entry }) {
   return (
-    <div className="w-[340px] p-4">
-      <div className="text-[11px] uppercase tracking-wider mb-1" style={{ color: ACCENT, letterSpacing: "0.1em" }}>
+    <div className="w-[420px] p-5">
+      <div className="text-[12px] uppercase tracking-wider mb-1.5" style={{ color: ACCENT, letterSpacing: "0.1em" }}>
         {entry.date}
       </div>
-      <div className="text-[15px] font-semibold text-foreground leading-snug mb-1">{entry.title}</div>
+      <div className="text-[17px] font-semibold text-foreground leading-snug mb-1.5">{entry.title}</div>
       {entry.subtitle && (
-        <div className="text-[13px] mb-3" style={{ color: "rgba(0,0,0,0.6)" }}>
+        <div className="text-[14px] mb-4" style={{ color: "rgba(0,0,0,0.6)" }}>
           {entry.subtitle}
         </div>
       )}
 
       {entry.bullets && entry.bullets.length > 0 && (
-        <ul className="space-y-1.5 mb-3">
+        <ul className="space-y-2 mb-4">
           {entry.bullets.map((b, i) => (
-            <li key={i} className="text-[13px] leading-relaxed flex gap-2" style={{ color: "rgba(0,0,0,0.78)" }}>
-              <span className="mt-1.5 shrink-0 h-1 w-1 rounded-full" style={{ background: ACCENT }} />
+            <li key={i} className="text-[14px] leading-relaxed flex gap-2.5" style={{ color: "rgba(0,0,0,0.78)" }}>
+              <span className="mt-2 shrink-0 h-1.5 w-1.5 rounded-full" style={{ background: ACCENT }} />
               <span>{b}</span>
             </li>
           ))}
@@ -171,16 +171,16 @@ function DetailPanel({ entry }: { entry: Entry }) {
       )}
 
       {entry.tools && entry.tools.length > 0 && (
-        <div className="mb-3">
-          <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider mb-1.5" style={{ color: "rgba(0,0,0,0.5)", letterSpacing: "0.08em" }}>
-            <Wrench size={11} strokeWidth={2} />
+        <div className="mb-4">
+          <div className="flex items-center gap-1.5 text-[12px] uppercase tracking-wider mb-2" style={{ color: "rgba(0,0,0,0.5)", letterSpacing: "0.08em" }}>
+            <Wrench size={12} strokeWidth={2} />
             Tools
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {entry.tools.map((t) => (
               <span
                 key={t}
-                className="text-[11px] px-2 py-0.5 rounded-full"
+                className="text-[12px] px-2.5 py-1 rounded-full"
                 style={{ background: "rgba(134,163,151,0.14)", color: "rgba(0,0,0,0.72)" }}
               >
                 {t}
@@ -192,15 +192,15 @@ function DetailPanel({ entry }: { entry: Entry }) {
 
       {entry.learned && entry.learned.length > 0 && (
         <div>
-          <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider mb-1.5" style={{ color: "rgba(0,0,0,0.5)", letterSpacing: "0.08em" }}>
-            <Sparkles size={11} strokeWidth={2} />
+          <div className="flex items-center gap-1.5 text-[12px] uppercase tracking-wider mb-2" style={{ color: "rgba(0,0,0,0.5)", letterSpacing: "0.08em" }}>
+            <Sparkles size={12} strokeWidth={2} />
             What I took away
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {entry.learned.map((t) => (
               <span
                 key={t}
-                className="text-[11px] px-2 py-0.5 rounded-full border"
+                className="text-[12px] px-2.5 py-1 rounded-full border"
                 style={{ borderColor: "rgba(0,0,0,0.1)", color: "rgba(0,0,0,0.7)" }}
               >
                 {t}
