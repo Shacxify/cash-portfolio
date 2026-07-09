@@ -180,7 +180,7 @@ function DetailPanel({ entry }: { entry: Entry }) {
             {entry.tools.map((t) => (
               <span
                 key={t}
-                 className="max-w-full break-words text-[12px] px-2.5 py-1 rounded-full"
+                className="inline-block max-w-full whitespace-normal break-words text-[12px] px-2.5 py-1 rounded-full"
                 style={{ background: "rgba(134,163,151,0.14)", color: "rgba(0,0,0,0.72)" }}
               >
                 {t}
@@ -200,7 +200,7 @@ function DetailPanel({ entry }: { entry: Entry }) {
             {entry.learned.map((t) => (
               <span
                 key={t}
-                 className="max-w-full break-words text-[12px] px-2.5 py-1 rounded-full border"
+                className="inline-block max-w-full whitespace-normal break-words text-[12px] px-2.5 py-1 rounded-full border"
                 style={{ borderColor: "rgba(0,0,0,0.1)", color: "rgba(0,0,0,0.7)" }}
               >
                 {t}
