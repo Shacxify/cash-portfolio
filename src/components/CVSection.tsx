@@ -289,7 +289,13 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
       {hasDetails ? (
         <HoverCard openDelay={120} closeDelay={80}>
           <HoverCardTrigger asChild>{trigger}</HoverCardTrigger>
-          <HoverCardContent side="right" align="start" sideOffset={12} className="p-0 border-black/10 shadow-xl">
+          <HoverCardContent
+            side="right"
+            align="start"
+            sideOffset={12}
+            className="p-0 border border-black/10 shadow-2xl rounded-lg backdrop-blur-none"
+            style={{ background: "#ffffff" }}
+          >
             <DetailPanel entry={entry} />
           </HoverCardContent>
         </HoverCard>
