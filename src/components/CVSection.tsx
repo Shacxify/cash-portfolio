@@ -363,16 +363,30 @@ export function CVSection() {
         >
           <div className="md:col-span-2">
             <h2 className="text-[15px] font-semibold text-foreground mb-6">Profile</h2>
-            <p
-              className="text-[17px] md:text-[18px] leading-relaxed max-w-xl"
+            <div
+              className="space-y-5 text-[17px] md:text-[18px] leading-relaxed max-w-xl"
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
-              Cash Johnson is a Silicon Valley–based operations and project
-              manager working at the intersection of enterprise operations,
-              partnerships, and go-to-market. He's currently a PM intern at
-              Centene, Director of Events for LinkedIn's SJSU Campus Ambassador
-              program, and studying Business MIS at San José State.
-            </p>
+              <p>
+                Cash Johnson is a <strong>Silicon Valley operations and project manager</strong>{" "}
+                who lives where <strong>enterprise ops, partnerships, and go-to-market</strong>{" "}
+                collide. Give him an <strong>ambiguous, cross-functional mess</strong> and he'll
+                hand you back a <strong>plan that actually ships</strong>.
+              </p>
+              <p>
+                Right now he's a <strong>Project Management intern at Centene</strong>, one of the
+                country's biggest healthcare companies, learning to move fast inside a{" "}
+                <strong>very regulated world</strong>. He's also{" "}
+                <strong>Director of Events for LinkedIn's SJSU Campus Ambassador program</strong>,
+                where he <strong>runs events end to end</strong>, and he's finishing a{" "}
+                <strong>B.S. in Business Administration (Management Information Systems) at San José State</strong>.{" "}
+                <strong>Business brain, technical instincts, one person.</strong>
+              </p>
+              <p>
+                Off the clock, you'll find him fishing, rock climbing, surfing, playing guitar, or
+                getting paint everywhere with a watercolor set.
+              </p>
+            </div>
           </div>
           <div id="contact">
             <h2 className="text-[15px] font-semibold text-foreground mb-6">Contact</h2>
