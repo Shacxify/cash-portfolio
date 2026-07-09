@@ -294,8 +294,12 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
             align="start"
             sideOffset={12}
             collisionPadding={16}
-            className="w-[calc(100vw-2rem)] max-w-[420px] p-0 border border-black/10 shadow-2xl rounded-lg backdrop-blur-none overflow-hidden"
-            style={{ background: "#ffffff" }}
+            className="p-0 border border-black/10 shadow-2xl rounded-lg backdrop-blur-none overflow-hidden"
+            style={{
+              background: "#ffffff",
+              width: "min(420px, calc(100vw - 32px))",
+              maxWidth: "calc(100vw - 32px)",
+            }}
           >
             <DetailPanel entry={entry} />
           </HoverCardContent>
