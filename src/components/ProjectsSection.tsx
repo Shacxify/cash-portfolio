@@ -80,7 +80,7 @@ export function ProjectsSection() {
   return (
     <section id="work" className="relative px-6 md:px-10 py-24">
       <div className="max-w-6xl mx-auto">
-        <SectionLabel>Recent Work</SectionLabel>
+        <SectionLabel>Featured Work</SectionLabel>
         <div className="grid sm:grid-cols-2 gap-4">
           {projects.map((p, i) => {
             const isOrphan =
