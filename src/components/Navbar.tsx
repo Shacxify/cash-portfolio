@@ -35,7 +35,7 @@ export function Navbar() {
         borderBottom: "1px solid rgba(0,0,0,0.05)",
       }}
     >
-      <div className="flex items-center justify-between w-full max-w-6xl mx-auto">
+      <div className="flex items-center justify-between w-full max-w-6xl mx-auto pointer-events-auto">
         <a href="#top" className="text-[14px] font-semibold tracking-tight text-foreground">
           Cash Johnson
         </a>
