@@ -100,7 +100,7 @@ export function ProjectsSection() {
               <div className="aspect-[4/3] overflow-hidden">
                 <img
                   src={p.image}
-                  alt={p.title}
+                  alt={`${p.title} project cover - ${p.tag}`}
                   className="w-full h-full object-cover opacity-75 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700"
                 />
               </div>

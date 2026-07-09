@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 const TITLE = "Projects";
 const DESCRIPTION =
-  "In-depth case studies from Cash Johnson: VNTG OS, Sammy's Source, Markowitz Investment, LinkedUp, Stanley 1913, LinkedIn Learning, and Adobe Cloud for Ralph Lauren.";
+  "In-depth case studies from Cash Johnson: VNTG OS, Sammy's Source, Markowitz Investment, LinkedUp, Stanley 1913, and Adobe Cloud for Ralph Lauren.";
 const URL = "https://cashjohnson.net/projects";
 
 export const Route = createFileRoute("/projects")({
