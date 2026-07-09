@@ -152,9 +152,9 @@ function DetailPanel({ entry }: { entry: Entry }) {
       <div className="text-[12px] uppercase tracking-wider mb-1.5" style={{ color: ACCENT, letterSpacing: "0.1em" }}>
         {entry.date}
       </div>
-      <div className="text-[17px] font-semibold text-foreground leading-snug mb-1.5">{entry.title}</div>
+      <div className="break-words text-[17px] font-semibold text-foreground leading-snug mb-1.5">{entry.title}</div>
       {entry.subtitle && (
-        <div className="text-[14px] mb-4" style={{ color: "rgba(0,0,0,0.6)" }}>
+        <div className="break-words text-[14px] mb-4" style={{ color: "rgba(0,0,0,0.6)" }}>
           {entry.subtitle}
         </div>
       )}
@@ -294,7 +294,7 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
             align="start"
             sideOffset={12}
             collisionPadding={16}
-            className="w-[min(420px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] p-0 border border-black/10 shadow-2xl rounded-lg backdrop-blur-none overflow-hidden"
+            className="w-[calc(100vw-2rem)] max-w-[420px] p-0 border border-black/10 shadow-2xl rounded-lg backdrop-blur-none overflow-hidden"
             style={{ background: "#ffffff" }}
           >
             <DetailPanel entry={entry} />
