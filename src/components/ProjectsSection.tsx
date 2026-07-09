@@ -11,7 +11,7 @@ const projects = [
     accent: "#86A397",
     description:
       "Two-sided retail platform for Black & Brown vintage consignment with an AI-powered resale pricing engine. Replaced 100% of pen-and-paper operations.",
-    href: "/projects#vntg-os",
+    href: "https://bnb.cashjohnson.net",
     image: `https://images.unsplash.com/photo-1770012117468-9b1ee7aba977${IMG}`,
   },
   {
