@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, GraduationCap, Briefcase, Users, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, GraduationCap, Briefcase, Award, Wrench, Sparkles, type LucideIcon } from "lucide-react";
 import { SectionLabel } from "./SectionLabel";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 type Entry = {
   date: string;
@@ -8,17 +9,38 @@ type Entry = {
   subtitle?: string;
   location?: string;
   href?: string;
+  bullets?: string[];
+  tools?: string[];
+  learned?: string[];
 };
 
 const ease = [0.16, 1, 0.3, 1] as const;
+const ACCENT = "#86A397";
 
 const education: Entry[] = [
   {
-    date: "Aug 2022 — Dec 2026",
+    date: "Aug 2024 — Dec 2026",
     title: "San José State University",
-    subtitle: "B.S. Business Administration, MIS · GPA 3.52",
+    subtitle: "B.S. Business Administration, MIS · GPA 3.5",
     location: "San José, California",
     href: "https://www.sjsu.edu/",
+    bullets: [
+      "Lucas College of Business — Management Information Systems concentration.",
+      "Coursework across systems analysis, data management, and enterprise operations.",
+    ],
+    tools: ["SQL", "Tableau", "Power BI", "Excel"],
+    learned: ["Systems analysis & design", "Data-driven decision making"],
+  },
+  {
+    date: "Graduated May 2024",
+    title: "West Valley College",
+    subtitle: "5 Associate Degrees — AS MIS, AST Economics, AA Liberal Arts (3 emphases)",
+    location: "Saratoga, California",
+    bullets: [
+      "Completed five associate degrees in parallel across business, economics, and the liberal arts.",
+      "Merit Scholar, Alpha Gamma Sigma Honors Society (2023–2024).",
+    ],
+    learned: ["Cross-disciplinary study", "Academic project management"],
   },
 ];
 
@@ -26,58 +48,179 @@ const professional: Entry[] = [
   {
     date: "May 2025 — Present",
     title: "Operations PM Intern @ Centene",
-    subtitle: "Remote · Enterprise Operations",
-    location: "Remote",
+    subtitle: "St. Louis, MO · Hybrid · Enterprise Operations",
+    location: "Hybrid",
     href: "https://www.centene.com/",
+    bullets: [
+      "Cut PM troubleshooting time by up to 50% by deploying real-time dashboards and standardized reporting.",
+      "Selected as a core PM for Centene's Duals initiative, orchestrating healthcare plan operations across 9 states.",
+      "Designed a Smartsheet Lessons Learned tracker adopted as the legacy operations model, slated for company-wide rollout.",
+      "Aligned Compliance, IT, and Operations stakeholders to unblock execution and streamline workflows.",
+    ],
+    tools: ["Smartsheet", "Power BI", "Jira", "Confluence", "SharePoint"],
+    learned: ["Enterprise PMO governance", "Cross-functional stakeholder alignment", "RAID & risk registers"],
   },
   {
     date: "Jan 2025 — Present",
-    title: "Events Director @ LinkedIn",
-    subtitle: "Campus Ambassador Program",
-    location: "Sunnyvale, California",
+    title: "Director of Events @ LinkedIn Campus Ambassador Program",
+    subtitle: "Promoted from LinkedIn Ambassador · SJSU",
+    location: "San José, California",
     href: "https://www.linkedin.com/",
+    bullets: [
+      "Directed 6+ large-scale career events drawing 25,000+ collective attendees with 100% on-time delivery.",
+      "Selected from 2,000+ applicants to help lead LinkedIn's student ambassador program at SJSU.",
+      "Partnered directly with LinkedIn corporate stakeholders to align campus events with brand priorities.",
+      "Improved event satisfaction scores by 25% through structured post-event feedback loops.",
+    ],
+    tools: ["LinkedIn Events", "Luma", "Notion", "Asana"],
+    learned: ["Brand-partner alignment", "Event operations at scale", "Feedback-driven iteration"],
   },
   {
     date: "Jun 2025 — Jan 2026",
-    title: "Director of Event Ops @ The Intern Ship",
+    title: "Director of Operations @ The Intern Ship",
     subtitle: "Partnerships & National Programming",
-    location: "Remote",
+    location: "San José, California",
     href: "https://www.theintern.ship/",
+    bullets: [
+      "Converted ~85% of a 20+ monthly partner pipeline into active sponsorships, driving GTM across 10+ event formats.",
+      "Led flagship events (Tech Intern Bus Mixer, Intern Ship Games) drawing 300+ attendees at 90%+ venue capacity.",
+      "Automated Power BI lead scoring; A/B tested email, Luma, and LinkedIn campaigns to lift partner conversion.",
+    ],
+    tools: ["Power BI", "Luma", "Salesforce", "Power Automate", "Excel"],
+    learned: ["GTM pipeline management", "A/B testing & lead scoring", "Sponsorship negotiation"],
+  },
+  {
+    date: "Aug 2020 — Jun 2024",
+    title: "Project Manager @ San José Spotlight",
+    subtitle: "Remote · Award-winning nonprofit newsroom",
+    location: "San José, California (Remote)",
+    href: "https://sanjosespotlight.com/",
+    bullets: [
+      "Managed content production for 4+ years, delivering every issue on deadline.",
+      "Drove 24-hour editorial turnarounds across 4+ monthly stories with zero missed deadlines over a 4-year run.",
+    ],
+    tools: ["Asana", "Google Workspace", "Slack"],
+    learned: ["Editorial project management", "Long-horizon reliability"],
   },
 ];
 
 const organizational: Entry[] = [
   {
-    date: "Jul 2024 — Dec 2025",
+    date: "Jul 2024 — Jan 2026",
     title: "President @ SJSU Marketing Association",
-    subtitle: "Lucas College of Business",
+    subtitle: "Lucas College of Business · 250+ members, 45+ year legacy",
     location: "San José, California",
     href: "https://www.linkedin.com/company/sjsu-marketing-association/",
+    bullets: [
+      "Secured consulting engagements with Tesla, LinkedIn, and YC startups, generating 200+ client data points.",
+      "Led SJSU's largest business organization, directing a 72-person officer team via OKRs.",
+      "Coached 20 consultants on client communication and data storytelling, boosting offer-ready pipelines by 78%.",
+    ],
+    tools: ["OKRs", "Notion", "Slack", "Figma"],
+    learned: ["Executive team leadership", "Consulting delivery", "Coaching & mentorship"],
   },
   {
-    date: "2024 — Present",
-    title: "Event Consultant @ Fashion Club SJSU",
-    location: "San José, California",
+    date: "2026",
+    title: "Winner — LinkedUp | PMc Build-A-Feature Competition",
+    subtitle: "End-to-end product feature for LinkedIn",
+    bullets: [
+      "Scoped, designed, and pitched a LinkedIn product feature end-to-end: product strategy, UX, and roadmap.",
+    ],
+    tools: ["Figma", "Miro"],
+    learned: ["Product discovery", "Feature scoping & pitching"],
   },
   {
-    date: "2023 — 2024",
-    title: "Student Affiliate @ Entrepreneurship Club",
-    subtitle: "West Valley College",
-    location: "Saratoga, California",
+    date: "2018",
+    title: "Innovation Award — San José Unified School District",
+    subtitle: "Pioneer High School video news production",
+    bullets: [
+      "Created and anchored Pioneer High School's largest-scale video news production, reaching 1,500+ students.",
+    ],
+    learned: ["Production leadership", "On-camera communication"],
   },
   {
     date: "2023 — 2024",
     title: "Merit Scholar @ Alpha Gamma Sigma",
+    subtitle: "Honors Society, West Valley College",
     location: "Saratoga, California",
   },
 ];
 
-const ACCENT = "#86A397";
+function DetailPanel({ entry }: { entry: Entry }) {
+  return (
+    <div className="w-[340px] p-4">
+      <div className="text-[11px] uppercase tracking-wider mb-1" style={{ color: ACCENT, letterSpacing: "0.1em" }}>
+        {entry.date}
+      </div>
+      <div className="text-[15px] font-semibold text-foreground leading-snug mb-1">{entry.title}</div>
+      {entry.subtitle && (
+        <div className="text-[13px] mb-3" style={{ color: "rgba(0,0,0,0.6)" }}>
+          {entry.subtitle}
+        </div>
+      )}
+
+      {entry.bullets && entry.bullets.length > 0 && (
+        <ul className="space-y-1.5 mb-3">
+          {entry.bullets.map((b, i) => (
+            <li key={i} className="text-[13px] leading-relaxed flex gap-2" style={{ color: "rgba(0,0,0,0.78)" }}>
+              <span className="mt-1.5 shrink-0 h-1 w-1 rounded-full" style={{ background: ACCENT }} />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {entry.tools && entry.tools.length > 0 && (
+        <div className="mb-3">
+          <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider mb-1.5" style={{ color: "rgba(0,0,0,0.5)", letterSpacing: "0.08em" }}>
+            <Wrench size={11} strokeWidth={2} />
+            Tools
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {entry.tools.map((t) => (
+              <span
+                key={t}
+                className="text-[11px] px-2 py-0.5 rounded-full"
+                style={{ background: "rgba(134,163,151,0.14)", color: "rgba(0,0,0,0.72)" }}
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {entry.learned && entry.learned.length > 0 && (
+        <div>
+          <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider mb-1.5" style={{ color: "rgba(0,0,0,0.5)", letterSpacing: "0.08em" }}>
+            <Sparkles size={11} strokeWidth={2} />
+            What I took away
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {entry.learned.map((t) => (
+              <span
+                key={t}
+                className="text-[11px] px-2 py-0.5 rounded-full border"
+                style={{ borderColor: "rgba(0,0,0,0.1)", color: "rgba(0,0,0,0.7)" }}
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function EntryRow({ entry, index }: { entry: Entry; index: number }) {
+  const hasDetails =
+    (entry.bullets && entry.bullets.length > 0) ||
+    (entry.tools && entry.tools.length > 0) ||
+    (entry.learned && entry.learned.length > 0);
+
   const inner = (
     <div className="relative pl-5 py-1">
-      {/* left accent line */}
       <span
         className="absolute left-0 top-1.5 bottom-1.5 w-px transition-all duration-300 group-hover:w-[2px]"
         style={{ background: "rgba(0,0,0,0.12)" }}
@@ -114,7 +257,26 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
           {entry.location}
         </div>
       )}
+      {hasDetails && (
+        <div
+          className="text-[11px] mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          style={{ color: ACCENT, letterSpacing: "0.08em" }}
+        >
+          HOVER FOR DETAILS →
+        </div>
+      )}
     </div>
+  );
+
+  const triggerClass =
+    "group block rounded-md -mx-3 px-3 py-2 transition-colors duration-300 hover:bg-black/[0.025] cursor-pointer";
+
+  const trigger = entry.href ? (
+    <a href={entry.href} target="_blank" rel="noreferrer" className={triggerClass}>
+      {inner}
+    </a>
+  ) : (
+    <div className={triggerClass}>{inner}</div>
   );
 
   return (
@@ -124,17 +286,15 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.55, delay: index * 0.08, ease }}
     >
-      {entry.href ? (
-        <a
-          href={entry.href}
-          target="_blank"
-          rel="noreferrer"
-          className="group block rounded-md -mx-3 px-3 py-2 transition-colors duration-300 hover:bg-black/[0.025]"
-        >
-          {inner}
-        </a>
+      {hasDetails ? (
+        <HoverCard openDelay={120} closeDelay={80}>
+          <HoverCardTrigger asChild>{trigger}</HoverCardTrigger>
+          <HoverCardContent side="right" align="start" sideOffset={12} className="p-0 border-black/10 shadow-xl">
+            <DetailPanel entry={entry} />
+          </HoverCardContent>
+        </HoverCard>
       ) : (
-        <div className="group block rounded-md -mx-3 px-3 py-2">{inner}</div>
+        trigger
       )}
     </motion.div>
   );
@@ -159,12 +319,7 @@ function Column({
       <div className="flex items-center gap-2.5 mb-8 pb-3" style={{ borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
         <span
           className="inline-flex items-center justify-center rounded-full"
-          style={{
-            width: 28,
-            height: 28,
-            background: "rgba(134,163,151,0.14)",
-            color: ACCENT,
-          }}
+          style={{ width: 28, height: 28, background: "rgba(134,163,151,0.14)", color: ACCENT }}
         >
           <Icon size={15} strokeWidth={1.75} />
         </span>
@@ -188,7 +343,6 @@ export function CVSection() {
     >
       <div className="max-w-6xl mx-auto">
         <SectionLabel>About</SectionLabel>
-        {/* Profile + Contact row */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -202,28 +356,29 @@ export function CVSection() {
               className="text-[17px] md:text-[18px] leading-relaxed max-w-xl"
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
-              Cash Johnson is a Silicon Valley–based growth operator working at
-              the intersection of operations, partnerships, and go-to-market.
-              He's currently building at Centene and leading campus events for
-              LinkedIn while studying Business MIS at San José State.
+              Cash Johnson is a Silicon Valley–based operations and project
+              manager working at the intersection of enterprise operations,
+              partnerships, and go-to-market. He's currently a PM intern at
+              Centene, Director of Events for LinkedIn's SJSU Campus Ambassador
+              program, and studying Business MIS at San José State.
             </p>
           </div>
           <div id="contact">
             <h2 className="text-[15px] font-semibold text-foreground mb-6">Contact</h2>
             <div className="flex flex-col gap-3">
               <a
-                href="mailto:cash@example.com"
+                href="mailto:me@cashjohnson.net"
                 className="group inline-flex items-center gap-1.5 text-[17px] md:text-[18px] transition-colors hover:[color:#86A397]"
                 style={{ color: "rgba(0,0,0,0.78)" }}
               >
-                Email me
+                me@cashjohnson.net
                 <ArrowUpRight
                   size={18}
                   className="opacity-60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
                 />
               </a>
               <a
-                href="https://www.linkedin.com/"
+                href="https://linkedin.com/in/cash-johnson/"
                 target="_blank"
                 rel="noreferrer"
                 className="group inline-flex items-center gap-1.5 text-[17px] md:text-[18px] transition-colors hover:[color:#86A397]"
@@ -239,13 +394,12 @@ export function CVSection() {
           </div>
         </motion.div>
 
-        {/* Three-column CV grid */}
         <div className="pt-12" style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}>
           <SectionLabel>Curriculum Vitae</SectionLabel>
           <div className="grid md:grid-cols-3 gap-10 md:gap-12">
             <Column heading="Education" entries={education} Icon={GraduationCap} />
-            <Column heading="Professional Experience" entries={professional} Icon={Briefcase} />
-            <Column heading="Organizational Experience" entries={organizational} Icon={Users} />
+            <Column heading="Work Experience" entries={professional} Icon={Briefcase} />
+            <Column heading="Projects & Honors" entries={organizational} Icon={Award} />
           </div>
         </div>
       </div>
