@@ -14,6 +14,7 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogPmVsOperationsRouteImport } from './routes/blog.pm-vs-operations'
 import { Route as BlogOperationsProjectManagerRoleRouteImport } from './routes/blog.operations-project-manager-role'
+import { Route as BlogOperationsAndProjectManagementRouteImport } from './routes/blog.operations-and-project-management'
 import { Route as BlogHowToDocumentSopsRouteImport } from './routes/blog.how-to-document-sops'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -42,6 +43,12 @@ const BlogOperationsProjectManagerRoleRoute =
     path: '/blog/operations-project-manager-role',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BlogOperationsAndProjectManagementRoute =
+  BlogOperationsAndProjectManagementRouteImport.update({
+    id: '/blog/operations-and-project-management',
+    path: '/blog/operations-and-project-management',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const BlogHowToDocumentSopsRoute = BlogHowToDocumentSopsRouteImport.update({
   id: '/blog/how-to-document-sops',
   path: '/blog/how-to-document-sops',
@@ -53,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
+  '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
   '/blog/pm-vs-operations': typeof BlogPmVsOperationsRoute
 }
@@ -61,6 +69,7 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
+  '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
   '/blog/pm-vs-operations': typeof BlogPmVsOperationsRoute
 }
@@ -70,6 +79,7 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
+  '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
   '/blog/pm-vs-operations': typeof BlogPmVsOperationsRoute
 }
@@ -80,6 +90,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
+    | '/blog/operations-and-project-management'
     | '/blog/operations-project-manager-role'
     | '/blog/pm-vs-operations'
   fileRoutesByTo: FileRoutesByTo
@@ -88,6 +99,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
+    | '/blog/operations-and-project-management'
     | '/blog/operations-project-manager-role'
     | '/blog/pm-vs-operations'
   id:
@@ -96,6 +108,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/sitemap.xml'
     | '/blog/how-to-document-sops'
+    | '/blog/operations-and-project-management'
     | '/blog/operations-project-manager-role'
     | '/blog/pm-vs-operations'
   fileRoutesById: FileRoutesById
@@ -105,6 +118,7 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BlogHowToDocumentSopsRoute: typeof BlogHowToDocumentSopsRoute
+  BlogOperationsAndProjectManagementRoute: typeof BlogOperationsAndProjectManagementRoute
   BlogOperationsProjectManagerRoleRoute: typeof BlogOperationsProjectManagerRoleRoute
   BlogPmVsOperationsRoute: typeof BlogPmVsOperationsRoute
 }
@@ -146,6 +160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogOperationsProjectManagerRoleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/operations-and-project-management': {
+      id: '/blog/operations-and-project-management'
+      path: '/blog/operations-and-project-management'
+      fullPath: '/blog/operations-and-project-management'
+      preLoaderRoute: typeof BlogOperationsAndProjectManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/how-to-document-sops': {
       id: '/blog/how-to-document-sops'
       path: '/blog/how-to-document-sops'
@@ -161,6 +182,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   BlogHowToDocumentSopsRoute: BlogHowToDocumentSopsRoute,
+  BlogOperationsAndProjectManagementRoute:
+    BlogOperationsAndProjectManagementRoute,
   BlogOperationsProjectManagerRoleRoute: BlogOperationsProjectManagerRoleRoute,
   BlogPmVsOperationsRoute: BlogPmVsOperationsRoute,
 }
