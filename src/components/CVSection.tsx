@@ -148,7 +148,7 @@ const organizational: Entry[] = [
 
 function DetailPanel({ entry }: { entry: Entry }) {
   return (
-    <div className="w-[420px] p-5">
+    <div className="w-full max-h-[min(640px,calc(100vh-2rem))] overflow-y-auto overflow-x-hidden p-5">
       <div className="text-[12px] uppercase tracking-wider mb-1.5" style={{ color: ACCENT, letterSpacing: "0.1em" }}>
         {entry.date}
       </div>
@@ -162,9 +162,9 @@ function DetailPanel({ entry }: { entry: Entry }) {
       {entry.bullets && entry.bullets.length > 0 && (
         <ul className="space-y-2 mb-4">
           {entry.bullets.map((b, i) => (
-            <li key={i} className="text-[14px] leading-relaxed flex gap-2.5" style={{ color: "rgba(0,0,0,0.78)" }}>
+            <li key={i} className="text-[14px] leading-relaxed flex min-w-0 gap-2.5" style={{ color: "rgba(0,0,0,0.78)" }}>
               <span className="mt-2 shrink-0 h-1.5 w-1.5 rounded-full" style={{ background: ACCENT }} />
-              <span>{b}</span>
+              <span className="min-w-0 break-words">{b}</span>
             </li>
           ))}
         </ul>
@@ -180,7 +180,7 @@ function DetailPanel({ entry }: { entry: Entry }) {
             {entry.tools.map((t) => (
               <span
                 key={t}
-                className="text-[12px] px-2.5 py-1 rounded-full"
+                 className="max-w-full break-words text-[12px] px-2.5 py-1 rounded-full"
                 style={{ background: "rgba(134,163,151,0.14)", color: "rgba(0,0,0,0.72)" }}
               >
                 {t}
@@ -200,7 +200,7 @@ function DetailPanel({ entry }: { entry: Entry }) {
             {entry.learned.map((t) => (
               <span
                 key={t}
-                className="text-[12px] px-2.5 py-1 rounded-full border"
+                 className="max-w-full break-words text-[12px] px-2.5 py-1 rounded-full border"
                 style={{ borderColor: "rgba(0,0,0,0.1)", color: "rgba(0,0,0,0.7)" }}
               >
                 {t}
@@ -293,7 +293,8 @@ function EntryRow({ entry, index }: { entry: Entry; index: number }) {
             side="right"
             align="start"
             sideOffset={12}
-            className="p-0 border border-black/10 shadow-2xl rounded-lg backdrop-blur-none"
+            collisionPadding={16}
+            className="w-[min(420px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] p-0 border border-black/10 shadow-2xl rounded-lg backdrop-blur-none overflow-hidden"
             style={{ background: "#ffffff" }}
           >
             <DetailPanel entry={entry} />
