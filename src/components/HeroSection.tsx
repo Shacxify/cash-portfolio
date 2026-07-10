@@ -60,15 +60,30 @@ export function HeroSection() {
           transition={{ duration: 0.9, ease }}
           className="font-bold tracking-tight text-foreground text-balance"
           style={{
-            fontSize: "clamp(2.25rem, 5.4vw, 5rem)",
-            lineHeight: 1.08,
-            letterSpacing: "-0.025em",
+            fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.03em",
           }}
         >
-          Hi, I'm Cash Johnson. I'm a{" "}
+          Hi, I'm Cash Johnson.
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.15, ease }}
+          className="mt-3 text-foreground/80 text-balance"
+          style={{
+            fontSize: "clamp(1.25rem, 2.4vw, 2.25rem)",
+            lineHeight: 1.25,
+            letterSpacing: "-0.02em",
+          }}
+        >
+          I'm a{" "}
           <span style={{ color: "#86A397" }}>Strategic Growth Architect</span>{" "}
           based in Silicon Valley.
-        </motion.h1>
+        </motion.p>
+
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
