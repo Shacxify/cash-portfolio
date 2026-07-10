@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { SectionLabel } from "./SectionLabel";
-import vntg from "@/assets/projects/vntg-os-cover-2.png.asset.json";
-import sammys from "@/assets/projects/sammys-source-cover-2.png.asset.json";
-import markowitz from "@/assets/projects/markowitz-cover-2.png.asset.json";
-import linkedup from "@/assets/projects/linkedup-cover-2.png.asset.json";
-import stanley from "@/assets/projects/stanley-cover-2.png.asset.json";
-import linkedinLearning from "@/assets/projects/linkedin-learning-cover-2.png.asset.json";
-import adobe from "@/assets/projects/adobe-ralph-lauren-cover-2.png.asset.json";
+import vntg from "@/assets/projects/vntg-os-cover-2.png";
+import sammys from "@/assets/projects/sammys-source-cover-2.png";
+import markowitz from "@/assets/projects/markowitz-cover-2.png";
+import linkedup from "@/assets/projects/linkedup-cover-2.png";
+import stanley from "@/assets/projects/stanley-cover-2.png";
+import linkedinLearning from "@/assets/projects/linkedin-learning-cover-2.png";
+import adobe from "@/assets/projects/adobe-ralph-lauren-cover-2.png";
 
 const projects = [
   {
@@ -17,7 +17,7 @@ const projects = [
     description:
       "Two-sided retail platform for Black & Brown vintage consignment with an AI-powered resale pricing engine. Replaced 100% of pen-and-paper operations.",
     href: "https://bnb.cashjohnson.net",
-    image: vntg.url,
+    image: vntg,
   },
   {
     title: "Sammy's Source",
@@ -27,7 +27,7 @@ const projects = [
     description:
       "AI-powered financial navigation for first-gen SJSU students. Led system-prompt architecture, urgency ranking, and multilingual fallback with peer-advisor oversight.",
     href: "/projects#sammys-source",
-    image: sammys.url,
+    image: sammys,
   },
   {
     title: "Markowitz Investment",
@@ -37,7 +37,7 @@ const projects = [
     description:
       "Mean-variance optimized portfolio across a 6-asset universe using GRG Nonlinear Solver. Delivered a 1.23 Sharpe Ratio at 46.5% expected return.",
     href: "/projects#markowitz",
-    image: markowitz.url,
+    image: markowitz,
   },
   {
     title: "LinkedUp",
@@ -47,7 +47,7 @@ const projects = [
     description:
       "Award-winning LinkedIn feature concept for the SJSU PM Club. Opt-in proximity-based contextual connections, privacy-first by default.",
     href: "/projects#linkedup",
-    image: linkedup.url,
+    image: linkedup,
   },
   {
     title: "Stanley 1913",
@@ -57,7 +57,7 @@ const projects = [
     description:
       "Marketing performance evaluation and brand case study layering consumer trends, regulatory pressure, and competitive dynamics into a growth thesis.",
     href: "/projects#stanley-1913",
-    image: stanley.url,
+    image: stanley,
   },
   {
     title: "LinkedIn Learning",
@@ -67,7 +67,7 @@ const projects = [
     description:
       "Segmented campus targeting model for SJSU LinkedIn Campus Ambassadors. Drove a 67% lift in workshop participation and 2.6x ambassador-led engagement.",
     href: "/projects#linkedin-learning",
-    image: linkedinLearning.url,
+    image: linkedinLearning,
   },
   {
     title: "Adobe Cloud for Ralph Lauren",
@@ -77,7 +77,7 @@ const projects = [
     description:
       "Adobe Experience Cloud strategy spanning analytics, personalization, and omnichannel engagement. Projected 28% campaign efficiency lift and 2.1x targeting precision.",
     href: "/projects#adobe-ralph-lauren",
-    image: adobe.url,
+    image: adobe,
   },
 ];
 
