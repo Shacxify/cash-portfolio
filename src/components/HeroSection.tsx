@@ -122,8 +122,11 @@ export function HeroSection() {
             href="https://www.linkedin.com/"
             target="_blank"
             rel="noreferrer"
-            className="group inline-flex shrink-0 items-center justify-center min-w-12 h-12 max-w-12 hover:max-w-40 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:bg-white/80"
+            onMouseEnter={() => setHovered("linkedin")}
+            onMouseLeave={() => setHovered(null)}
+            className="group inline-flex shrink-0 items-center justify-center h-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:bg-white/80"
             style={{
+              width: hovered === "linkedin" ? 150 : 48,
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
               backdropFilter: "blur(12px)",
@@ -134,14 +137,15 @@ export function HeroSection() {
               LinkedIn
             </span>
           </a>
-
-
           <a
             href="https://www.youtube.com/@Cash-Johnson"
             target="_blank"
             rel="noreferrer"
-            className="group inline-flex shrink-0 items-center justify-center min-w-12 h-12 max-w-12 hover:max-w-40 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:bg-white/80"
+            onMouseEnter={() => setHovered("youtube")}
+            onMouseLeave={() => setHovered(null)}
+            className="group inline-flex shrink-0 items-center justify-center h-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:bg-white/80"
             style={{
+              width: hovered === "youtube" ? 150 : 48,
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
               backdropFilter: "blur(12px)",
@@ -152,9 +156,8 @@ export function HeroSection() {
               YouTube
             </span>
           </a>
-
-
         </motion.div>
+
 
       </div>
     </section>
