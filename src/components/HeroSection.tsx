@@ -95,7 +95,7 @@ export function HeroSection() {
         >
           <a
             href="#work"
-            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all hover:bg-white/80"
+            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all duration-200 hover:scale-105 hover:bg-white/85 active:scale-95"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
@@ -107,7 +107,7 @@ export function HeroSection() {
           </a>
           <a
             href="#cv"
-            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all hover:bg-white/80"
+            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all duration-200 hover:scale-105 hover:bg-white/85 active:scale-95"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
@@ -122,7 +122,7 @@ export function HeroSection() {
             target="_blank"
             rel="noreferrer"
             aria-label="LinkedIn"
-            className="inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full text-foreground transition-all hover:bg-white/80"
+            className="inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full text-foreground transition-all duration-200 hover:scale-110 hover:bg-white/85 active:scale-95"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
@@ -137,7 +137,7 @@ export function HeroSection() {
             target="_blank"
             rel="noreferrer"
             aria-label="YouTube"
-            className="inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full text-foreground transition-all hover:bg-white/80"
+            className="inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full text-foreground transition-all duration-200 hover:scale-110 hover:bg-white/85 active:scale-95"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
