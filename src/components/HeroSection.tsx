@@ -1,12 +1,14 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Layers, Linkedin, User, Youtube } from "lucide-react";
-
-
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
 export function HeroSection() {
+  const [hovered, setHovered] = useState<string | null>(null);
+
   return (
+
     <section
       id="top"
       className="relative min-h-screen flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-32 md:pb-48"
