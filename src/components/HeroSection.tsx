@@ -74,8 +74,8 @@ export function HeroSection() {
           transition={{ duration: 0.9, delay: 0.15, ease }}
           className="mt-3 text-foreground/80 text-balance"
           style={{
-            fontSize: "clamp(1.25rem, 2.4vw, 2.25rem)",
-            lineHeight: 1.25,
+            fontSize: "clamp(2.25rem, 5.4vw, 5.25rem)",
+            lineHeight: 1.15,
             letterSpacing: "-0.02em",
           }}
         >
