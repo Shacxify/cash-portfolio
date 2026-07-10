@@ -8,7 +8,7 @@ export function HeroSection() {
   return (
     <section
       id="top"
-      className="relative min-h-screen flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-10 md:pb-14"
+      className="relative min-h-screen flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-32 md:pb-48"
     >
       {/* Inline aurora blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -74,7 +74,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.3, ease }}
-          className="mt-8 flex flex-wrap gap-3"
+          className="mt-10 md:mt-12 flex flex-wrap gap-3"
         >
           <a
             href="#work"
