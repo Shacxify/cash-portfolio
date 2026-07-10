@@ -121,12 +121,8 @@ export function HeroSection() {
             href="https://www.linkedin.com/"
             target="_blank"
             rel="noreferrer"
-            onMouseEnter={() => setHovered("linkedin")}
-            onMouseLeave={() => setHovered(null)}
-            onClick={(e) => { e.preventDefault(); setHovered("linkedin"); }}
-            className="group inline-flex shrink-0 items-center justify-center h-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:bg-white/80"
+            className="group inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:bg-white/80 group-hover:w-[150px]"
             style={{
-              width: hovered === "linkedin" ? 150 : 48,
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
               backdropFilter: "blur(12px)",
@@ -142,11 +138,8 @@ export function HeroSection() {
             href="https://www.youtube.com/@Cash-Johnson"
             target="_blank"
             rel="noreferrer"
-            onMouseEnter={() => setHovered("youtube")}
-            onMouseLeave={() => setHovered(null)}
-            className="group inline-flex shrink-0 items-center justify-center h-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:bg-white/80"
+            className="group inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:bg-white/80 group-hover:w-[150px]"
             style={{
-              width: hovered === "youtube" ? 150 : 48,
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
               backdropFilter: "blur(12px)",
@@ -157,6 +150,7 @@ export function HeroSection() {
               YouTube
             </span>
           </a>
+
         </motion.div>
 
 
