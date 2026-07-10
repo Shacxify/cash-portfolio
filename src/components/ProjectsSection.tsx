@@ -1,7 +1,12 @@
 import { motion } from "framer-motion";
 import { SectionLabel } from "./SectionLabel";
-
-const IMG = "?w=1600&q=80&auto=format&fit=crop";
+import vntg from "@/assets/projects/vntg-os-cover.png.asset.json";
+import sammys from "@/assets/projects/sammys-source-cover.png.asset.json";
+import markowitz from "@/assets/projects/markowitz-cover.png.asset.json";
+import linkedup from "@/assets/projects/linkedup-cover.png.asset.json";
+import stanley from "@/assets/projects/stanley-cover.png.asset.json";
+import linkedinLearning from "@/assets/projects/linkedin-learning-cover.png.asset.json";
+import adobe from "@/assets/projects/adobe-ralph-lauren-cover.png.asset.json";
 
 const projects = [
   {
@@ -12,7 +17,7 @@ const projects = [
     description:
       "Two-sided retail platform for Black & Brown vintage consignment with an AI-powered resale pricing engine. Replaced 100% of pen-and-paper operations.",
     href: "https://bnb.cashjohnson.net",
-    image: `https://images.unsplash.com/photo-1770012117468-9b1ee7aba977${IMG}`,
+    image: vntg.url,
   },
   {
     title: "Sammy's Source",
@@ -22,7 +27,7 @@ const projects = [
     description:
       "AI-powered financial navigation for first-gen SJSU students. Led system-prompt architecture, urgency ranking, and multilingual fallback with peer-advisor oversight.",
     href: "/projects#sammys-source",
-    image: `https://plus.unsplash.com/premium_photo-1753346515174-109ced2dd7a5${IMG}`,
+    image: sammys.url,
   },
   {
     title: "Markowitz Investment",
@@ -32,7 +37,7 @@ const projects = [
     description:
       "Mean-variance optimized portfolio across a 6-asset universe using GRG Nonlinear Solver. Delivered a 1.23 Sharpe Ratio at 46.5% expected return.",
     href: "/projects#markowitz",
-    image: `https://images.unsplash.com/photo-1768055104895-e6185762f2a9${IMG}`,
+    image: markowitz.url,
   },
   {
     title: "LinkedUp",
@@ -42,7 +47,7 @@ const projects = [
     description:
       "Award-winning LinkedIn feature concept for the SJSU PM Club. Opt-in proximity-based contextual connections, privacy-first by default.",
     href: "/projects#linkedup",
-    image: `https://plus.unsplash.com/premium_photo-1723708804518-dd1802a845c7${IMG}`,
+    image: linkedup.url,
   },
   {
     title: "Stanley 1913",
@@ -52,7 +57,7 @@ const projects = [
     description:
       "Marketing performance evaluation and brand case study layering consumer trends, regulatory pressure, and competitive dynamics into a growth thesis.",
     href: "/projects#stanley-1913",
-    image: `https://images.unsplash.com/photo-1694372451859-385b400d3609${IMG}`,
+    image: stanley.url,
   },
   {
     title: "LinkedIn Learning",
@@ -62,7 +67,7 @@ const projects = [
     description:
       "Segmented campus targeting model for SJSU LinkedIn Campus Ambassadors. Drove a 67% lift in workshop participation and 2.6x ambassador-led engagement.",
     href: "/projects#linkedin-learning",
-    image: `https://plus.unsplash.com/premium_photo-1663126272028-db3751371c30${IMG}`,
+    image: linkedinLearning.url,
   },
   {
     title: "Adobe Cloud for Ralph Lauren",
@@ -72,7 +77,7 @@ const projects = [
     description:
       "Adobe Experience Cloud strategy spanning analytics, personalization, and omnichannel engagement. Projected 28% campaign efficiency lift and 2.1x targeting precision.",
     href: "/projects#adobe-ralph-lauren",
-    image: `https://images.unsplash.com/photo-1578773729184-1cc53e43c7e5${IMG}`,
+    image: adobe.url,
   },
 ];
 
@@ -86,54 +91,87 @@ export function ProjectsSection() {
             const isOrphan =
               i === projects.length - 1 && projects.length % 2 === 1;
             return (
-            <motion.a
-              key={p.title}
-              href={p.href}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.55, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-              className={`group relative block overflow-hidden rounded-2xl bg-black ${
-                isOrphan ? "sm:col-span-2 sm:mx-auto sm:w-1/2" : ""
-              }`}
-            >
-              <div className="aspect-[4/3] overflow-hidden">
-                <img
-                  src={p.image}
-                  alt={`${p.title} project cover - ${p.tag}`}
-                  className="w-full h-full object-cover opacity-75 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700"
-                />
-              </div>
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 55%, transparent 100%)",
-                }}
-              />
-              <div className="absolute top-4 right-4">
-                <span className="text-[11px] tabular-nums text-white/80">
-                  {p.year}
-                </span>
-              </div>
-              <div className="absolute bottom-0 left-0 p-5 md:p-6 max-w-xl">
-                <span
-                  className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-medium mb-2"
+              <motion.a
+                key={p.title}
+                href={p.href}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.55, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                className={`group relative block overflow-hidden rounded-2xl bg-black ${
+                  isOrphan ? "sm:col-span-2 sm:mx-auto sm:w-1/2" : ""
+                }`}
+              >
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img
+                    src={p.image}
+                    alt={`${p.title} project cover - ${p.tag}`}
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:opacity-40"
+                  />
+                </div>
+
+                {/* Base gradient - always subtle so title/badge are legible */}
+                <div
+                  className="absolute inset-0 pointer-events-none transition-opacity duration-500 group-hover:opacity-0"
                   style={{
-                    background: p.accent,
-                    color: p.accent === "#361D2E" ? "#fff" : "#0a0a0a",
+                    background:
+                      "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)",
                   }}
-                >
-                  {p.tag}
-                </span>
-                <h3 className="text-lg md:text-xl font-semibold text-white tracking-tight">
-                  {p.title}
-                </h3>
-                <p className="mt-1.5 text-[13px] leading-snug text-white/85">
-                  {p.description}
-                </p>
-              </div>
-            </motion.a>
+                />
+
+                {/* Hover overlay - deeper wash so the description reads cleanly */}
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  style={{
+                    background:
+                      "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.78) 45%, rgba(0,0,0,0.55) 100%)",
+                  }}
+                />
+
+                <div className="absolute top-4 right-4">
+                  <span className="text-[11px] tabular-nums text-white/80">
+                    {p.year}
+                  </span>
+                </div>
+
+                {/* Default state - title + badge only, anchored bottom-left */}
+                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 transition-all duration-500 group-hover:opacity-0 group-hover:translate-y-2">
+                  <span
+                    className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-medium mb-2"
+                    style={{
+                      background: p.accent,
+                      color: p.accent === "#361D2E" ? "#fff" : "#0a0a0a",
+                    }}
+                  >
+                    {p.tag}
+                  </span>
+                  <h3 className="text-lg md:text-xl font-semibold text-white tracking-tight">
+                    {p.title}
+                  </h3>
+                </div>
+
+                {/* Hover state - full context, centered vertically */}
+                <div className="absolute inset-0 flex flex-col justify-center p-6 md:p-8 opacity-0 translate-y-3 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+                  <span
+                    className="inline-block self-start rounded-full px-2.5 py-0.5 text-[10px] font-medium mb-3"
+                    style={{
+                      background: p.accent,
+                      color: p.accent === "#361D2E" ? "#fff" : "#0a0a0a",
+                    }}
+                  >
+                    {p.tag}
+                  </span>
+                  <h3 className="text-xl md:text-2xl font-semibold text-white tracking-tight">
+                    {p.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-white/90 max-w-md">
+                    {p.description}
+                  </p>
+                  <span className="mt-4 text-[12px] uppercase tracking-[0.15em] text-white/70">
+                    View project →
+                  </span>
+                </div>
+              </motion.a>
             );
           })}
         </div>
