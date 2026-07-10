@@ -74,7 +74,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.3, ease }}
-          className="mt-8 flex flex-wrap gap-3"
+          className="mt-10 md:mt-12 flex flex-wrap gap-3"
         >
           <a
             href="#work"
