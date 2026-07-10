@@ -368,23 +368,36 @@ export function CVSection() {
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
               <p>
-                Cash Johnson is a <strong>Silicon Valley operations and project manager</strong>{" "}
-                who lives where <strong>enterprise ops, partnerships, and go-to-market</strong>{" "}
-                collide. Give him an <strong>ambiguous, cross-functional mess</strong> and he'll
-                hand you back a <strong>plan that actually ships</strong>.
+                I’m <strong>Cash Johnson</strong>, a{" "}
+                <strong>Silicon Valley operations and project manager</strong> who enjoys working
+                where <strong>enterprise operations, partnerships, and go-to-market strategy</strong>{" "}
+                meet. Give me an <strong>ambiguous, cross-functional problem</strong>, and I’ll turn
+                it into a <strong>clear plan that can actually ship</strong>.
               </p>
               <p>
-                Right now he's a <strong>Project Management intern at Centene</strong>, one of the
-                country's biggest healthcare companies, learning to move fast inside a{" "}
-                <strong>very regulated world</strong>. He's also{" "}
-                <strong>Director of Events for LinkedIn's SJSU Campus Ambassador program</strong>,
-                where he <strong>runs events end to end</strong>, and he's finishing a{" "}
-                <strong>B.S. in Business Administration (Management Information Systems) at San José State</strong>.{" "}
-                <strong>Business brain, technical instincts, one person.</strong>
+                I’m currently a <strong>Project Management Intern at Centene</strong>, where I’m
+                learning how to move quickly and thoughtfully within a{" "}
+                <strong>highly regulated healthcare environment</strong>. I also serve as{" "}
+                <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>,
+                leading events from <strong>initial idea through execution</strong>. Alongside that,
+                I’m finishing my{" "}
+                <strong>
+                  B.S. in Business Administration with a concentration in Management Information
+                  Systems at San José State University
+                </strong>
+                .
               </p>
               <p>
-                Off the clock, you'll find him fishing, rock climbing, surfing, playing guitar, or
-                getting paint everywhere with a watercolor set.
+                I bring a <strong>business mindset, technical instincts, and a practical approach</strong>{" "}
+                to getting things done. Outside of work and school, I’m usually{" "}
+                <strong>
+                  fishing, rock climbing, surfing, playing guitar, or making a mess with my watercolor
+                  set
+                </strong>
+                .
+              </p>
+              <p>
+                Go ahead and <strong>message me, let's go grab coffee</strong>! (-:
               </p>
             </div>
           </div>
