@@ -121,8 +121,8 @@ export function HeroSection() {
             href="https://www.linkedin.com/"
             target="_blank"
             rel="noreferrer"
-            className="group inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:!w-[150px] hover:bg-white/80"
-
+            aria-label="LinkedIn"
+            className="inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full text-foreground transition-all hover:bg-white/80"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
@@ -130,17 +130,14 @@ export function HeroSection() {
             }}
           >
             <Linkedin size={20} strokeWidth={1.5} />
-            <span className="ml-0 inline-block w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:w-[90px] group-hover:opacity-100">
-              LinkedIn
-            </span>
           </a>
 
           <a
             href="https://www.youtube.com/@Cash-Johnson"
             target="_blank"
             rel="noreferrer"
-            className="group inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:!w-[150px] hover:bg-white/80"
-
+            aria-label="YouTube"
+            className="inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full text-foreground transition-all hover:bg-white/80"
             style={{
               border: "1px solid rgba(0,0,0,0.15)",
               background: "rgba(255,255,255,0.6)",
@@ -148,9 +145,6 @@ export function HeroSection() {
             }}
           >
             <Youtube size={20} strokeWidth={1.5} />
-            <span className="ml-0 inline-block w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:w-[90px] group-hover:opacity-100">
-              YouTube
-            </span>
           </a>
 
 
