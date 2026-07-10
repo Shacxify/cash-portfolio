@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, Layers, Linkedin, User } from "lucide-react";
-
+import { Layers, Linkedin, User, Youtube } from "lucide-react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
 export function HeroSection() {
+
+
   return (
+
     <section
       id="top"
       className="relative min-h-screen flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-32 md:pb-48"
@@ -89,7 +91,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.3, ease }}
-          className="mt-10 md:mt-12 flex flex-wrap gap-3"
+          className="mt-10 md:mt-12 flex flex-wrap gap-3 max-w-[540px]"
         >
           <a
             href="#work"
@@ -104,20 +106,6 @@ export function HeroSection() {
             Featured Work
           </a>
           <a
-            href="https://www.linkedin.com/"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all hover:bg-white/80"
-            style={{
-              border: "1px solid rgba(0,0,0,0.15)",
-              background: "rgba(255,255,255,0.6)",
-              backdropFilter: "blur(12px)",
-            }}
-          >
-            <Linkedin size={18} strokeWidth={1.5} />
-            LinkedIn <ArrowUpRight size={16} />
-          </a>
-          <a
             href="#cv"
             className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-foreground transition-all hover:bg-white/80"
             style={{
@@ -127,9 +115,48 @@ export function HeroSection() {
             }}
           >
             <User size={18} strokeWidth={1.5} />
-            More About Me <ArrowUpRight size={16} />
+            More About Me
           </a>
+          <a
+            href="https://www.linkedin.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="group inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:!w-[150px] hover:bg-white/80"
+
+            style={{
+              border: "1px solid rgba(0,0,0,0.15)",
+              background: "rgba(255,255,255,0.6)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <Linkedin size={20} strokeWidth={1.5} />
+            <span className="ml-0 inline-block w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:w-[90px] group-hover:opacity-100">
+              LinkedIn
+            </span>
+          </a>
+
+          <a
+            href="https://www.youtube.com/@Cash-Johnson"
+            target="_blank"
+            rel="noreferrer"
+            className="group inline-flex shrink-0 items-center justify-center h-12 w-12 rounded-full px-3 text-[15px] font-medium text-foreground transition-all duration-300 hover:!w-[150px] hover:bg-white/80"
+
+            style={{
+              border: "1px solid rgba(0,0,0,0.15)",
+              background: "rgba(255,255,255,0.6)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <Youtube size={20} strokeWidth={1.5} />
+            <span className="ml-0 inline-block w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:w-[90px] group-hover:opacity-100">
+              YouTube
+            </span>
+          </a>
+
+
         </motion.div>
+
+
       </div>
     </section>
   );
