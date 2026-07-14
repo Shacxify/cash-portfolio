@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Analytics } from "@vercel/analytics/react";
 
 import appCss from "../styles.css?url";
 
@@ -77,6 +78,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <SpeedInsights />
+        <Analytics />
         <Scripts />
       </body>
     </html>
