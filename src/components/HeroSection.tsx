@@ -118,7 +118,7 @@ export function HeroSection() {
             More About Me
           </a>
           <a
-            href="https://www.linkedin.com/"
+            href="https://www.linkedin.com/in/cash-johnson/"
             target="_blank"
             rel="noreferrer"
             aria-label="LinkedIn"
