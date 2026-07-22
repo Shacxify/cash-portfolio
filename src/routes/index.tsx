@@ -12,13 +12,13 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "Cash Johnson - Strategic Growth Architect" },
+      { title: "Cash Johnson - Sales Growth Architect" },
       {
         name: "description",
         content:
-          "Cash Johnson is a Strategic Growth Architect based in Silicon Valley, working at the intersection of operations, partnerships, and go-to-market.",
+          "Cash Johnson is a Sales Growth Architect based in Silicon Valley, specializing in sales development and data analytics across operations, partnerships, and go-to-market.",
       },
-      { property: "og:title", content: "Cash Johnson - Strategic Growth Architect" },
+      { property: "og:title", content: "Cash Johnson - Sales Growth Architect" },
       {
         property: "og:description",
         content:
@@ -38,17 +38,17 @@ export const Route = createFileRoute("/")({
           "@type": "ProfilePage",
           "@id": "https://cashjohnson.net/#profilepage",
           url: "https://cashjohnson.net/",
-          name: "Cash Johnson - Strategic Growth Architect",
+          name: "Cash Johnson - Sales Growth Architect",
           mainEntity: {
             "@type": "Person",
             "@id": "https://cashjohnson.net/#person",
             name: "Cash Johnson",
-            jobTitle: "Strategic Growth Architect",
+            jobTitle: "Sales Growth Architect",
             url: "https://cashjohnson.net/",
             image: "https://cashjohnson.net/og-home.jpg",
             email: "mailto:me@cashjohnson.net",
             description:
-              "Cash Johnson is a Strategic Growth Architect based in Silicon Valley, working at the intersection of enterprise operations, partnerships, and go-to-market strategy.",
+              "Cash Johnson is a Sales Growth Architect based in Silicon Valley, specializing in sales development and data analytics at the intersection of enterprise operations, partnerships, and go-to-market strategy.",
             address: {
               "@type": "PostalAddress",
               addressLocality: "San José",
@@ -68,6 +68,8 @@ export const Route = createFileRoute("/")({
               { "@type": "CollegeOrUniversity", name: "West Valley College" },
             ],
             knowsAbout: [
+              "Sales Development",
+              "Data Analytics",
               "Operations Management",
               "Project Management",
               "Go-to-Market Strategy",
