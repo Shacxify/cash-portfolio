@@ -16,13 +16,22 @@ export function Footer() {
               Social
             </div>
             <a
-              href="https://www.linkedin.com/"
+              href="https://www.linkedin.com/in/cash-johnson/"
               target="_blank"
               rel="noreferrer"
               className="block transition-colors hover:[color:#86A397]"
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
               LinkedIn
+            </a>
+            <a
+              href="https://www.youtube.com/@Cash-Johnson"
+              target="_blank"
+              rel="noreferrer"
+              className="block transition-colors hover:[color:#86A397]"
+              style={{ color: "rgba(0,0,0,0.78)" }}
+            >
+              YouTube
             </a>
           </div>
           <div>
@@ -33,18 +42,11 @@ export function Footer() {
               Contact
             </div>
             <a
-              href="mailto:cash@example.com"
+              href="mailto:me@cashjohnson.net"
               className="block transition-colors hover:[color:#86A397]"
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
               Email
-            </a>
-            <a
-              href="tel:+1"
-              className="block transition-colors hover:[color:#86A397]"
-              style={{ color: "rgba(0,0,0,0.78)" }}
-            >
-              Phone
             </a>
           </div>
         </div>

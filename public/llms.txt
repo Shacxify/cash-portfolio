@@ -7,3 +7,13 @@ This site showcases professional experience across Centene, LinkedIn, and The In
 ## Pages
 
 - [Home](/): Portfolio overview with featured work, projects, CV, and contact.
+- [Projects](/projects): Featured project case studies.
+- [Blog: What Does an Operations Project Manager Do?](/blog/operations-project-manager-role)
+- [Blog: How to Document SOPs](/blog/how-to-document-sops)
+- [Blog: PM vs. Operations](/blog/pm-vs-operations)
+- [Blog: Operations and Project Management](/blog/operations-and-project-management)
+
+## Profiles
+
+- [LinkedIn](https://www.linkedin.com/in/cash-johnson/)
+- [YouTube](https://www.youtube.com/@Cash-Johnson)

@@ -36,7 +36,6 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Cash Johnson" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     scripts: [
       {
@@ -44,10 +43,13 @@ export const Route = createRootRoute({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "Cash Johnson | Sales & Events Growth Architect",
-          url: "https://cashjohnson.net",
+          "@id": "https://cashjohnson.net/#website",
+          name: "Cash Johnson - Strategic Growth Architect",
+          url: "https://cashjohnson.net/",
           description:
-            "A personal portfolio website showcasing professional experience, featured projects, and contact information.",
+            "Personal portfolio of Cash Johnson, a Strategic Growth Architect based in Silicon Valley - professional experience, featured projects, and contact information.",
+          about: { "@id": "https://cashjohnson.net/#person" },
+          publisher: { "@id": "https://cashjohnson.net/#person" },
         }),
       },
     ],
