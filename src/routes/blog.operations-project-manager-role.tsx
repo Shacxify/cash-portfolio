@@ -31,7 +31,12 @@ export const Route = createFileRoute("/blog/operations-project-manager-role")({
           description: DESCRIPTION,
           image: "https://cashjohnson.net/blog/operations-project-manager.jpg",
           datePublished: "2026-06-10",
-          author: { "@type": "Person", name: "Cash Johnson" },
+          author: {
+            "@type": "Person",
+            "@id": "https://cashjohnson.net/#person",
+            name: "Cash Johnson",
+            url: "https://cashjohnson.net/",
+          },
           mainEntityOfPage: URL,
         }),
       },

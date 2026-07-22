@@ -31,7 +31,12 @@ export const Route = createFileRoute("/blog/how-to-document-sops")({
           description: DESCRIPTION,
           image: "https://cashjohnson.net/blog/how-to-document-sops.jpg",
           datePublished: "2026-06-10",
-          author: { "@type": "Person", name: "Cash Johnson" },
+          author: {
+            "@type": "Person",
+            "@id": "https://cashjohnson.net/#person",
+            name: "Cash Johnson",
+            url: "https://cashjohnson.net/",
+          },
           mainEntityOfPage: URL,
         }),
       },

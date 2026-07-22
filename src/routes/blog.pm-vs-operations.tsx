@@ -28,7 +28,12 @@ export const Route = createFileRoute("/blog/pm-vs-operations")({
           headline: TITLE,
           description: DESCRIPTION,
           datePublished: "2026-06-10",
-          author: { "@type": "Person", name: "Cash Johnson" },
+          author: {
+            "@type": "Person",
+            "@id": "https://cashjohnson.net/#person",
+            name: "Cash Johnson",
+            url: "https://cashjohnson.net/",
+          },
           mainEntityOfPage: URL,
         }),
       },
