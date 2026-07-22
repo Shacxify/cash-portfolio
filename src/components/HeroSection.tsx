@@ -82,7 +82,7 @@ export function HeroSection() {
           }}
         >
           I'm a{" "}
-          <span style={{ color: "#86A397" }}>Strategic Growth Architect</span>{" "}
+          <span style={{ color: "#86A397" }}>Sales Growth Architect</span>{" "}
           based in Silicon Valley.
         </motion.p>
 
