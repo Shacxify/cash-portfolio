@@ -1,8 +1,27 @@
+import { useEffect } from "react";
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
 
 import appCss from "../styles.css?url";
+
+function VisitTracker() {
+  useEffect(() => {
+    try {
+      const payload = JSON.stringify({
+        path: window.location.pathname,
+        referrer: document.referrer,
+      });
+      const blob = new Blob([payload], { type: "application/json" });
+      if (!navigator.sendBeacon?.("/api/visit", blob)) {
+        fetch("/api/visit", { method: "POST", body: payload, keepalive: true }).catch(() => {});
+      }
+    } catch {
+      // tracking must never break the page
+    }
+  }, []);
+  return null;
+}
 
 function NotFoundComponent() {
   return (
@@ -79,6 +98,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <VisitTracker />
         <SpeedInsights />
         <Analytics />
         <Scripts />
