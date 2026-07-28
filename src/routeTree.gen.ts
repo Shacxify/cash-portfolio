@@ -16,6 +16,7 @@ import { Route as BlogPmVsOperationsRouteImport } from './routes/blog.pm-vs-oper
 import { Route as BlogOperationsProjectManagerRoleRouteImport } from './routes/blog.operations-project-manager-role'
 import { Route as BlogOperationsAndProjectManagementRouteImport } from './routes/blog.operations-and-project-management'
 import { Route as BlogHowToDocumentSopsRouteImport } from './routes/blog.how-to-document-sops'
+import { Route as ApiVisitRouteImport } from './routes/api.visit'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -54,11 +55,17 @@ const BlogHowToDocumentSopsRoute = BlogHowToDocumentSopsRouteImport.update({
   path: '/blog/how-to-document-sops',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVisitRoute = ApiVisitRouteImport.update({
+  id: '/api/visit',
+  path: '/api/visit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/visit': typeof ApiVisitRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/visit': typeof ApiVisitRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/visit': typeof ApiVisitRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
   '/blog/operations-project-manager-role': typeof BlogOperationsProjectManagerRoleRoute
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/'
     | '/projects'
     | '/sitemap.xml'
+    | '/api/visit'
     | '/blog/how-to-document-sops'
     | '/blog/operations-and-project-management'
     | '/blog/operations-project-manager-role'
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/'
     | '/projects'
     | '/sitemap.xml'
+    | '/api/visit'
     | '/blog/how-to-document-sops'
     | '/blog/operations-and-project-management'
     | '/blog/operations-project-manager-role'
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/'
     | '/projects'
     | '/sitemap.xml'
+    | '/api/visit'
     | '/blog/how-to-document-sops'
     | '/blog/operations-and-project-management'
     | '/blog/operations-project-manager-role'
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProjectsRoute: typeof ProjectsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiVisitRoute: typeof ApiVisitRoute
   BlogHowToDocumentSopsRoute: typeof BlogHowToDocumentSopsRoute
   BlogOperationsAndProjectManagementRoute: typeof BlogOperationsAndProjectManagementRoute
   BlogOperationsProjectManagerRoleRoute: typeof BlogOperationsProjectManagerRoleRoute
@@ -174,6 +187,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogHowToDocumentSopsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/visit': {
+      id: '/api/visit'
+      path: '/api/visit'
+      fullPath: '/api/visit'
+      preLoaderRoute: typeof ApiVisitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -181,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProjectsRoute: ProjectsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiVisitRoute: ApiVisitRoute,
   BlogHowToDocumentSopsRoute: BlogHowToDocumentSopsRoute,
   BlogOperationsAndProjectManagementRoute:
     BlogOperationsAndProjectManagementRoute,
@@ -190,3 +211,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
