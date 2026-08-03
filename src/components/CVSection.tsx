@@ -80,7 +80,7 @@ const professional: Entry[] = [
     title: "Director of Operations @ The Intern Ship",
     subtitle: "Partnerships & National Programming",
     location: "San José, California",
-    href: "https://www.theintern.ship/",
+    href: "https://internship.beehiiv.com/",
     bullets: [
       "Converted ~85% of a 20+ monthly partner pipeline into active sponsorships, driving GTM across 10+ event formats.",
       "Led flagship events (Tech Intern Bus Mixer, Intern Ship Games) drawing 300+ attendees at 90%+ venue capacity.",
@@ -110,7 +110,7 @@ const organizational: Entry[] = [
     title: "President @ SJSU Marketing Association",
     subtitle: "Lucas College of Business · 250+ members, 45+ year legacy",
     location: "San José, California",
-    href: "https://www.linkedin.com/company/sjsu-marketing-association/",
+    href: "https://www.linkedin.com/company/sjsumarketingassociation/",
     bullets: [
       "Secured consulting engagements with Tesla, LinkedIn, and YC startups, generating 200+ client data points.",
       "Led SJSU's largest business organization, directing a 72-person officer team via OKRs.",
