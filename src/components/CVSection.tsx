@@ -36,6 +36,7 @@ const education: Entry[] = [
     title: "West Valley College",
     subtitle: "5 Associate Degrees — AS MIS, AST Economics, AA Liberal Arts (3 emphases)",
     location: "Saratoga, California",
+    href: "https://www.westvalley.edu/",
     bullets: [
       "Completed five associate degrees in parallel across business, economics, and the liberal arts.",
       "Merit Scholar, Alpha Gamma Sigma Honors Society (2023–2024).",
@@ -65,7 +66,7 @@ const professional: Entry[] = [
     title: "Director of Events @ LinkedIn Campus Ambassador Program",
     subtitle: "Promoted from LinkedIn Ambassador · SJSU",
     location: "San José, California",
-    href: "https://www.linkedin.com/",
+    href: "https://sjsulinkedin.com/",
     bullets: [
       "Directed 6+ large-scale career events drawing 25,000+ collective attendees with 100% on-time delivery.",
       "Selected from 2,000+ applicants to help lead LinkedIn's student ambassador program at SJSU.",
