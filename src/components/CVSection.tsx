@@ -19,7 +19,7 @@ const ACCENT = "#86A397";
 
 const education: Entry[] = [
   {
-    date: "Aug 2024 — Dec 2026",
+    date: "",
     title: "San José State University",
     subtitle: "B.S. Business Administration, MIS · GPA 3.5",
     location: "San José, California",
@@ -32,7 +32,7 @@ const education: Entry[] = [
     learned: ["Systems analysis & design", "Data-driven decision making"],
   },
   {
-    date: "Graduated May 2024",
+    date: "",
     title: "West Valley College",
     subtitle: "5 Associate Degrees — AS MIS, AST Economics, AA Liberal Arts (3 emphases)",
     location: "Saratoga, California",
