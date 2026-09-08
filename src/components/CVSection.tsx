@@ -19,7 +19,7 @@ const ACCENT = "#86A397";
 
 const education: Entry[] = [
   {
-    date: "",
+    date: "2026",
     title: "San José State University",
     subtitle: "B.S. Business Administration, MIS · GPA 3.5",
     location: "San José, California",
