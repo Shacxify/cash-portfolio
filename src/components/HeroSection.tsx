@@ -81,8 +81,8 @@ export function HeroSection() {
             letterSpacing: "-0.02em",
           }}
         >
-          I'm a{" "}
-          <span style={{ color: "#86A397" }}>Sales Growth Architect</span>{" "}
+          I'm an{" "}
+          <span style={{ color: "#86A397" }}>AI Architect</span>{" "}
           based in Silicon Valley.
         </motion.p>
 

@@ -182,7 +182,7 @@ function ArticlePage() {
 
         <footer className="mt-16 pt-8" style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}>
           <p className="text-sm" style={{ color: "rgba(0,0,0,0.65)" }}>
-            Written by Cash Johnson - Sales Growth Architect working across sales,
+            Written by Cash Johnson - AI Architect working across sales,
             events, and operations.
           </p>
           <Link

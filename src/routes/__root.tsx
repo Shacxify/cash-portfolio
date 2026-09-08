@@ -63,10 +63,10 @@ export const Route = createRootRoute({
           "@context": "https://schema.org",
           "@type": "WebSite",
           "@id": "https://cashjohnson.net/#website",
-          name: "Cash Johnson - Sales Growth Architect",
+          name: "Cash Johnson - AI Architect",
           url: "https://cashjohnson.net/",
           description:
-            "Personal portfolio of Cash Johnson, a Sales Growth Architect based in Silicon Valley - professional experience, featured projects, and contact information.",
+            "Personal portfolio of Cash Johnson, an AI Architect based in Silicon Valley - professional experience, featured projects, and contact information.",
           about: { "@id": "https://cashjohnson.net/#person" },
           publisher: { "@id": "https://cashjohnson.net/#person" },
         }),
