@@ -369,37 +369,25 @@ export function CVSection() {
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
               <p>
-                I’m <strong>Cash Johnson</strong>, a{" "}
-                <strong>Silicon Valley operations and project manager</strong> who enjoys working
-                where <strong>enterprise operations, partnerships, and go-to-market strategy</strong>{" "}
-                meet. Give me an <strong>ambiguous, cross-functional problem</strong>, and I’ll turn
-                it into a <strong>clear plan that can actually ship</strong>.
+                I’m Cash Johnson, a Silicon Valley operations and project manager who enjoys
+                working where enterprise operations, partnerships, and go-to-market strategy meet.
+                Give me an ambiguous, cross-functional problem, and I’ll turn it into a clear plan
+                that can actually ship.
               </p>
               <p>
-                I was most recently a <strong>Project Management Intern at Centene</strong>, where I
-                learned how to move quickly and thoughtfully within a{" "}
-                <strong>highly regulated healthcare environment</strong>. I also served as{" "}
-                <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>,
-                leading events from <strong>initial idea through execution</strong>. Alongside that,
-                I’m finishing my{" "}
-                <strong>
-                  B.S. in Business Administration with a concentration in Management Information
-                  Systems at San José State University
-                </strong>
-                .
+                I was most recently a Project Management Intern at Centene, where I learned how to
+                move quickly and thoughtfully within a highly regulated healthcare environment. I
+                also served as Director of Events for LinkedIn’s SJSU Campus Ambassador program,
+                leading events from initial idea through execution. I have an educational background
+                in Business Administration with a concentration in Management Information Systems
+                from San José State University.
               </p>
               <p>
-                I bring a <strong>business mindset, technical instincts, and a practical approach</strong>{" "}
-                to getting things done. Outside of work and school, I’m usually{" "}
-                <strong>
-                  fishing, rock climbing, surfing, playing guitar, or making a mess with my watercolor
-                  set
-                </strong>
-                .
+                I bring a business mindset, technical instincts, and a practical approach to getting
+                things done. Outside of work, I’m usually fishing, rock climbing, surfing, playing
+                guitar, or making a mess with my watercolor set.
               </p>
-              <p>
-                Go ahead and <strong>message me, let's go grab coffee</strong>! (-:
-              </p>
+              <p>Go ahead and message me, let's go grab coffee! (-:</p>
             </div>
           </div>
           <div id="contact">
