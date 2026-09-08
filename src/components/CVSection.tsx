@@ -47,7 +47,7 @@ const education: Entry[] = [
 
 const professional: Entry[] = [
   {
-    date: "May 2025 — Present",
+    date: "May 2025 - Aug. 2026",
     title: "Operations PM Intern @ Centene",
     subtitle: "St. Louis, MO · Hybrid · Enterprise Operations",
     location: "Hybrid",
@@ -62,7 +62,7 @@ const professional: Entry[] = [
     learned: ["Enterprise PMO governance", "Cross-functional stakeholder alignment", "RAID & risk registers"],
   },
   {
-    date: "Jan 2025 — Present",
+    date: "Jan. 2025 - Aug. 2026",
     title: "Director of Events @ LinkedIn Campus Ambassador Program",
     subtitle: "Promoted from LinkedIn Ambassador · SJSU",
     location: "San José, California",
@@ -77,7 +77,7 @@ const professional: Entry[] = [
     learned: ["Brand-partner alignment", "Event operations at scale", "Feedback-driven iteration"],
   },
   {
-    date: "Jun 2025 — Jan 2026",
+    date: "June 2025 - Jan. 2026",
     title: "Director of Operations @ The Intern Ship",
     subtitle: "Partnerships & National Programming",
     location: "San José, California",
@@ -91,7 +91,7 @@ const professional: Entry[] = [
     learned: ["GTM pipeline management", "A/B testing & lead scoring", "Sponsorship negotiation"],
   },
   {
-    date: "Aug 2020 — Jun 2024",
+    date: "Aug. 2020 - June 2024",
     title: "Project Manager @ San José Spotlight",
     subtitle: "Remote · Award-winning nonprofit newsroom",
     location: "San José, California (Remote)",
@@ -107,7 +107,7 @@ const professional: Entry[] = [
 
 const organizational: Entry[] = [
   {
-    date: "Jul 2024 — Jan 2026",
+    date: "July 2024 - Jan. 2026",
     title: "President @ SJSU Marketing Association",
     subtitle: "Lucas College of Business · 250+ members, 45+ year legacy",
     location: "San José, California",
@@ -140,7 +140,7 @@ const organizational: Entry[] = [
     learned: ["Production leadership", "On-camera communication"],
   },
   {
-    date: "2023 — 2024",
+    date: "2023 - 2024",
     title: "Merit Scholar @ Alpha Gamma Sigma",
     subtitle: "Honors Society, West Valley College",
     location: "Saratoga, California",
@@ -376,9 +376,9 @@ export function CVSection() {
                 it into a <strong>clear plan that can actually ship</strong>.
               </p>
               <p>
-                I’m currently a <strong>Project Management Intern at Centene</strong>, where I’m
-                learning how to move quickly and thoughtfully within a{" "}
-                <strong>highly regulated healthcare environment</strong>. I also serve as{" "}
+                I was most recently a <strong>Project Management Intern at Centene</strong>, where I
+                learned how to move quickly and thoughtfully within a{" "}
+                <strong>highly regulated healthcare environment</strong>. I also served as{" "}
                 <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>,
                 leading events from <strong>initial idea through execution</strong>. Alongside that,
                 I’m finishing my{" "}
