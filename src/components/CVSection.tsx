@@ -378,11 +378,10 @@ export function CVSection() {
                 Most of my focus right now is on AI operations and building agents that solve real
                 operational problems. That usually starts with mapping a messy manual process,
                 figuring out where an agent actually belongs, and then shipping automated workflows
-                people will genuinely use. I’m currently a Project Management Intern at Centene,
-                applying that same thinking inside a highly regulated healthcare environment where
-                accuracy and documentation matter as much as speed. Alongside that, I’m finishing my
-                B.S. in Business Administration with a concentration in Management Information
-                Systems at San José State University.
+                people will genuinely use. As a Project Management Intern at Centene, I applied that
+                same thinking inside a highly regulated healthcare environment where accuracy and
+                documentation matter as much as speed. I hold a B.S. in Business Administration with
+                a concentration in Management Information Systems from San José State University.
               </p>
               <p>
                 I bring a business mindset, technical instincts, and a practical approach to getting
