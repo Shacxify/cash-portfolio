@@ -381,10 +381,10 @@ export function CVSection() {
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
               <p>
-                I’m Cash Johnson, a Silicon Valley operations and project manager who enjoys working
-                where enterprise operations, partnerships, and go-to-market strategy meet. Give me an
-                ambiguous, cross-functional problem, and I’ll turn it into a clear plan that can
-                actually ship.
+                I’m Cash Johnson, a Silicon Valley AI Solutions Architect who enjoys working where
+                enterprise operations, intelligent automation, and go-to-market strategy meet. Give
+                me an ambiguous, cross-functional problem, and I’ll turn it into an AI-powered
+                solution that actually ships.
               </p>
               <p>
                 Most of my focus right now is on AI operations and building agents that solve real
