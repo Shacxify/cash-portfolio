@@ -376,12 +376,14 @@ export function CVSection() {
                 it into a <strong>clear plan that can actually ship</strong>.
               </p>
               <p>
-                I’m currently a <strong>Project Management Intern at Centene</strong>, where I’m
-                learning how to move quickly and thoughtfully within a{" "}
-                <strong>highly regulated healthcare environment</strong>. I also serve as{" "}
-                <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>,
-                leading events from <strong>initial idea through execution</strong>. Alongside that,
-                I’m finishing my{" "}
+                Most of my focus right now is on <strong>AI operations</strong> and{" "}
+                <strong>building agents that solve real operational problems</strong>. That usually
+                starts with <strong>mapping a messy manual process</strong>, figuring out where an
+                agent actually belongs, and then shipping{" "}
+                <strong>automated workflows people will genuinely use</strong>. I’m currently a{" "}
+                <strong>Project Management Intern at Centene</strong>, applying that same thinking
+                inside a <strong>highly regulated healthcare environment</strong> where accuracy and
+                documentation matter as much as speed. Alongside that, I’m finishing my{" "}
                 <strong>
                   B.S. in Business Administration with a concentration in Management Information
                   Systems at San José State University
