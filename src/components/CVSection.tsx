@@ -369,39 +369,27 @@ export function CVSection() {
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
               <p>
-                I’m <strong>Cash Johnson</strong>, a{" "}
-                <strong>Silicon Valley operations and project manager</strong> who enjoys working
-                where <strong>enterprise operations, partnerships, and go-to-market strategy</strong>{" "}
-                meet. Give me an <strong>ambiguous, cross-functional problem</strong>, and I’ll turn
-                it into a <strong>clear plan that can actually ship</strong>.
+                I’m Cash Johnson, a Silicon Valley operations and project manager who enjoys working
+                where enterprise operations, partnerships, and go-to-market strategy meet. Give me an
+                ambiguous, cross-functional problem, and I’ll turn it into a clear plan that can
+                actually ship.
               </p>
               <p>
-                Most of my focus right now is on <strong>AI operations</strong> and{" "}
-                <strong>building agents that solve real operational problems</strong>. That usually
-                starts with <strong>mapping a messy manual process</strong>, figuring out where an
-                agent actually belongs, and then shipping{" "}
-                <strong>automated workflows people will genuinely use</strong>. I’m currently a{" "}
-                <strong>Project Management Intern at Centene</strong>, applying that same thinking
-                inside a <strong>highly regulated healthcare environment</strong> where accuracy and
-                documentation matter as much as speed. Alongside that, I’m finishing my{" "}
-                <strong>
-                  B.S. in Business Administration with a concentration in Management Information
-                  Systems at San José State University
-                </strong>
-                .
+                Most of my focus right now is on AI operations and building agents that solve real
+                operational problems. That usually starts with mapping a messy manual process,
+                figuring out where an agent actually belongs, and then shipping automated workflows
+                people will genuinely use. I’m currently a Project Management Intern at Centene,
+                applying that same thinking inside a highly regulated healthcare environment where
+                accuracy and documentation matter as much as speed. Alongside that, I’m finishing my
+                B.S. in Business Administration with a concentration in Management Information
+                Systems at San José State University.
               </p>
               <p>
-                I bring a <strong>business mindset, technical instincts, and a practical approach</strong>{" "}
-                to getting things done. Outside of work and school, I’m usually{" "}
-                <strong>
-                  fishing, rock climbing, surfing, playing guitar, or making a mess with my watercolor
-                  set
-                </strong>
-                .
+                I bring a business mindset, technical instincts, and a practical approach to getting
+                things done. Outside of work and school, I’m usually fishing, rock climbing, surfing,
+                playing guitar, or making a mess with my watercolor set.
               </p>
-              <p>
-                Go ahead and <strong>message me, let's go grab coffee</strong>! (-:
-              </p>
+              <p>Go ahead and message me, let's go grab coffee! (-:</p>
             </div>
           </div>
           <div id="contact">
