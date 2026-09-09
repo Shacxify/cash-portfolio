@@ -396,7 +396,7 @@ export function CVSection() {
               </p>
               <p>
                 I bring a business mindset, technical instincts, and a practical approach to getting
-                things done. Outside of work and school, I’m usually fishing, rock climbing, surfing,
+                things done. Outside of work, I’m usually fishing, rock climbing, surfing,
                 playing guitar, or making a mess with my watercolor set.
               </p>
               <p>Go ahead and message me, let's go grab coffee! (-:</p>
