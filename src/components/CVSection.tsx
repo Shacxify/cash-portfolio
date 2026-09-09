@@ -25,7 +25,7 @@ const education: Entry[] = [
     location: "San José, California",
     href: "https://www.sjsu.edu/",
     bullets: [
-      "Lucas College of Business — Management Information Systems concentration.",
+      "Lucas College of Business, Management Information Systems concentration.",
       "Coursework across systems analysis, data management, and enterprise operations.",
     ],
     tools: ["SQL", "Tableau", "Power BI", "Excel"],
@@ -34,7 +34,7 @@ const education: Entry[] = [
   {
     date: "",
     title: "West Valley College",
-    subtitle: "5 Associate Degrees — AS MIS, AST Economics, AA Liberal Arts (3 emphases)",
+    subtitle: "5 Associate Degrees: AS MIS, AST Economics, AA Liberal Arts (3 emphases)",
     location: "Saratoga, California",
     href: "https://www.westvalley.edu/",
     bullets: [
@@ -47,7 +47,7 @@ const education: Entry[] = [
 
 const professional: Entry[] = [
   {
-    date: "May 2025 — Present",
+    date: "May 2025 - Aug 2026",
     title: "Operations PM Intern @ Centene",
     subtitle: "St. Louis, MO · Hybrid · Enterprise Operations",
     location: "Hybrid",
@@ -62,7 +62,21 @@ const professional: Entry[] = [
     learned: ["Enterprise PMO governance", "Cross-functional stakeholder alignment", "RAID & risk registers"],
   },
   {
-    date: "Jan 2025 — Present",
+    date: "Jun 2025 - Jan 2026",
+    title: "Director of Operations @ The Intern Ship",
+    subtitle: "Partnerships & National Programming",
+    location: "San José, California",
+    href: "https://internship.beehiiv.com/",
+    bullets: [
+      "Converted ~85% of a 20+ monthly partner pipeline into active sponsorships, driving GTM across 10+ event formats.",
+      "Led flagship events (Tech Intern Bus Mixer, Intern Ship Games) drawing 300+ attendees at 90%+ venue capacity.",
+      "Automated Power BI lead scoring; A/B tested email, Luma, and LinkedIn campaigns to lift partner conversion.",
+    ],
+    tools: ["Power BI", "Luma", "Salesforce", "Power Automate", "Excel"],
+    learned: ["GTM pipeline management", "A/B testing & lead scoring", "Sponsorship negotiation"],
+  },
+  {
+    date: "Jan 2025 - Aug 2026",
     title: "Director of Events @ LinkedIn Campus Ambassador Program",
     subtitle: "Promoted from LinkedIn Ambassador · SJSU",
     location: "San José, California",
@@ -77,21 +91,7 @@ const professional: Entry[] = [
     learned: ["Brand-partner alignment", "Event operations at scale", "Feedback-driven iteration"],
   },
   {
-    date: "Jun 2025 — Jan 2026",
-    title: "Director of Operations @ The Intern Ship",
-    subtitle: "Partnerships & National Programming",
-    location: "San José, California",
-    href: "https://internship.beehiiv.com/",
-    bullets: [
-      "Converted ~85% of a 20+ monthly partner pipeline into active sponsorships, driving GTM across 10+ event formats.",
-      "Led flagship events (Tech Intern Bus Mixer, Intern Ship Games) drawing 300+ attendees at 90%+ venue capacity.",
-      "Automated Power BI lead scoring; A/B tested email, Luma, and LinkedIn campaigns to lift partner conversion.",
-    ],
-    tools: ["Power BI", "Luma", "Salesforce", "Power Automate", "Excel"],
-    learned: ["GTM pipeline management", "A/B testing & lead scoring", "Sponsorship negotiation"],
-  },
-  {
-    date: "Aug 2020 — Jun 2024",
+    date: "Aug 2020 - Jun 2024",
     title: "Project Manager @ San José Spotlight",
     subtitle: "Remote · Award-winning nonprofit newsroom",
     location: "San José, California (Remote)",
@@ -103,11 +103,23 @@ const professional: Entry[] = [
     tools: ["Asana", "Google Workspace", "Slack"],
     learned: ["Editorial project management", "Long-horizon reliability"],
   },
+  {
+    date: "Jan 2016 - Jun 2019",
+    title: "Founder @ CodeMoney",
+    subtitle: "Indie game studio · Shipped to App Store & Google Play",
+    location: "San Francisco Bay Area, California",
+    bullets: [
+      "Built beCAREFUL, an endless hold-and-survive arcade game that generated $20K+ in 3 months post launch.",
+      "Developed in C# on the Unity SDK, integrated social network and ad space APIs, shipped to App Store and Google Play.",
+    ],
+    tools: ["C#", "Unity", "App Store Connect", "Google Play Console"],
+    learned: ["End-to-end product ownership", "Consumer app monetization"],
+  },
 ];
 
 const organizational: Entry[] = [
   {
-    date: "Jul 2024 — Jan 2026",
+    date: "Jul 2024 - Jan 2026",
     title: "President @ SJSU Marketing Association",
     subtitle: "Lucas College of Business · 250+ members, 45+ year legacy",
     location: "San José, California",
@@ -122,7 +134,7 @@ const organizational: Entry[] = [
   },
   {
     date: "2026",
-    title: "Winner — LinkedUp | PMc Build-A-Feature Competition",
+    title: "Winner: LinkedUp | PMc Build-A-Feature Competition",
     subtitle: "End-to-end product feature for LinkedIn",
     bullets: [
       "Scoped, designed, and pitched a LinkedIn product feature end-to-end: product strategy, UX, and roadmap.",
@@ -132,7 +144,7 @@ const organizational: Entry[] = [
   },
   {
     date: "2018",
-    title: "Innovation Award — San José Unified School District",
+    title: "Innovation Award, San José Unified School District",
     subtitle: "Pioneer High School video news production",
     bullets: [
       "Created and anchored Pioneer High School's largest-scale video news production, reaching 1,500+ students.",
@@ -140,7 +152,7 @@ const organizational: Entry[] = [
     learned: ["Production leadership", "On-camera communication"],
   },
   {
-    date: "2023 — 2024",
+    date: "2023 - 2024",
     title: "Merit Scholar @ Alpha Gamma Sigma",
     subtitle: "Honors Society, West Valley College",
     location: "Saratoga, California",
