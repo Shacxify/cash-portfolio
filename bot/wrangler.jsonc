@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "bikex-bot",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-24",
+  "triggers": {
+    // Weekdays 16:00 UTC = 9am PDT / 8am PST
+    "crons": ["0 16 * * 1-5"]
+  }
+}
