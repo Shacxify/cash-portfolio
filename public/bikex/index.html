@@ -27,12 +27,16 @@ h1{font-size:24px;margin:0;letter-spacing:-.01em}
 header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
 .sub{color:var(--ink2);margin-top:4px;font-size:13px}
 .sub a{color:var(--accent)}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
+.tabs button{border:0;background:none;color:var(--ink2);font:inherit;font-weight:600;padding:6px 12px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accentInk)}
 .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:14px;box-shadow:var(--shadow)}
 .bar label{font-size:12px;color:var(--ink2);font-weight:600}
 input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;max-width:100%}
 button{font:inherit;font-weight:600;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
 button.pri{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
 button:disabled{opacity:.5;cursor:default}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .who{margin-left:auto;font-size:12px;color:var(--ink2)}
 .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
@@ -76,7 +80,130 @@ td.due input,td.note input{border-color:transparent;background:transparent;width
 #toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;display:none;z-index:60}
 .ro{background:var(--panel2);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2);margin-bottom:14px}
 .err{color:var(--s-stuck)}
+.note-sm{font-size:12px;color:var(--ink2)}
 @media (max-width:560px){h1{font-size:20px}.ghead .gbar{flex-basis:100%;margin-left:0;max-width:none}}
+/* ---- WBS chart view ---- */
+.wbs-scroll{overflow-x:auto;padding-bottom:6px}
+.wbs-root{display:flex;justify-content:center;margin-bottom:18px}
+.node{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.node.root{background:var(--accent);color:var(--accentInk);border:0;text-align:center;min-width:260px}
+.wbs-cols{display:grid;grid-template-columns:repeat(7,minmax(170px,1fr));gap:10px;min-width:1240px;position:relative}
+.wcol{display:flex;flex-direction:column;gap:6px}
+.wcol .node.l1{border-top:4px solid var(--gc);font-weight:600}
+.wcol .node.l1 small{display:block;font-weight:400;color:var(--ink2);font-size:11px}
+.node.l2{font-size:12px;padding:7px 9px;display:grid;grid-template-columns:auto 1fr;gap:2px 6px;border-left:3px solid var(--sc)}
+.node.l2 .n{color:var(--ink3)}
+.node.l2 .o{grid-column:2;color:var(--ink3);font-size:11px}
+/* ---- Team view ---- */
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.pcard header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.pcard .av{width:34px;height:34px;font-size:13px}
+.pcard h3{margin:0;font-size:15px}
+.pcard .role{color:var(--ink2);font-size:12px}
+.pcard ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.pcard li{display:flex;gap:8px;align-items:baseline;font-size:13px}
+.pcard li .d{margin-left:auto;color:var(--ink3);font-size:12px;white-space:nowrap}
+.pcard .dot{transform:translateY(-1px)}
+.why{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:14px}
+.why h3{margin:0 0 6px;font-size:14px}
+.why ul{margin:0;padding-left:18px;color:var(--ink2)}
+/* ---- Gantt view ---- */
+.gbase{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;margin-bottom:10px;font-size:12.5px;color:var(--ink2)}
+.gbase b{color:var(--ink);font-weight:600}
+.glegend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2);align-items:center;margin-bottom:12px}
+.glegend span{display:inline-flex;align-items:center;gap:5px}
+.glegend i{flex:none}
+.gwrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);
+  overflow:auto;max-height:min(1400px,76vh);min-height:400px;overscroll-behavior:contain;margin-bottom:16px}
+@media print{.gwrap{max-height:none;overflow:visible}}
+.ggrid{min-width:1010px}
+.gr{display:grid;grid-template-columns:46px minmax(190px,1.4fr) 106px 116px minmax(560px,2.4fr);align-items:stretch}
+.gr>*{min-width:0}
+.ghd{position:sticky;top:0;z-index:5;background:var(--panel2);border-bottom:1.5px solid var(--line)}
+.gh{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);font-weight:600;
+  padding:10px 10px 8px;display:flex;align-items:flex-end}
+.gmo{display:flex;border-left:1px solid var(--line)}
+.gmo>div{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2);font-weight:600;
+  padding:6px 8px 3px;border-right:1px solid var(--line2);overflow:hidden;white-space:nowrap}
+.gmo>div:last-child{border-right:0}
+.gwk{display:grid;border-left:1px solid var(--line)}
+.gwk>div{border-right:1px solid var(--line2);padding:2px 0 7px;text-align:center;font-size:10px;color:var(--ink3);line-height:1.3}
+.gwk>div:last-child{border-right:0}
+.gwk b{display:block;font-size:11px;color:var(--ink2);font-weight:600}
+.gwk .nw{background:rgba(214,69,75,.1)}
+.gwk .nw b{color:var(--today)}
+.grailrow{background:var(--panel2);border-bottom:1px solid var(--line)}
+.grailrow .gl{grid-column:1 / 5;padding:8px 10px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink2);font-weight:600;display:flex;align-items:center}
+.grail{position:relative;height:38px;border-left:1px solid var(--line)}
+.ms{position:absolute;top:50%;translate:-50% -50%;width:15px;height:15px;rotate:45deg;border-radius:2px;
+  background:var(--panel);border:2px solid var(--ink);display:grid;place-items:center}
+.ms.gate{background:var(--ink)}
+.ms i{rotate:-45deg;font-style:normal;font-size:9px;font-weight:700;color:var(--ink);
+  font-family:"IBM Plex Mono",ui-monospace,monospace}
+.ms.gate i{color:var(--panel)}
+.gph{background:var(--panel2);border-top:1px solid var(--line)}
+.gph .pn{grid-column:1 / 3;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;padding:9px 10px;
+  border-left:5px solid var(--gc)}
+.gph .pn .num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;font-weight:600;color:var(--gc)}
+.gph .pn h2{margin:0;font-size:15.5px;font-weight:700}
+.gph .pn small{font-size:11px;color:var(--ink2)}
+.gph .pm{grid-column:3 / 5;padding:9px 10px;display:flex;align-items:center;justify-content:flex-end;gap:8px;
+  font-size:11.5px;color:var(--ink2);white-space:nowrap}
+.gtrk{position:relative;border-left:1px solid var(--line);
+  background-image:linear-gradient(to right,var(--line2) 1px,transparent 1px)}
+.gtr{border-bottom:1px solid var(--line2)}
+.gtr:hover{background:var(--panel2)}
+.gtr .gtrk{min-height:33px}
+.gph .gtrk{min-height:36px}
+.gsum{position:absolute;top:50%;translate:0 -50%;height:9px;border-radius:2px;background:var(--gc);opacity:.85}
+.gsum::before,.gsum::after{content:"";position:absolute;top:-4px;width:3px;height:17px;background:var(--gc);border-radius:1px}
+.gsum::before{left:0}.gsum::after{right:0}
+.gtr .w{padding:7px 4px 7px 10px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;
+  color:var(--ink3);border-left:5px solid transparent;display:flex;align-items:center}
+.gtr.cp .w{border-left-color:var(--today)}
+.gtr .n{padding:7px 10px 7px 4px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.gtr .n .gt{font-size:13px;line-height:1.3}
+.gtr .n .sm{font-size:10.5px;color:var(--ink3);line-height:1.3}
+.gtr .n .sm b{color:var(--ink2);font-weight:600}
+.gtr .o{padding:7px 6px;display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink2);overflow:hidden;white-space:nowrap}
+.gtr .dt{padding:7px 10px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;color:var(--ink2);
+  display:flex;align-items:center;white-space:nowrap}
+.gtr .dt .lt{color:var(--s-stuck);font-weight:600}
+.gb{position:absolute;top:50%;translate:0 -50%;height:15px;min-width:7px;border-radius:4px;background:var(--gc);
+  display:flex;align-items:center;overflow:hidden}
+.gb.todo{background:transparent;box-shadow:inset 0 0 0 1.5px var(--gc);opacity:.75}
+.gb.waiting{background:repeating-linear-gradient(115deg,var(--gc) 0 4px,transparent 4px 8px);
+  box-shadow:inset 0 0 0 1.5px var(--gc)}
+.gb.stuck{box-shadow:0 0 0 2px var(--s-stuck)}
+.gb.done{background:var(--s-done);opacity:.8}
+.gb.cpb{box-shadow:inset 0 0 0 1.5px var(--gc),0 0 0 1.5px var(--today)}
+.gb .ck{font-size:9px;color:#fff;margin-left:4px;font-weight:700}
+.nowl{position:absolute;top:0;bottom:0;width:2px;background:var(--today);opacity:.85;z-index:2}
+.cpf{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.05em;color:var(--today);
+  border:1px solid var(--today);border-radius:3px;padding:0 3px;margin-left:5px;vertical-align:1px}
+.sdot{width:8px;height:8px;border-radius:50%;flex:none}
+.gcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start}
+.gcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.gcard h3{margin:0 0 9px;font-size:14.5px;font-weight:700}
+.gcard p{margin:0 0 9px;color:var(--ink2);font-size:12.5px;line-height:1.5}
+.gcard ul{margin:0;padding-left:16px;color:var(--ink2);font-size:12.5px;line-height:1.5}
+.gcard ul li{margin-bottom:6px}
+.gcard ul li:last-child{margin-bottom:0}
+.gcard ul b{color:var(--ink);font-weight:600}
+.mst{width:100%;border-collapse:collapse;min-width:0}
+.mst td{padding:6px 0;border-bottom:1px solid var(--line2);font-size:12.5px;vertical-align:top;line-height:1.35;height:auto}
+.mst tr:last-child td{border-bottom:0}
+.mst .i{width:24px;color:var(--ink3);font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;padding-top:7px}
+.mst .d{width:70px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;color:var(--ink2);
+  white-space:nowrap;padding-top:7px}
+.mst .gt{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--panel);
+  background:var(--ink);border-radius:3px;padding:1px 5px;margin-left:6px;white-space:nowrap}
+.cpath{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;color:var(--ink3)}
+.cpath code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;background:rgba(214,69,75,.1);
+  color:var(--ink);border:1px solid rgba(214,69,75,.35);border-radius:4px;padding:1px 5px}
+@media (max-width:560px){.gwrap{max-height:70vh}}
 </style>
 </head>
 <body>
@@ -87,12 +214,13 @@ td.due input,td.note input{border-color:transparent;background:transparent;width
       <h1>BikeX Work Board</h1>
       <div class="sub" id="sub">Loading the board…</div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="tabs" role="tablist" id="tabs"></div>
       <button id="refresh">Refresh</button>
     </div>
   </header>
 
-  <div class="bar">
+  <div class="bar" id="bar">
     <label for="me">I am</label>
     <select id="me"><option value="">pick your name</option></select>
     <label for="pass">Your code</label>
@@ -107,6 +235,7 @@ td.due input,td.note input{border-color:transparent;background:transparent;width
   <div class="summary" id="summary"></div>
   <div class="filters" id="filters"></div>
   <div id="groups"></div>
+  <div id="alt"></div>
 </div>
 <div id="tip" role="tooltip"></div>
 <div id="toast"></div>
@@ -128,10 +257,54 @@ const ST = {
 const ORDER = ["Done","Working on it","Waiting","Stuck","Not started"];
 const COLORS = {"Cash Johnson":"#0E7C86","Alexander Ching":"#C2410C","Andrew Paran":"#7C3AED","Jaden Dang":"#2563EB","Brandon Le":"#B45309","Whole team":"#5A6475"};
 
+// Baseline plan structure from the v1.0 project plan. Owners, statuses and
+// dates render live from the Sheet; this block is the plan itself: phase
+// windows, milestones, approval gates, dependencies, and the critical path.
+const PLAN = {
+  term: { start:"2026-09-14", end:"2026-12-11", weeks:13 },
+  baseline: { v:"v1.0", d:"set Sep 20, 2026" },
+  roles: {
+    "Cash Johnson":"PM, sponsor comms",
+    "Alexander Ching":"Lead: Acknowledgements",
+    "Andrew Paran":"Lead: In-kind intake",
+    "Jaden Dang":"Project Architect: process design",
+    "Brandon Le":"Lead: Outgoing donations"
+  },
+  groups: [
+    {wbs:"1.0",name:"Project Management",weeks:"All term",start:"2026-09-14",end:"2026-12-11",color:"#0E7C86",lead:"Cash Johnson"},
+    {wbs:"2.0",name:"Discovery & Training",weeks:"Weeks 1-2",start:"2026-09-14",end:"2026-10-02",color:"#4F6BED",lead:"Cash Johnson"},
+    {wbs:"3.0",name:"Acknowledgements",weeks:"Weeks 3-5",start:"2026-09-28",end:"2026-10-16",color:"#E0663A",lead:"Alexander Ching"},
+    {wbs:"4.0",name:"In-Kind Intake",weeks:"Weeks 6-8",start:"2026-10-19",end:"2026-11-06",color:"#8B5CF6",lead:"Andrew Paran"},
+    {wbs:"5.0",name:"Outgoing Donations",weeks:"Weeks 6-8",start:"2026-10-19",end:"2026-11-06",color:"#2A9D8F",lead:"Brandon Le"},
+    {wbs:"6.0",name:"Pilot & Refinement",weeks:"Weeks 9-12",start:"2026-11-09",end:"2026-12-04",color:"#D4A017",lead:"Alexander Ching"},
+    {wbs:"7.0",name:"Documentation & Handoff",weeks:"Final weeks",start:"2026-11-30",end:"2026-12-11",color:"#C04E7A",lead:"Brandon Le"}
+  ],
+  cp: {"2.3":1,"2.4":1,"2.9":1,"3.1":1,"3.2":1,"3.6":1,"3.7":1,"3.8":1,"6.1":1,"6.2":1,"6.3":1,"6.4":1,"7.1":1,"7.2":1,"7.4":1},
+  dep: {"1.6":"2.9","2.4":"2.3","2.5":"2.3","2.6":"2.3","2.9":"2.4-2.6","3.1":"2.9","3.2":"3.1","3.6":"3.2-3.5","3.7":"3.6 approved","3.8":"3.7","4.1":"2.9","4.3":"4.2","4.4":"4.3","5.1":"2.9","5.4":"5.2-5.3","6.1":"3.8","6.2":"6.1","6.4":"6.3","7.1":"6.4","7.2":"6.4","7.4":"7.1-7.3"},
+  milestones: [
+    {d:"2026-09-25",n:"Sponsor call 1: live DonorView walkthrough; three as-is flowcharts due"},
+    {d:"2026-10-02",n:"Phase 2.0 exit: user requirements specs complete for all three processes"},
+    {d:"2026-10-09",n:"Sponsor call 2: gap analysis and proposal deck",gate:1},
+    {d:"2026-10-23",n:"Sponsor call 3; CPM diagram and risk register due to Prof. Sridar"},
+    {d:"2026-10-30",n:"Project plan v1 submitted"},
+    {d:"2026-11-06",n:"Sponsor call 4: in-kind and outgoing feasibility memos",gate:1},
+    {d:"2026-11-13",n:"High-level presentation to class"},
+    {d:"2026-11-20",n:"Sponsor call 5: pilot results and staff feedback"},
+    {d:"2026-12-04",n:"Sponsor call 6: final presentation and project plan v2"},
+    {d:"2026-12-11",n:"Turnover: SOPs handed in, sponsor feedback review"}
+  ]
+};
+const SKEY = {"Not started":"todo","Working on it":"working","Waiting":"waiting","Stuck":"stuck","Done":"done"};
+const STK = {todo:["Not started","var(--s-todo)"],working:["Working on it","var(--s-working)"],waiting:["Waiting","var(--s-waiting)"],stuck:["Stuck","var(--s-stuck)"],done:["Done","var(--s-done)"]};
+const KORDER = ["done","working","waiting","stuck","todo"];
+
 let DATA = {rows:[],owners:[],status:[]};
 let who = localStorage.getItem("bx-who") || "";
 let pass = sessionStorage.getItem("bx-pass") || "";
 let filter = null;
+let view = "board";
+let critOnly = false;
+try{ view = sessionStorage.getItem("bx-view") || "board"; critOnly = sessionStorage.getItem("bx-crit") === "1"; }catch(e){}
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -140,6 +313,7 @@ const asDate = s => {if(!s)return null;const p=String(s).slice(0,10).split("-");
 const fmtDay = s => {const d=asDate(s);return d?d.toLocaleDateString("en-US",{month:"short",day:"numeric"}):"TBD";};
 const initials = n => n==="Whole team" ? "ALL" : n.split(" ").map(x=>x[0]).join("").slice(0,2);
 const canEdit = () => !!(who && pass);
+const avN = n => '<span class="av" style="background:'+(COLORS[n]||"#5A6475")+'">'+initials(n||"?")+'</span>';
 
 function toast(msg, bad){
   const t = $("#toast");
@@ -197,11 +371,13 @@ function summary(list){
   const soon = list.filter(t=>{const d=asDate(t.due);return t.status!=="Done" && d && d>=t0 && d<=wk;}).length;
   const held = list.filter(t=>t.status==="Waiting"||t.status==="Stuck").length;
   const pct = list.length ? Math.round(100*done/list.length) : 0;
+  const wkno = Math.max(1, Math.floor((today()-asDate(PLAN.term.start))/6048e5)+1);
   $("#summary").innerHTML =
     tile(pct+"%", done+" of "+list.length+" done", stack(list)) +
     tile(overdue, "Overdue", "", overdue?"var(--s-stuck)":"") +
     tile(soon, "Due in the next 7 days") +
-    tile(held, "Waiting or stuck");
+    tile(held, "Waiting or stuck") +
+    tile('<span class="mono">Wk '+Math.min(wkno,PLAN.term.weeks)+'</span>', "of "+PLAN.term.weeks+", term runs to "+fmtDay(PLAN.term.end));
 }
 function tile(v,l,extra,color){
   return '<div class="tile"><div class="v"'+(color?' style="color:'+color+'"':'')+'>'+v+'</div><div class="l">'+l+'</div>'+(extra||"")+'</div>';
@@ -212,18 +388,177 @@ function filters(){
   DATA.owners.forEach(p=>{
     const open = DATA.rows.filter(t=>t.owner===p && t.status!=="Done").length;
     h += '<button class="chip" data-who="'+esc(p)+'" aria-pressed="'+(filter===p)+'">'+
-         '<span class="av" style="background:'+(COLORS[p]||"#5A6475")+'">'+initials(p)+'</span>'+
-         esc(p.split(" ")[0])+' <span class="mono" style="color:var(--ink3)">'+open+'</span></button>';
+         avN(p)+esc(p.split(" ")[0])+' <span class="mono" style="color:var(--ink3)">'+open+'</span></button>';
   });
+  if(view==="gantt") h += '<button class="chip plain" data-crit="1" aria-pressed="'+critOnly+'">Critical path only</button>';
   h += '<span class="legend">' + ORDER.map(k=>'<span><i class="dot" style="background:'+ST[k]+'"></i>'+k+'</span>').join("") + '</span>';
   $("#filters").innerHTML = h;
 }
 
-function render(){
+function renderTabs(){
+  const views = {board:"Board", gantt:"Gantt", wbs:"WBS chart", team:"Team"};
+  $("#tabs").innerHTML = Object.keys(views).map(k=>
+    '<button role="tab" data-view="'+k+'" aria-selected="'+(view===k)+'">'+views[k]+'</button>').join("");
+}
+
+// ---- shared helpers for the plan views ------------------------------------
+function planGroups(){
+  // PLAN phases first, in plan order, then any phases the Sheet added later.
+  const named = PLAN.groups.map(g=>g.name);
+  const extra = [];
+  DATA.rows.forEach(t=>{ if(!named.includes(t.phase) && !extra.includes(t.phase)) extra.push(t.phase); });
+  return PLAN.groups.concat(extra.map(p=>({wbs:"",name:p,weeks:"",start:"",end:"",color:"#5A6475",lead:""})));
+}
+function groupRows(g){ return DATA.rows.filter(t=>t.phase===g.name); }
+function skey(t){ return SKEY[t.status] || "todo"; }
+function tStart(t,g){ return t.start || g.start || t.due || PLAN.term.start; }
+function tDue(t,g){ return t.due || t.start || g.end || PLAN.term.end; }
+function mineV(t){ return !filter || t.owner===filter || t.owner==="Whole team"; }
+function pctK(list){ return list.length ? Math.round(100*list.filter(t=>t.status==="Done").length/list.length) : 0; }
+
+// ---- WBS chart view --------------------------------------------------------
+function wbsView(){
+  let h = '<div class="wbs-scroll"><div class="wbs-root"><div class="node root"><div class="eyebrow" style="color:inherit;opacity:.8">Level 0</div><strong>SVBE Donor Acknowledgement &amp; Records Automation</strong><div style="font-size:12px;opacity:.85">BUS4-119A &middot; PM Cash Johnson &middot; Fall 2026</div></div></div><div class="wbs-cols">';
+  planGroups().forEach(g=>{
+    const ts = groupRows(g);
+    if(!ts.length && !g.wbs) return;
+    h += '<div class="wcol" style="--gc:'+g.color+'"><div class="node l1"><span class="mono">'+esc(g.wbs)+'</span> '+esc(g.name)+'<small>'+esc(g.weeks)+(g.weeks?' &middot; ':'')+pctK(ts)+'% done</small></div>';
+    ts.forEach(t=>{
+      h += '<div class="node l2" style="--sc:'+ST[t.status]+'"><span class="n mono">'+esc(t.wbs)+'</span><span>'+esc(t.task)+'</span><span class="o">'+esc(t.owner)+' &middot; '+fmtDay(t.due)+'</span></div>';
+    });
+    h += '</div>';
+  });
+  return h+'</div></div><p class="note-sm">Left edge color on each work package = its current status, live from the Sheet.</p>';
+}
+
+// ---- Team view -------------------------------------------------------------
+function teamView(){
+  let h = '<div class="team">';
+  DATA.owners.filter(p=>p!=="Whole team").forEach(p=>{
+    const ts = DATA.rows.filter(t=>t.owner===p).sort((a,b)=>(a.due||"9").localeCompare(b.due||"9"));
+    const open = ts.filter(t=>t.status!=="Done");
+    h += '<article class="pcard"><header>'+avN(p)+'<div><h3>'+esc(p)+'</h3><div class="role">'+esc(PLAN.roles[p]||"")+'</div></div><div style="margin-left:auto;text-align:right"><div class="mono" style="font-size:18px">'+pctK(ts)+'%</div><div class="note-sm">'+open.length+' open / '+ts.length+'</div></div></header>'+stack(ts)+'<ul>';
+    open.slice(0,6).forEach(t=>{
+      h += '<li><i class="dot" style="background:'+ST[t.status]+'"></i><span>'+esc(t.task)+'</span><span class="d'+(late(t)?' late':'')+'">'+fmtDay(t.due)+'</span></li>';
+    });
+    if(open.length>6) h += '<li class="note-sm">+'+(open.length-6)+' more on the board</li>';
+    if(!open.length) h += '<li class="note-sm">All clear.</li>';
+    h += '</ul></article>';
+  });
+  h += '</div><div class="why"><h3>Scoring the team, not just the tasks</h3><ul>'+
+    '<li>Board = execution: on-time rate, overdue count, stuck count. Review it before every Friday call.</li>'+
+    '<li>Sponsor satisfaction is 20% of the grade. Ask Kelly for a 1-5 pulse at the end of each bi-weekly call.</li>'+
+    '<li>Pilot outcome: % of check/DAF gifts acknowledged, and days from deposit to thank-you, old vs new.</li>'+
+    '<li>Peer feedback is graded. Tasks-done per person shows who is carrying weight before it becomes a problem.</li></ul></div>';
+  return h;
+}
+
+// ---- Gantt view ------------------------------------------------------------
+function ganttView(){
+  const T0 = asDate(PLAN.term.start);
+  let last = asDate(PLAN.term.end);
+  DATA.rows.forEach(t=>{ const d=asDate(t.due); if(d && d>last) last=d; });
+  const W = Math.max(PLAN.term.weeks, Math.ceil(((last-T0)/864e5+1)/7));
+  const D = W*7, t = today();
+  const gx = s => Math.max(0,Math.min(100,(asDate(s)-T0)/864e5/D*100));
+  const gwid = (a,b)=>{let x1=(asDate(a)-T0)/864e5, x2=(asDate(b)-T0)/864e5+1; if(x2<x1+1)x2=x1+1;
+    return Math.max(.8,(Math.min(x2,D)-Math.max(x1,0))/D*100);};
+  const nowX = Math.max(0,Math.min(100,(t-T0)/864e5/D*100)), nowWk = Math.floor((t-T0)/864e5/7);
+  const NOW = (nowX>=0&&nowX<=100)?'<div class="nowl" style="left:'+nowX+'%"></div>':'';
+  const trkStyle = 'background-size:calc(100%/'+W+') 100%';
+
+  const mos=[]; let i,m;
+  for(i=0;i<W;i++){ m=new Date(T0); m.setDate(m.getDate()+i*7);
+    const lb=m.toLocaleDateString("en-US",{month:"long"});
+    if(mos.length&&mos[mos.length-1].l===lb)mos[mos.length-1].n++; else mos.push({l:lb,n:1});}
+  let moH=""; mos.forEach(x=>{moH+='<div style="flex:'+x.n+' 0 0">'+(x.n<3?x.l.slice(0,3):x.l)+'</div>';});
+  let wkH="";
+  for(i=0;i<W;i++){ m=new Date(T0); m.setDate(m.getDate()+i*7);
+    wkH+='<div class="'+(i===nowWk?'nw':'')+'"><b>W'+(i+1)+'</b>'+m.toLocaleDateString("en-US",{month:"numeric",day:"numeric"})+'</div>';}
+
+  let h='<div class="gwrap" role="region" aria-label="Gantt chart, scrolls sideways for the full term" tabindex="0"><div class="ggrid">'+
+    '<div class="ghd"><div class="gr"><div class="gh">WBS</div><div class="gh">Work package &amp; deliverable</div>'+
+    '<div class="gh">Owner</div><div class="gh">Window</div><div style="position:relative">'+
+    '<div class="gmo">'+moH+'</div><div class="gwk" style="grid-template-columns:repeat('+W+',1fr)">'+wkH+'</div>'+NOW+'</div></div></div>';
+
+  const mss = PLAN.milestones;
+  h += '<div class="gr grailrow"><div class="gl">Milestones &amp; approval gates</div><div class="grail" style="'+trkStyle+'">';
+  mss.forEach((x,k)=>{h+='<span class="ms'+(x.gate?' gate':'')+'" style="left:'+gx(x.d)+'%" title="'+esc(fmtDay(x.d)+' - '+x.n)+'"><i>'+(k+1)+'</i></span>';});
+  h += NOW+'</div></div>';
+
+  planGroups().forEach(g=>{
+    const all = groupRows(g);
+    const ts = all.filter(x=>mineV(x)&&(!critOnly||PLAN.cp[x.wbs]));
+    if(!ts.length) return;
+    const starts = all.map(x=>tStart(x,g)).sort(), dues = all.map(x=>tDue(x,g)).sort();
+    const ss = g.start || starts[0], ee = dues[dues.length-1] > (g.end||"") ? dues[dues.length-1] : (g.end||dues[dues.length-1]);
+    const dn = all.filter(x=>x.status==="Done").length;
+    h += '<div class="gr gph" style="--gc:'+g.color+'"><div class="pn"><span class="num">'+esc(g.wbs)+'</span>'+
+      '<h2>'+esc(g.name)+'</h2><small>'+esc(g.weeks)+(g.lead?' &middot; lead '+esc(g.lead.split(" ")[0]):'')+'</small></div>'+
+      '<div class="pm"><span>'+fmtDay(ss)+' &ndash; '+fmtDay(ee)+'</span><span class="mono">'+dn+'/'+all.length+'</span></div>'+
+      '<div class="gtrk" style="'+trkStyle+'"><span class="gsum" style="left:'+gx(ss)+'%;width:'+gwid(ss,ee)+'%"></span>'+NOW+'</div></div>';
+
+    ts.forEach(x=>{
+      const k = skey(x), cp = PLAN.cp[x.wbs], dep = PLAN.dep[x.wbs];
+      const cls = k==="done"?"done":k==="waiting"?"waiting":k==="stuck"?"stuck":k==="todo"?"todo":"";
+      const s0 = tStart(x,g), d0 = tDue(x,g);
+      h += '<div class="gr gtr'+(cp?' cp':'')+'" style="--gc:'+g.color+'">'+
+        '<div class="w">'+esc(x.wbs)+'</div>'+
+        '<div class="n"><span class="gt">'+esc(x.task)+(cp?'<span class="cpf">CP</span>':'')+'</span>'+
+          '<span class="sm">'+esc(x.deliv||STK[k][0])+(dep?' &middot; after <b>'+esc(dep)+'</b>':'')+'</span></div>'+
+        '<div class="o"><i class="sdot" style="background:'+ST[x.status]+'" title="'+esc(x.status)+'"></i>'+avN(x.owner)+esc(x.owner==="Whole team"?"Team":String(x.owner||"?").split(" ")[0])+'</div>'+
+        '<div class="dt">'+fmtDay(s0)+'&nbsp;&ndash;&nbsp;<span class="'+(late(x)?'lt':'')+'">'+fmtDay(d0)+'</span></div>'+
+        '<div class="gtrk" style="'+trkStyle+'"><span class="gb '+cls+(cp?' cpb':'')+'" style="left:'+gx(s0)+'%;width:'+gwid(s0,d0)+'%" '+
+          'title="'+esc(x.wbs+' '+x.task+' | '+fmtDay(s0)+' to '+fmtDay(d0)+' | '+x.status)+'">'+
+          (k==="done"?'<span class="ck">&#10003;</span>':'')+'</span>'+NOW+'</div></div>';
+    });
+  });
+  h += '</div></div>';
+
+  const cps = DATA.rows.filter(x=>PLAN.cp[x.wbs]);
+  const top = '<div class="gbase"><span>Baseline <b>'+esc(PLAN.baseline.v)+'</b>, '+esc(PLAN.baseline.d)+'</span>'+
+    '<span><b>'+DATA.rows.length+'</b> work packages &middot; <b>'+planGroups().filter(g=>groupRows(g).length).length+'</b> phases &middot; <b>'+W+'</b> weeks</span>'+
+    '<span><b>'+mss.length+'</b> milestones, <b>'+mss.filter(x=>x.gate).length+'</b> approval gates</span>'+
+    '<span><b>'+cps.length+'</b> packages on the critical path</span></div>'+
+    '<div class="glegend">'+
+     '<span><i style="width:24px;height:11px;border-radius:3px;background:var(--s-done);opacity:.8"></i>Done</span>'+
+     '<span><i style="width:24px;height:11px;border-radius:3px;background:var(--accent)"></i>Working</span>'+
+     '<span><i style="width:24px;height:11px;border-radius:3px;background:repeating-linear-gradient(115deg,var(--s-waiting) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--s-waiting)"></i>Waiting</span>'+
+     '<span><i style="width:24px;height:11px;border-radius:3px;box-shadow:inset 0 0 0 1.5px var(--ink3)"></i>Not started</span>'+
+     '<span><i style="width:24px;height:11px;border-radius:3px;box-shadow:0 0 0 1.5px var(--today)"></i>Critical path</span>'+
+     '<span><i style="width:3px;height:14px;background:var(--today)"></i>Today</span>'+
+     '<span><i style="width:12px;height:12px;rotate:45deg;border:2px solid var(--ink);border-radius:2px"></i>Milestone</span>'+
+     '<span><i style="width:12px;height:12px;rotate:45deg;border:2px solid var(--ink);border-radius:2px;background:var(--ink)"></i>Gate</span>'+
+    '</div>';
+
+  let msH=""; mss.forEach((x,k)=>{msH+='<tr><td class="i">'+(k+1)+'</td><td class="d">'+fmtDay(x.d)+'</td><td>'+esc(x.n)+(x.gate?'<span class="gt">Gate</span>':'')+'</td></tr>';});
+  const chain = cps.map(x=>'<code>'+esc(x.wbs)+'</code>').join('<span>&rsaquo;</span>');
+
+  const cards = '<div class="gcards">'+
+    '<section class="gcard"><h3>Milestones &amp; approval gates</h3><table class="mst">'+msH+'</table></section>'+
+    '<section class="gcard"><h3>Critical path</h3><p>'+cps.length+' packages carry zero float. Slip one and the pilot loses a week it does not have. Everything else has room to move.</p>'+
+      '<div class="cpath">'+chain+'</div><ul style="margin-top:10px">'+
+      '<li><b>Tightest link:</b> the Oct 9 proposal gate. Build work cannot start until Kelly approves, and only 5 working days separate approval from the first live batch test.</li>'+
+      '<li><b>Buffer:</b> 4.0 and 5.0 run in parallel off the critical path, so an in-kind or outgoing slip costs a feasibility memo, not the pilot.</li></ul></section>'+
+    '<section class="gcard"><h3>Schedule risks</h3><ul>'+
+      '<li><b>Live production system.</b> DonorView and the deposit sheets are live, so every build task is gated on a Friday call. Proposals land the Tuesday before, not the morning of.</li>'+
+      '<li><b>Zero in-kind records in DV.</b> 98 constituents are tagged In-Kind Donor, none has an in-kind gift record. 4.0 designs for a process that generates no data today.</li>'+
+      '<li><b>GiveButter is in the stack</b> and absent from Kelly\'s plan. Until we know what it syncs and whether it thanks donors itself, 3.1 is incomplete.</li>'+
+      '<li><b>Thanksgiving week</b> (Nov 23-29) overlaps pilot refinement. 6.0 holds the term\'s only real slack and it gets spent there.</li>'+
+      '<li><b>Class dates are placeholders</b> until the F26 greensheet posts.</li></ul></section>'+
+    '<section class="gcard"><h3>How to read it</h3><ul>'+
+      '<li>Bars sit on a Monday-start week grid. The hairline down every row is today.</li>'+
+      '<li>A red left rail and a <b>CP</b> tag mark the critical path. Use the filter chip to show only those rows.</li>'+
+      '<li>Phase rows show the bracket span, the lead, and done-of-total.</li>'+
+      '<li>Edits happen on the <b>Board</b> tab. This view re-draws from the live Sheet data, so it is never out of date.</li></ul></section>'+
+    '</div>';
+  return top+h+cards;
+}
+
+// ---- Board view ------------------------------------------------------------
+function boardView(){
   const all = DATA.rows;
   const list = filter ? all.filter(t=>t.owner===filter) : all;
-  summary(list);
-  filters();
 
   // owner picker
   const me = $("#me");
@@ -254,7 +589,7 @@ function render(){
         '<td class="wbs mono">'+esc(t.wbs)+'</td>'+
         '<td class="name"><span class="t" data-tip="'+esc(t.note||"")+'">'+esc(t.task)+'</span>'+
           (t.deliv?'<span class="dl">Deliverable: '+esc(t.deliv)+'</span>':'')+'</td>'+
-        '<td class="own"><div class="ownsel"><span class="av" style="background:'+(COLORS[t.owner]||"#5A6475")+'">'+initials(t.owner||"?")+'</span>'+
+        '<td class="own"><div class="ownsel">'+avN(t.owner||"?")+
           sel("owner", DATA.owners, t.owner)+'</div></td>'+
         '<td class="st">'+sel("status", DATA.status, t.status, 'class="stsel" style="background:'+ST[t.status]+'"')+'</td>'+
         '<td class="due'+(late(t)?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
@@ -281,12 +616,31 @@ function phaseColor(p){
   return m[p] || "#0E7C86";
 }
 
+// ---- master render ---------------------------------------------------------
+function render(){
+  renderTabs();
+  const isB = view==="board", isG = view==="gantt", isW = view==="wbs", isT = view==="team";
+  $("#bar").style.display = isB ? "flex" : "none";
+  $("#summary").style.display = (isB||isT) ? "grid" : "none";
+  $("#filters").style.display = (isB||isG) ? "flex" : "none";
+  $("#groups").style.display = isB ? "block" : "none";
+  if(!isB){ $("#rohint").style.display = "none"; $("#paused").style.display = "none"; }
+  if(isB||isT){
+    const list = (isB && filter) ? DATA.rows.filter(t=>t.owner===filter) : DATA.rows;
+    summary(list);
+  }
+  if(isB||isG) filters();
+  if(isB) boardView();
+  $("#alt").innerHTML = isG ? ganttView() : isW ? wbsView() : isT ? teamView() : "";
+}
+
 // ---- edits -----------------------------------------------------------------
 document.addEventListener("change", async e=>{
   const el = e.target;
   const field = el.dataset.f;
   if(!field) return;
   const tr = el.closest("tr");
+  if(!tr || !tr.dataset.row) return;
   const row = Number(tr.dataset.row);
   const rec = DATA.rows.find(t=>t.row===row);
   const before = rec[field];
@@ -310,8 +664,22 @@ document.addEventListener("change", async e=>{
 });
 
 document.addEventListener("click", e=>{
+  const tab = e.target.closest("[data-view]");
+  if(tab){
+    view = tab.dataset.view;
+    try{ sessionStorage.setItem("bx-view", view); }catch(x){}
+    render(); return;
+  }
   const chip = e.target.closest(".chip");
-  if(chip){ filter = chip.dataset.who || null; render(); }
+  if(chip){
+    if(chip.dataset.crit !== undefined){
+      critOnly = !critOnly;
+      try{ sessionStorage.setItem("bx-crit", critOnly?"1":"0"); }catch(x){}
+    }else{
+      filter = chip.dataset.who || null;
+    }
+    render();
+  }
 });
 
 $("#unlock").addEventListener("click", async ()=>{
@@ -349,6 +717,7 @@ document.addEventListener("mouseout", e=>{
 });
 
 if(who) $("#me").value = who;
+render();
 load();
 setInterval(load, 120000);
 </script>
