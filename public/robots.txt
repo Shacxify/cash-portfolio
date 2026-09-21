@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /bikex.html
+Disallow: /bikex
 
 Sitemap: https://cashjohnson.net/sitemap.xml
