@@ -148,10 +148,11 @@ async function run(env, dry) {
   const out = { todayIso, weekday, posted: [], skipped: !reminder && !announcements.length };
   if (dry) return { ...out, reminder, announcements };
 
-  if (!env.WEBHOOK_URL) return { ...out, error: "WEBHOOK_URL not set" };
-  if (reminder) { await post(env.WEBHOOK_URL, reminder, false); out.posted.push("reminder"); }
+  if (reminder && env.WEBHOOK_URL) { await post(env.WEBHOOK_URL, reminder, false); out.posted.push("reminder"); }
+  if (reminder && !env.WEBHOOK_URL) out.error = "WEBHOOK_URL not set, reminder skipped";
   const annUrl = env.WEBHOOK_ANNOUNCE || env.WEBHOOK_URL;
   for (const a of announcements) {
+    if (!annUrl) { out.error = "no webhook for announcements"; break; }
     await post(annUrl, a, !!env.WEBHOOK_ANNOUNCE);
     out.posted.push("announcement");
   }
