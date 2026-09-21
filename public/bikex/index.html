@@ -226,6 +226,7 @@ td.due input,td.note input{border-color:transparent;background:transparent;width
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <div class="tabs" role="tablist" id="tabs"></div>
+      <button id="foldall">Collapse all</button>
       <button id="refresh">Refresh</button>
     </div>
   </header>
@@ -251,6 +252,171 @@ td.due input,td.note input{border-color:transparent;background:transparent;width
 <div id="toast"></div>
 
 <script>
+/* =========================================================================
+ * style.js
+ * -------------------------------------------------------------------------
+ * Design tokens, and the component CSS for everything added after the first
+ * build: fold chevrons, sortable column headers, collapsed status pills.
+ * The base sheet stays in <head>; every rule that reads a token lives here
+ * so the token and its use never drift apart.
+ *
+ * Packaging note: style.js and motion.js are written as standalone modules
+ * but inlined into this file deliberately. /bikex is served as one static
+ * HTML file, so <script src="style.js"> would 404 in production.
+ * ======================================================================= */
+const Style = (function(){
+  const tokens = {
+    dur:  { fast:120, base:200, slow:320 },
+    ease: { out:"cubic-bezier(.2,.7,.3,1)", inOut:"cubic-bezier(.4,0,.2,1)" },
+    size: { chev:9, rail:5 }
+  };
+
+  const css = `
+:root{
+  --bx-fast:${tokens.dur.fast}ms;--bx-base:${tokens.dur.base}ms;--bx-slow:${tokens.dur.slow}ms;
+  --bx-out:${tokens.ease.out};--bx-inout:${tokens.ease.inOut};
+}
+
+/* ---- fold toggles ------------------------------------------------------ */
+.gtog{display:flex;align-items:center;gap:8px;background:none;border:0;padding:0;margin:0;
+  font:inherit;color:inherit;text-align:left;cursor:pointer;border-radius:8px}
+.gtog:focus-visible,.l1btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.chev{flex:none;width:${tokens.size.chev}px;height:${tokens.size.chev}px;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  rotate:45deg;translate:0 -2px;opacity:.7;transition:rotate var(--bx-base) var(--bx-out)}
+[aria-expanded="false"] .chev{rotate:-45deg;translate:0 0}
+.ghead .ht{font-size:16px;font-weight:700;color:var(--gc)}
+.gph .pn .ht2{font-size:15.5px;font-weight:700;color:var(--ink)}
+
+/* ---- collapsed status pills -------------------------------------------- */
+.pills{display:inline-flex;gap:4px;align-items:center;margin-left:auto}
+.group.fold .ghead .gbar{margin-left:10px}
+.pill{display:inline-flex;align-items:center;justify-content:center;min-width:20px;
+  font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:#fff;
+  border-radius:999px;padding:1px 7px;line-height:1.6}
+
+/* ---- sortable headers -------------------------------------------------- */
+th.sortable,.gh.sortable{padding:0}
+.sortb{display:flex;align-items:center;gap:4px;width:100%;background:none;border:0;border-radius:0;
+  font:inherit;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);padding:6px 10px;cursor:pointer;white-space:nowrap}
+.gh .sortb{align-items:flex-end;height:100%;font-size:10.5px;letter-spacing:.07em;padding:10px 10px 8px}
+.sortb.c{justify-content:center}
+.sortb:hover{color:var(--ink)}
+th[aria-sort]:not([aria-sort="none"]) .sortb,
+.gh[aria-sort]:not([aria-sort="none"]) .sortb{color:var(--accent)}
+.sarr{font-size:8px;opacity:0;transition:opacity var(--bx-fast) linear}
+.sortb:hover .sarr{opacity:.4}
+th[aria-sort]:not([aria-sort="none"]) .sarr,
+.gh[aria-sort]:not([aria-sort="none"]) .sarr{opacity:1}
+
+/* ---- WBS column fold ---------------------------------------------------- */
+.wcol .l1btn{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;cursor:pointer;
+  background:var(--panel);color:var(--ink);border:1px solid var(--line);border-top:4px solid var(--gc);
+  border-radius:10px;padding:10px 12px;font:inherit;font-weight:600}
+.wcol .l1btn .chev{margin-top:4px}
+.wcol .l1btn small{display:block;font-weight:400;color:var(--ink2);font-size:11px}
+/* A flex item defaults to min-height:auto and refuses to shrink below its
+   content, which is exactly why these columns would not collapse. Both the
+   column and the animated body need min-height:0 before 1fr -> 0fr works. */
+.wcol{min-height:0}
+.wbody{display:grid;grid-template-rows:1fr;min-height:0;
+  transition:grid-template-rows var(--bx-slow) var(--bx-out)}
+.wcol.fold .wbody{grid-template-rows:0fr}
+.wbody>.winner{min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:6px}
+
+/* ---- reduced motion ----------------------------------------------------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:.01ms !important}
+}
+`;
+
+  function mount(){
+    if(document.getElementById("bx-style")) return;
+    const el = document.createElement("style");
+    el.id = "bx-style";
+    el.textContent = css;
+    document.head.appendChild(el);
+  }
+  return { tokens, css, mount };
+})();
+
+/* =========================================================================
+ * motion.js
+ * -------------------------------------------------------------------------
+ * reveal  - staggered entrance for a freshly drawn view
+ * capture/flip - FLIP: rows slide from where they were to where sorting put
+ *           them. Captured by data-row key, not node identity, because a
+ *           re-render replaces the elements outright.
+ * countUp - summary tiles tick to their new value instead of jumping
+ * pulse   - one-shot ring on a row that just saved
+ * Every one of these is a no-op under prefers-reduced-motion.
+ * ======================================================================= */
+const Motion = (function(){
+  const mq = window.matchMedia ? matchMedia("(prefers-reduced-motion: reduce)")
+                               : { matches:false };
+  const D = Style.tokens.dur, E = Style.tokens.ease;
+  const off = () => mq.matches || typeof Element.prototype.animate !== "function";
+
+  function reveal(nodes, step){
+    if(off() || !nodes) return;
+    step = step || 40;
+    Array.prototype.forEach.call(nodes, (el, i) => {
+      el.animate([{opacity:0, transform:"translateY(6px)"}, {opacity:1, transform:"none"}],
+        {duration:D.slow, delay:Math.min(i*step, 320), easing:E.out, fill:"backwards"});
+    });
+  }
+
+  function capture(root, sel){
+    if(off() || !root) return null;
+    const m = new Map();
+    root.querySelectorAll(sel).forEach(el => {
+      const k = el.dataset.row;
+      if(k) m.set(k, el.getBoundingClientRect().top);
+    });
+    return m;
+  }
+
+  function flip(root, sel, first){
+    if(off() || !first || !root) return;
+    root.querySelectorAll(sel).forEach(el => {
+      const k = el.dataset.row;
+      if(!k || !first.has(k)) return;
+      const dy = first.get(k) - el.getBoundingClientRect().top;
+      if(!dy) return;
+      el.animate([{transform:"translateY(" + dy + "px)"}, {transform:"none"}],
+        {duration:280, easing:E.out});
+    });
+  }
+
+  function countUp(el, to, suffix){
+    suffix = suffix || "";
+    if(!el) return;
+    if(off()){ el.textContent = to + suffix; return; }
+    const from = parseFloat(String(el.textContent).replace(/[^\d.-]/g, ""));
+    if(!isFinite(from) || from === to){ el.textContent = to + suffix; return; }
+    const t0 = performance.now(), ms = 520;
+    (function step(now){
+      const p = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(from + (to - from) * e) + suffix;
+      if(p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  function pulse(el){
+    if(off() || !el) return;
+    el.animate([{boxShadow:"inset 0 0 0 2px rgba(14,124,134,.55)"},
+                {boxShadow:"inset 0 0 0 2px rgba(14,124,134,0)"}],
+      {duration:700, easing:E.out});
+  }
+
+  return { reveal, capture, flip, countUp, pulse,
+           get reduced(){ return mq.matches; } };
+})();
+
+Style.mount();
+
 // ---------------------------------------------------------------------------
 // Paste the /exec URL from the Apps Script deployment between the quotes.
 const API = "https://script.google.com/macros/s/AKfycbwp2Q3l9s4674OZLx5shd_JheTgZgyAyogctRXCFfLA8ehcGeZWAt8J_q-ooinoZs6PUw/exec";
@@ -316,6 +482,95 @@ let view = "board";
 let critOnly = false;
 try{ view = sessionStorage.getItem("bx-view") || "board"; critOnly = sessionStorage.getItem("bx-crit") === "1"; }catch(e){}
 
+// Which sections are collapsed, and how each sortable scope is sorted. Both
+// survive a refresh and a poll so neither rearranges the board under you.
+let folded = {}, sortBy = {};
+try{ folded = JSON.parse(sessionStorage.getItem("bx-fold") || "{}") || {}; }catch(e){ folded = {}; }
+try{ sortBy = JSON.parse(sessionStorage.getItem("bx-sort") || "{}") || {}; }catch(e){ sortBy = {}; }
+const isFold = k => !!folded[k];
+function saveUI(){
+  try{
+    sessionStorage.setItem("bx-fold", JSON.stringify(folded));
+    sessionStorage.setItem("bx-sort", JSON.stringify(sortBy));
+  }catch(e){}
+}
+
+// ---- sorting ---------------------------------------------------------------
+// Board columns, in render order. [key, label, centred?]
+const COLS = [["wbs","WBS"],["task","Task"],["owner","Owner"],["status","Status",1],
+              ["due","Due"],["notes","Notes"],["upd","Updated"]];
+// Status sorts by how much it wants your attention, not by the alphabet.
+const URGENCY = {"Stuck":0,"Working on it":1,"Waiting":2,"Not started":3,"Done":4};
+
+function sortVal(t, k){
+  switch(k){
+    case "wbs":    return t.wbs || "";
+    case "task":   return (t.task || "").toLowerCase();
+    case "owner":  return (t.owner || "").toLowerCase();
+    case "status": { const v = URGENCY[t.status]; return v === undefined ? "" : v; }
+    case "due":    return t.due || "";
+    case "notes":  return (t.notes || "").toLowerCase();
+    case "upd":    return t.upd || "";
+  }
+  return "";
+}
+
+// 2.10 sorts after 2.9, not between 2.1 and 2.2.
+function cmpWbs(a, b){
+  const pa = String(a).split("."), pb = String(b).split(".");
+  for(let i = 0; i < Math.max(pa.length, pb.length); i++){
+    const x = parseFloat(pa[i]), y = parseFloat(pb[i]);
+    const nx = isNaN(x), ny = isNaN(y);
+    if(nx && ny) continue;
+    if(nx) return 1;
+    if(ny) return -1;
+    if(x !== y) return x - y;
+  }
+  return 0;
+}
+
+// Sorts the records themselves. Blanks sink to the bottom in both directions,
+// and the Sheet's own order breaks every tie, so the sort is stable.
+function sortRows(rows, st){
+  if(!st || !st.k) return rows;
+  const idx = new Map();
+  rows.forEach((t, i) => idx.set(t, i));
+  return rows.slice().sort((a, b) => {
+    const va = sortVal(a, st.k), vb = sortVal(b, st.k);
+    const ba = (va === "" || va == null), bb = (vb === "" || vb == null);
+    if(ba && bb) return idx.get(a) - idx.get(b);
+    if(ba) return 1;
+    if(bb) return -1;
+    let c;
+    if(st.k === "wbs") c = cmpWbs(va, vb);
+    else if(typeof va === "number") c = va - vb;
+    else c = String(va).localeCompare(String(vb));
+    return c ? c * st.dir : idx.get(a) - idx.get(b);
+  });
+}
+
+// asc -> desc -> back to the Sheet's own order.
+function cycleSort(scope, k){
+  const cur = sortBy[scope];
+  if(!cur || cur.k !== k) sortBy[scope] = {k:k, dir:1};
+  else if(cur.dir === 1) sortBy[scope] = {k:k, dir:-1};
+  else delete sortBy[scope];
+  saveUI();
+}
+
+function sortBtn(scope, k, label, centre){
+  const st = sortBy[scope], on = st && st.k === k;
+  const arrow = on ? (st.dir === 1 ? "\u25B2" : "\u25BC") : "\u25B2";
+  return '<button class="sortb' + (centre ? " c" : "") + '" data-sort="' + k +
+    '" data-scope="' + esc(scope) + '" title="Sort by ' +
+    esc(String(label).replace(/&amp;/g, "and")) + '">' + label +
+    '<span class="sarr">' + arrow + '</span></button>';
+}
+function sortAria(scope, k){
+  const st = sortBy[scope];
+  return (st && st.k === k) ? (st.dir === 1 ? "ascending" : "descending") : "none";
+}
+
 const $ = s => document.querySelector(s);
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const today = () => {const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());};
@@ -335,13 +590,34 @@ function toast(msg, bad){
   toast._t = setTimeout(()=>{t.style.display="none";}, 2600);
 }
 
-async function load(){
+// A fingerprint of everything the board draws. The 2-minute poll used to
+// re-render unconditionally, which wiped whatever note you were mid-way
+// through typing. Now it only redraws when the Sheet actually moved.
+function sigOf(j){
+  const rows = (j.rows || []).map(t =>
+    [t.row,t.phase,t.wbs,t.task,t.deliv,t.owner,t.status,t.start,t.due,t.notes,t.note,t.upd]
+      .join("\u001f")).join("\u001e");
+  // DATA.log, which the Team tab's analytics read, is deliberately left out.
+  // Every log entry comes from a write, and a write always stamps that row's
+  // upd, which is already in the fingerprint above. Folding the log in would
+  // also make each of your own edits force a redraw on the next poll, because
+  // the client cannot mirror the server's log entry locally, and that redraw
+  // is the very thing this guard exists to prevent.
+  return rows + "\u001d" + (j.owners || []).join(",") +
+         "\u001d" + (j.status || []).join(",") + "\u001d" + j.writes;
+}
+let lastSig = null, booted = false;
+
+async function load(force){
   try{
     const r = await fetch(API + "?t=" + Date.now());
     const j = await r.json();
     if(!j.ok) throw new Error(j.err || "bad response");
+    const sig = sigOf(j);
+    const changed = force || !booted || sig !== lastSig;
     DATA = j;
-    render();
+    lastSig = sig;
+    if(changed){ booted = true; render(); }
     $("#sub").innerHTML = 'Live from the team Google Sheet · synced ' +
       new Date(j.at).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}) +
       ' · <a href="' + SHEET + '" target="_blank" rel="noopener">open the Sheet</a>';
@@ -382,12 +658,35 @@ function summary(list){
   const held = list.filter(t=>t.status==="Waiting"||t.status==="Stuck").length;
   const pct = list.length ? Math.round(100*done/list.length) : 0;
   const wkno = Math.max(1, Math.floor((today()-asDate(PLAN.term.start))/6048e5)+1);
+  const vals = {pct:pct, overdue:overdue, soon:soon, held:held};
+  const n = (k,v) => '<span data-n="'+k+'">'+v+'</span>';
   $("#summary").innerHTML =
-    tile(pct+"%", done+" of "+list.length+" done", stack(list)) +
-    tile(overdue, "Overdue", "", overdue?"var(--s-stuck)":"") +
-    tile(soon, "Due in the next 7 days") +
-    tile(held, "Waiting or stuck") +
+    tile(n("pct",pct)+"%", done+" of "+list.length+" done", stack(list)) +
+    tile(n("overdue",overdue), "Overdue", "", overdue?"var(--s-stuck)":"") +
+    tile(n("soon",soon), "Due in the next 7 days") +
+    tile(n("held",held), "Waiting or stuck") +
     tile('<span class="mono">Wk '+Math.min(wkno,PLAN.term.weeks)+'</span>', "of "+PLAN.term.weeks+", term runs to "+fmtDay(PLAN.term.end));
+  // First paint lands on the real number; later renders tick to it.
+  const prev = summary._v;
+  if(prev) $("#summary").querySelectorAll("[data-n]").forEach(el=>{
+    const k = el.dataset.n;
+    if(prev[k] !== undefined && prev[k] !== vals[k]){
+      el.textContent = prev[k];
+      Motion.countUp(el, vals[k]);
+    }
+  });
+  summary._v = vals;
+}
+
+// Status counts for a section that is folded shut, so it still says where it
+// stands without being opened.
+function pills(rows){
+  let h = '<span class="pills">';
+  ORDER.forEach(k=>{
+    const n = rows.filter(t=>t.status===k).length;
+    if(n) h += '<span class="pill" style="background:'+ST[k]+'" title="'+esc(k+": "+n)+'">'+n+'</span>';
+  });
+  return h + '</span>';
 }
 function tile(v,l,extra,color){
   return '<div class="tile"><div class="v"'+(color?' style="color:'+color+'"':'')+'>'+v+'</div><div class="l">'+l+'</div>'+(extra||"")+'</div>';
@@ -436,11 +735,16 @@ function wbsView(){
   planGroups().forEach(g=>{
     const ts = groupRows(g);
     if(!ts.length && !g.wbs) return;
-    h += '<div class="wcol" style="--gc:'+g.color+'"><div class="node l1"><span class="mono">'+esc(g.wbs)+'</span> '+esc(g.name)+'<small>'+esc(g.weeks)+(g.weeks?' &middot; ':'')+pctK(ts)+'% done</small></div>';
+    const fk = "wbs:"+g.name, fd = isFold(fk);
+    h += '<div class="wcol'+(fd?' fold':'')+'" style="--gc:'+g.color+'">'+
+      '<button class="l1btn" data-fold="'+esc(fk)+'" aria-expanded="'+(!fd)+'">'+
+        '<i class="chev"></i><span><span class="mono">'+esc(g.wbs)+'</span> '+esc(g.name)+
+        '<small>'+esc(g.weeks)+(g.weeks?' &middot; ':'')+pctK(ts)+'% done &middot; '+ts.length+' packages</small></span>'+
+      '</button><div class="wbody"><div class="winner">';
     ts.forEach(t=>{
       h += '<div class="node l2" style="--sc:'+ST[t.status]+'"><span class="n mono">'+esc(t.wbs)+'</span><span>'+esc(t.task)+'</span><span class="o">'+esc(t.owner)+' &middot; '+fmtDay(t.due)+'</span></div>';
     });
-    h += '</div>';
+    h += '</div></div></div>';
   });
   return h+'</div></div><p class="note-sm">Left edge color on each work package = its current status, live from the Sheet.</p>';
 }
@@ -544,6 +848,13 @@ function teamView(){
 }
 
 // ---- Gantt view ------------------------------------------------------------
+// One shared header above every phase, so a click sorts inside all of them at
+// once rather than picking a phase to reorder.
+function gth(k, label){
+  return '<div class="gh sortable" aria-sort="'+sortAria("gantt",k)+'">'+
+    sortBtn("gantt", k, label)+'</div>';
+}
+
 function ganttView(){
   const T0 = asDate(PLAN.term.start);
   let last = asDate(PLAN.term.end);
@@ -567,8 +878,9 @@ function ganttView(){
     wkH+='<div class="'+(i===nowWk?'nw':'')+'"><b>W'+(i+1)+'</b>'+m.toLocaleDateString("en-US",{month:"numeric",day:"numeric"})+'</div>';}
 
   let h='<div class="gwrap" role="region" aria-label="Gantt chart, scrolls sideways for the full term" tabindex="0"><div class="ggrid">'+
-    '<div class="ghd"><div class="gr"><div class="gh">WBS</div><div class="gh">Work package &amp; deliverable</div>'+
-    '<div class="gh">Owner</div><div class="gh">Window</div><div style="position:relative">'+
+    '<div class="ghd"><div class="gr">'+
+    gth("wbs","WBS")+gth("task","Work package &amp; deliverable")+
+    gth("owner","Owner")+gth("due","Window")+'<div style="position:relative">'+
     '<div class="gmo">'+moH+'</div><div class="gwk" style="grid-template-columns:repeat('+W+',1fr)">'+wkH+'</div>'+NOW+'</div></div></div>';
 
   const mss = PLAN.milestones;
@@ -578,21 +890,28 @@ function ganttView(){
 
   planGroups().forEach(g=>{
     const all = groupRows(g);
-    const ts = all.filter(x=>mineV(x)&&(!critOnly||PLAN.cp[x.wbs]));
+    const ts = sortRows(all.filter(x=>mineV(x)&&(!critOnly||PLAN.cp[x.wbs])), sortBy.gantt);
     if(!ts.length) return;
+    const fk = "gantt:"+g.name, fd = isFold(fk);
     const starts = all.map(x=>tStart(x,g)).sort(), dues = all.map(x=>tDue(x,g)).sort();
     const ss = g.start || starts[0], ee = dues[dues.length-1] > (g.end||"") ? dues[dues.length-1] : (g.end||dues[dues.length-1]);
     const dn = all.filter(x=>x.status==="Done").length;
-    h += '<div class="gr gph" style="--gc:'+g.color+'"><div class="pn"><span class="num">'+esc(g.wbs)+'</span>'+
-      '<h2>'+esc(g.name)+'</h2><small>'+esc(g.weeks)+(g.lead?' &middot; lead '+esc(g.lead.split(" ")[0]):'')+'</small></div>'+
-      '<div class="pm"><span>'+fmtDay(ss)+' &ndash; '+fmtDay(ee)+'</span><span class="mono">'+dn+'/'+all.length+'</span></div>'+
+    // The phase summary bar stays on the timeline when the phase is shut; only
+    // the task rows go.
+    h += '<div class="gr gph" style="--gc:'+g.color+'"><div class="pn">'+
+      '<button class="gtog" data-fold="'+esc(fk)+'" aria-expanded="'+(!fd)+'">'+
+        '<i class="chev"></i><span class="num">'+esc(g.wbs)+'</span>'+
+        '<span class="ht2">'+esc(g.name)+'</span></button>'+
+      '<small>'+esc(g.weeks)+(g.lead?' &middot; lead '+esc(g.lead.split(" ")[0]):'')+'</small></div>'+
+      '<div class="pm">'+(fd?pills(ts):'')+'<span>'+fmtDay(ss)+' &ndash; '+fmtDay(ee)+'</span><span class="mono">'+dn+'/'+all.length+'</span></div>'+
       '<div class="gtrk" style="'+trkStyle+'"><span class="gsum" style="left:'+gx(ss)+'%;width:'+gwid(ss,ee)+'%"></span>'+NOW+'</div></div>';
 
+    if(fd) return;
     ts.forEach(x=>{
       const k = skey(x), cp = PLAN.cp[x.wbs], dep = PLAN.dep[x.wbs];
       const cls = k==="done"?"done":k==="waiting"?"waiting":k==="stuck"?"stuck":k==="todo"?"todo":"";
       const s0 = tStart(x,g), d0 = tDue(x,g);
-      h += '<div class="gr gtr'+(cp?' cp':'')+'" style="--gc:'+g.color+'">'+
+      h += '<div class="gr gtr'+(cp?' cp':'')+'" style="--gc:'+g.color+'" data-row="'+x.row+'">'+
         '<div class="w">'+esc(x.wbs)+'</div>'+
         '<div class="n"><span class="gt">'+esc(x.task)+(cp?'<span class="cpf">CP</span>':'')+'</span>'+
           '<span class="sm">'+esc(x.deliv||STK[k][0])+(dep?' &middot; after <b>'+esc(dep)+'</b>':'')+'</span></div>'+
@@ -670,11 +989,21 @@ function boardView(){
     const done = rows.filter(t=>t.status==="Done").length;
     const pct = rows.length ? Math.round(100*done/rows.length) : 0;
     const gc = phaseColor(ph);
-    h += '<section class="group" style="--gc:'+gc+'"><div class="ghead">'+
-         '<h2>'+esc(ph)+'</h2><span class="meta">'+rows.length+' tasks</span>'+
-         '<div class="gbar">'+stack(rows)+'</div><span class="gpct">'+pct+'%</span></div>'+
-         '<div class="tscroll"><table><thead><tr><th>WBS</th><th>Task</th><th>Owner</th><th style="text-align:center">Status</th><th>Due</th><th>Notes</th><th>Updated</th></tr></thead><tbody>';
-    rows.forEach(t=>{
+    // Each section sorts on its own, so the scope is the section.
+    const scope = "board:"+ph, fk = scope, fd = isFold(fk);
+    h += '<section class="group'+(fd?' fold':'')+'" style="--gc:'+gc+'" data-sec="'+esc(scope)+'">'+
+         '<div class="ghead">'+
+           '<button class="gtog" data-fold="'+esc(fk)+'" aria-expanded="'+(!fd)+'">'+
+             '<i class="chev"></i><span class="ht">'+esc(ph)+'</span>'+
+             '<span class="meta">'+rows.length+' tasks</span></button>'+
+           (fd?pills(rows):'')+
+           '<div class="gbar">'+stack(rows)+'</div><span class="gpct">'+pct+'%</span></div>';
+    if(fd){ h += '</section>'; return; }
+    h += '<div class="tscroll"><table><thead><tr>'+
+         COLS.map(c=>'<th class="sortable" aria-sort="'+sortAria(scope,c[0])+'">'+
+                     sortBtn(scope,c[0],c[1],c[2])+'</th>').join("")+
+         '</tr></thead><tbody>';
+    sortRows(rows, sortBy[scope]).forEach(t=>{
       h += '<tr class="'+(t.status==="Done"?"done":"")+'" data-row="'+t.row+'">'+
         '<td class="wbs mono">'+esc(t.wbs)+'</td>'+
         '<td class="name"><span class="t" data-tip="'+esc(t.note||"")+'">'+esc(t.task)+'</span>'+
@@ -707,6 +1036,28 @@ function phaseColor(p){
 }
 
 // ---- master render ---------------------------------------------------------
+// Every fold key the Collapse all / Expand all button owns in the current
+// view, so the one button retargets itself as you move between tabs.
+function foldKeys(){
+  if(view==="board"){
+    const list = filter ? DATA.rows.filter(t=>t.owner===filter) : DATA.rows;
+    const ph = [];
+    list.forEach(t=>{ if(!ph.includes(t.phase)) ph.push(t.phase); });
+    return ph.map(p=>"board:"+p);
+  }
+  if(view==="gantt" || view==="wbs"){
+    const p = view+":";
+    return planGroups().filter(g=>groupRows(g).length).map(g=>p+g.name);
+  }
+  return [];
+}
+function syncFoldAll(){
+  const btn = $("#foldall"), ks = foldKeys();
+  btn.style.display = ks.length ? "" : "none";
+  btn.textContent = (ks.length && ks.every(isFold)) ? "Expand all" : "Collapse all";
+}
+
+let lastView = null;
 function render(){
   renderTabs();
   const isB = view==="board", isG = view==="gantt", isW = view==="wbs", isT = view==="team";
@@ -722,6 +1073,13 @@ function render(){
   if(isB||isG) filters();
   if(isB) boardView();
   $("#alt").innerHTML = isG ? ganttView() : isW ? wbsView() : isT ? teamView() : "";
+  syncFoldAll();
+  // Stagger the entrance on arrival at a view, not on every redraw inside it.
+  if(view !== lastView){
+    lastView = view;
+    Motion.reveal(isB ? $("#groups").querySelectorAll("section.group")
+                      : $("#alt").querySelectorAll(".wcol, .pcard, .gcard"));
+  }
 }
 
 // ---- edits -----------------------------------------------------------------
@@ -744,8 +1102,10 @@ document.addEventListener("change", async e=>{
   if(r.ok){
     rec[field] = value;
     rec.upd = r.upd;
+    lastSig = sigOf(DATA);   // our own edit is not a change to redraw over
     toast("Saved to the Sheet");
     render();
+    Motion.pulse(document.querySelector('[data-row="'+row+'"]'));
   }else{
     el.value = before;
     toast(r.err || "Save failed", true);
@@ -754,6 +1114,22 @@ document.addEventListener("change", async e=>{
 });
 
 document.addEventListener("click", e=>{
+  const fold = e.target.closest("[data-fold]");
+  if(fold){
+    const k = fold.dataset.fold;
+    if(folded[k]) delete folded[k]; else folded[k] = 1;
+    saveUI(); render(); return;
+  }
+  const sort = e.target.closest("[data-sort]");
+  if(sort){
+    const root = view==="board" ? $("#groups") : $("#alt");
+    const sel  = view==="board" ? "tr[data-row]" : ".gtr[data-row]";
+    const first = Motion.capture(root, sel);
+    cycleSort(sort.dataset.scope, sort.dataset.sort);
+    render();
+    Motion.flip(root, sel, first);
+    return;
+  }
   const tab = e.target.closest("[data-view]");
   if(tab){
     view = tab.dataset.view;
@@ -788,7 +1164,15 @@ $("#unlock").addEventListener("click", async ()=>{
   load();
 });
 
-$("#refresh").addEventListener("click", load);
+$("#foldall").addEventListener("click", ()=>{
+  const ks = foldKeys();
+  if(!ks.length) return;
+  const shutAll = !ks.every(isFold);
+  ks.forEach(k=>{ if(shutAll) folded[k] = 1; else delete folded[k]; });
+  saveUI(); render();
+});
+
+$("#refresh").addEventListener("click", ()=>load(true));
 
 // ---- hover tooltips --------------------------------------------------------
 const tip = $("#tip");
@@ -809,7 +1193,7 @@ document.addEventListener("mouseout", e=>{
 if(who) $("#me").value = who;
 render();
 load();
-setInterval(load, 120000);
+setInterval(()=>load(), 120000);
 </script>
 </body>
 </html>
