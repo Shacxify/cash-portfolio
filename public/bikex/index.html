@@ -108,6 +108,16 @@ td.due input,td.note input{border-color:transparent;background:transparent;width
 .why{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:14px}
 .why h3{margin:0 0 6px;font-size:14px}
 .why ul{margin:0;padding-left:18px;color:var(--ink2)}
+.pmet{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px}
+.pmet .m{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:6px 8px;text-align:center}
+.pmet .m b{display:block;font-size:16px;font-variant-numeric:tabular-nums;font-weight:700}
+.pmet .m span{font-size:10.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.pmet .bad b{color:var(--s-stuck)}
+.att{background:var(--panel);border:1px solid var(--s-stuck);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.att h3{margin:0 0 8px;font-size:14px;color:var(--s-stuck)}
+.att ul{margin:0;padding-left:18px;color:var(--ink2)}
+.att li{margin-bottom:4px}
+.att b{color:var(--ink)}
 /* ---- Gantt view ---- */
 .gbase{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;margin-bottom:10px;font-size:12.5px;color:var(--ink2)}
 .gbase b{color:var(--ink);font-weight:600}
@@ -733,13 +743,87 @@ function wbsView(){
   return h+'</div></div><p class="note-sm">Left edge color on each work package = its current status, live from the Sheet.</p>';
 }
 
-// ---- Team view -------------------------------------------------------------
+// ---- Team view (per-person analytics) --------------------------------------
+function parseStampDate(u){
+  // upd stamps look like "Sep 21 Cash (web)" or "Sep 21 cash.johnson"
+  const m = /^([A-Z][a-z]{2}) (\d{1,2})/.exec(String(u||""));
+  if(!m) return null;
+  const mo = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(m[1]);
+  if(mo < 0) return null;
+  const t = today();
+  let d = new Date(t.getFullYear(), mo, +m[2]);
+  if(d - t > 90*864e5) d = new Date(t.getFullYear()-1, mo, +m[2]);
+  return d;
+}
+function whoMatch(logWho, owner){
+  const a = String(logWho||"").toLowerCase(), b = String(owner||"").toLowerCase();
+  if(!a || !b) return false;
+  return a === b || a.includes(b.split(" ")[0]) || b.startsWith(a.split(/[ .]/)[0]);
+}
+function analytics(){
+  // DATA.log arrives once the Apps Script exposes the Log sheet; every metric
+  // that needs it degrades to a dash until then.
+  const L = DATA.log || [];
+  const doneAt = {};
+  L.forEach(e=>{
+    if(e.field === "status"){
+      if(e.to === "Done") doneAt[e.wbs] = asDate(String(e.t).slice(0,10)) || new Date(e.t);
+      else delete doneAt[e.wbs];
+    }
+  });
+  return { L, doneAt, hasLog: L.length > 0 };
+}
 function teamView(){
-  let h = '<div class="team">';
+  const A = analytics();
+  const t0 = today(), wk = new Date(t0); wk.setDate(wk.getDate()+7);
+  let h = "";
+  const overdueAll = DATA.rows.filter(late).sort((a,b)=>(a.due||"").localeCompare(b.due||""));
+  const staleAll = DATA.rows.filter(r=>{
+    if(r.status !== "Working on it") return false;
+    const d = parseStampDate(r.upd);
+    return d && (t0-d)/864e5 > 7;
+  });
+  if(overdueAll.length || staleAll.length){
+    h += '<div class="att"><h3>Needs attention</h3><ul>';
+    overdueAll.forEach(r=>{
+      const days = Math.round((t0-asDate(r.due))/864e5);
+      h += '<li><b>'+esc(r.wbs)+' '+esc(r.task)+'</b> &middot; '+esc(r.owner)+' &middot; <b>'+days+' day'+(days===1?'':'s')+' late</b></li>';
+    });
+    staleAll.forEach(r=>{
+      h += '<li><b>'+esc(r.wbs)+' '+esc(r.task)+'</b> &middot; '+esc(r.owner)+' &middot; Working on it, no update since '+esc(String(r.upd).split(" ").slice(0,2).join(" "))+'</li>';
+    });
+    h += '</ul></div>';
+  }
+  h += '<div class="team">';
   DATA.owners.filter(p=>p!=="Whole team").forEach(p=>{
     const ts = DATA.rows.filter(t=>t.owner===p).sort((a,b)=>(a.due||"9").localeCompare(b.due||"9"));
     const open = ts.filter(t=>t.status!=="Done");
-    h += '<article class="pcard"><header>'+avN(p)+'<div><h3>'+esc(p)+'</h3><div class="role">'+esc(PLAN.roles[p]||"")+'</div></div><div style="margin-left:auto;text-align:right"><div class="mono" style="font-size:18px">'+pctK(ts)+'%</div><div class="note-sm">'+open.length+' open / '+ts.length+'</div></div></header>'+stack(ts)+'<ul>';
+    const od = ts.filter(late);
+    const worst = od.length ? Math.max.apply(null, od.map(r=>Math.round((t0-asDate(r.due))/864e5))) : 0;
+    const soon = open.filter(x=>{const d=asDate(x.due);return d && d>=t0 && d<=wk;}).length;
+    let onT = 0, known = 0;
+    ts.filter(x=>x.status==="Done").forEach(x=>{
+      const d = A.doneAt[x.wbs];
+      if(d && asDate(x.due)){ known++; if(d <= asDate(x.due)) onT++; }
+    });
+    let lastA = null;
+    A.L.forEach(e=>{ if(whoMatch(e.who,p)){ const d = new Date(e.t); if(!lastA || d>lastA) lastA = d; } });
+    if(!lastA){
+      const first = p.split(" ")[0].toLowerCase();
+      ts.forEach(x=>{
+        if(String(x.upd||"").toLowerCase().includes(first)){
+          const d = parseStampDate(x.upd);
+          if(d && (!lastA || d>lastA)) lastA = d;
+        }
+      });
+    }
+    h += '<article class="pcard"><header>'+avN(p)+'<div><h3>'+esc(p)+'</h3><div class="role">'+esc(PLAN.roles[p]||"")+'</div></div><div style="margin-left:auto;text-align:right"><div class="mono" style="font-size:18px">'+pctK(ts)+'%</div><div class="note-sm">'+open.length+' open / '+ts.length+'</div></div></header>'+stack(ts)+
+      '<div class="pmet">'+
+      '<div class="m'+(od.length?' bad':'')+'"><b>'+od.length+'</b><span>Overdue'+(worst?' ('+worst+'d)':'')+'</span></div>'+
+      '<div class="m"><b>'+soon+'</b><span>Due 7 days</span></div>'+
+      '<div class="m"><b>'+(A.hasLog ? (known ? Math.round(100*onT/known)+'%' : '&ndash;') : '&ndash;')+'</b><span>On time'+(A.hasLog && known ? ' ('+onT+'/'+known+')' : '')+'</span></div>'+
+      '<div class="m"><b>'+(lastA ? lastA.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '&ndash;')+'</b><span>Last active</span></div>'+
+      '</div><ul>';
     open.slice(0,6).forEach(t=>{
       h += '<li><i class="dot" style="background:'+ST[t.status]+'"></i><span>'+esc(t.task)+'</span><span class="d'+(late(t)?' late':'')+'">'+fmtDay(t.due)+'</span></li>';
     });
@@ -747,7 +831,9 @@ function teamView(){
     if(!open.length) h += '<li class="note-sm">All clear.</li>';
     h += '</ul></article>';
   });
-  h += '</div><div class="why"><h3>Scoring the team, not just the tasks</h3><ul>'+
+  h += '</div>';
+  if(!A.hasLog) h += '<p class="note-sm" style="margin-top:10px">On-time rates and reliable last-active dates switch on once the Apps Script shares its change log with this page.</p>';
+  h += '<div class="why"><h3>Scoring the team, not just the tasks</h3><ul>'+
     '<li>Board = execution: on-time rate, overdue count, stuck count. Review it before every Friday call.</li>'+
     '<li>Sponsor satisfaction is 20% of the grade. Ask Kelly for a 1-5 pulse at the end of each bi-weekly call.</li>'+
     '<li>Pilot outcome: % of check/DAF gifts acknowledged, and days from deposit to thank-you, old vs new.</li>'+
