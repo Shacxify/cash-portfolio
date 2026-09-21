@@ -283,12 +283,12 @@ const PLAN = {
   dep: {"1.6":"2.9","2.4":"2.3","2.5":"2.3","2.6":"2.3","2.9":"2.4-2.6","3.1":"2.9","3.2":"3.1","3.6":"3.2-3.5","3.7":"3.6 approved","3.8":"3.7","4.1":"2.9","4.3":"4.2","4.4":"4.3","5.1":"2.9","5.4":"5.2-5.3","6.1":"3.8","6.2":"6.1","6.4":"6.3","7.1":"6.4","7.2":"6.4","7.4":"7.1-7.3"},
   milestones: [
     {d:"2026-09-25",n:"Sponsor call 1: live DonorView walkthrough; three as-is flowcharts due"},
+    {d:"2026-09-30",n:"High-level presentation to class (10 to 12 minutes, scheduled by Prof. Sridar)"},
     {d:"2026-10-02",n:"Phase 2.0 exit: user requirements specs complete for all three processes"},
     {d:"2026-10-09",n:"Sponsor call 2: gap analysis and proposal deck",gate:1},
     {d:"2026-10-23",n:"Sponsor call 3; CPM diagram and risk register due to Prof. Sridar"},
     {d:"2026-10-30",n:"Project plan v1 submitted"},
     {d:"2026-11-06",n:"Sponsor call 4: in-kind and outgoing feasibility memos",gate:1},
-    {d:"2026-11-13",n:"High-level presentation to class"},
     {d:"2026-11-20",n:"Sponsor call 5: pilot results and staff feedback"},
     {d:"2026-12-04",n:"Sponsor call 6: final presentation and project plan v2"},
     {d:"2026-12-11",n:"Turnover: SOPs handed in, sponsor feedback review"}
@@ -411,7 +411,11 @@ function planGroups(){
 }
 function groupRows(g){ return DATA.rows.filter(t=>t.phase===g.name); }
 function skey(t){ return SKEY[t.status] || "todo"; }
-function tStart(t,g){ return t.start || g.start || t.due || PLAN.term.start; }
+function tStart(t,g){
+  const s = t.start || g.start || t.due || PLAN.term.start;
+  const e = t.due || t.start || g.end || PLAN.term.end;
+  return s > e ? e : s;   // a rescheduled due date can undercut the old start
+}
 function tDue(t,g){ return t.due || t.start || g.end || PLAN.term.end; }
 function mineV(t){ return !filter || t.owner===filter || t.owner==="Whole team"; }
 function pctK(list){ return list.length ? Math.round(100*list.filter(t=>t.status==="Done").length/list.length) : 0; }
@@ -545,7 +549,7 @@ function ganttView(){
       '<li><b>Zero in-kind records in DV.</b> 98 constituents are tagged In-Kind Donor, none has an in-kind gift record. 4.0 designs for a process that generates no data today.</li>'+
       '<li><b>GiveButter is in the stack</b> and absent from Kelly\'s plan. Until we know what it syncs and whether it thanks donors itself, 3.1 is incomplete.</li>'+
       '<li><b>Thanksgiving week</b> (Nov 23-29) overlaps pilot refinement. 6.0 holds the term\'s only real slack and it gets spent there.</li>'+
-      '<li><b>Class dates are placeholders</b> until the F26 greensheet posts.</li></ul></section>'+
+      '<li><b>High-level presentation moved to Sep 30</b> by Prof. Sridar, six weeks before the plan assumed, so the deck covers as-is findings and approach, not results. The final presentation date still tracks the F26 greensheet.</li></ul></section>'+
     '<section class="gcard"><h3>How to read it</h3><ul>'+
       '<li>Bars sit on a Monday-start week grid. The hairline down every row is today.</li>'+
       '<li>A red left rail and a <b>CP</b> tag mark the critical path. Use the filter chip to show only those rows.</li>'+
