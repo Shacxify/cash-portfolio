@@ -597,6 +597,12 @@ function sigOf(j){
   const rows = (j.rows || []).map(t =>
     [t.row,t.phase,t.wbs,t.task,t.deliv,t.owner,t.status,t.start,t.due,t.notes,t.note,t.upd]
       .join("\u001f")).join("\u001e");
+  // DATA.log, which the Team tab's analytics read, is deliberately left out.
+  // Every log entry comes from a write, and a write always stamps that row's
+  // upd, which is already in the fingerprint above. Folding the log in would
+  // also make each of your own edits force a redraw on the next poll, because
+  // the client cannot mirror the server's log entry locally, and that redraw
+  // is the very thing this guard exists to prevent.
   return rows + "\u001d" + (j.owners || []).join(",") +
          "\u001d" + (j.status || []).join(",") + "\u001d" + j.writes;
 }
