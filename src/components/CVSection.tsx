@@ -19,13 +19,13 @@ const ACCENT = "#86A397";
 
 const education: Entry[] = [
   {
-    date: "",
+    date: "Class of 2026",
     title: "San José State University",
     subtitle: "B.S. Business Administration, MIS · GPA 3.5",
     location: "San José, California",
     href: "https://www.sjsu.edu/",
     bullets: [
-      "Lucas College of Business — Management Information Systems concentration.",
+      "Lucas College of Business, Management Information Systems concentration.",
       "Coursework across systems analysis, data management, and enterprise operations.",
     ],
     tools: ["SQL", "Tableau", "Power BI", "Excel"],
@@ -34,7 +34,7 @@ const education: Entry[] = [
   {
     date: "",
     title: "West Valley College",
-    subtitle: "5 Associate Degrees — AS MIS, AST Economics, AA Liberal Arts (3 emphases)",
+    subtitle: "5 Associate Degrees: AS MIS, AST Economics, AA Liberal Arts (3 emphases)",
     location: "Saratoga, California",
     href: "https://www.westvalley.edu/",
     bullets: [
@@ -47,7 +47,7 @@ const education: Entry[] = [
 
 const professional: Entry[] = [
   {
-    date: "May 2025 — Present",
+    date: "May 2025 - Aug 2026",
     title: "Operations PM Intern @ Centene",
     subtitle: "St. Louis, MO · Hybrid · Enterprise Operations",
     location: "Hybrid",
@@ -62,7 +62,21 @@ const professional: Entry[] = [
     learned: ["Enterprise PMO governance", "Cross-functional stakeholder alignment", "RAID & risk registers"],
   },
   {
-    date: "Jan 2025 — Present",
+    date: "Jun 2025 - Jan 2026",
+    title: "Director of Operations @ The Intern Ship",
+    subtitle: "Partnerships & National Programming",
+    location: "San José, California",
+    href: "https://internship.beehiiv.com/",
+    bullets: [
+      "Converted ~85% of a 20+ monthly partner pipeline into active sponsorships, driving GTM across 10+ event formats.",
+      "Led flagship events (Tech Intern Bus Mixer, Intern Ship Games) drawing 300+ attendees at 90%+ venue capacity.",
+      "Automated Power BI lead scoring; A/B tested email, Luma, and LinkedIn campaigns to lift partner conversion.",
+    ],
+    tools: ["Power BI", "Luma", "Salesforce", "Power Automate", "Excel"],
+    learned: ["GTM pipeline management", "A/B testing & lead scoring", "Sponsorship negotiation"],
+  },
+  {
+    date: "Jan 2025 - Aug 2026",
     title: "Director of Events @ LinkedIn Campus Ambassador Program",
     subtitle: "Promoted from LinkedIn Ambassador · SJSU",
     location: "San José, California",
@@ -77,21 +91,7 @@ const professional: Entry[] = [
     learned: ["Brand-partner alignment", "Event operations at scale", "Feedback-driven iteration"],
   },
   {
-    date: "Jun 2025 — Jan 2026",
-    title: "Director of Operations @ The Intern Ship",
-    subtitle: "Partnerships & National Programming",
-    location: "San José, California",
-    href: "https://internship.beehiiv.com/",
-    bullets: [
-      "Converted ~85% of a 20+ monthly partner pipeline into active sponsorships, driving GTM across 10+ event formats.",
-      "Led flagship events (Tech Intern Bus Mixer, Intern Ship Games) drawing 300+ attendees at 90%+ venue capacity.",
-      "Automated Power BI lead scoring; A/B tested email, Luma, and LinkedIn campaigns to lift partner conversion.",
-    ],
-    tools: ["Power BI", "Luma", "Salesforce", "Power Automate", "Excel"],
-    learned: ["GTM pipeline management", "A/B testing & lead scoring", "Sponsorship negotiation"],
-  },
-  {
-    date: "Aug 2020 — Jun 2024",
+    date: "Aug 2020 - Jun 2024",
     title: "Project Manager @ San José Spotlight",
     subtitle: "Remote · Award-winning nonprofit newsroom",
     location: "San José, California (Remote)",
@@ -103,11 +103,23 @@ const professional: Entry[] = [
     tools: ["Asana", "Google Workspace", "Slack"],
     learned: ["Editorial project management", "Long-horizon reliability"],
   },
+  {
+    date: "Jan 2016 - Jun 2019",
+    title: "Founder @ CodeMoney",
+    subtitle: "Indie game studio · Shipped to App Store & Google Play",
+    location: "San Francisco Bay Area, California",
+    bullets: [
+      "Built beCAREFUL, an endless hold-and-survive arcade game that generated $20K+ in 3 months post launch.",
+      "Developed in C# on the Unity SDK, integrated social network and ad space APIs, shipped to App Store and Google Play.",
+    ],
+    tools: ["C#", "Unity", "App Store Connect", "Google Play Console"],
+    learned: ["End-to-end product ownership", "Consumer app monetization"],
+  },
 ];
 
 const organizational: Entry[] = [
   {
-    date: "Jul 2024 — Jan 2026",
+    date: "Jul 2024 - Jan 2026",
     title: "President @ SJSU Marketing Association",
     subtitle: "Lucas College of Business · 250+ members, 45+ year legacy",
     location: "San José, California",
@@ -122,7 +134,7 @@ const organizational: Entry[] = [
   },
   {
     date: "2026",
-    title: "Winner — LinkedUp | PMc Build-A-Feature Competition",
+    title: "Winner: LinkedUp | PMc Build-A-Feature Competition",
     subtitle: "End-to-end product feature for LinkedIn",
     bullets: [
       "Scoped, designed, and pitched a LinkedIn product feature end-to-end: product strategy, UX, and roadmap.",
@@ -132,7 +144,7 @@ const organizational: Entry[] = [
   },
   {
     date: "2018",
-    title: "Innovation Award — San José Unified School District",
+    title: "Innovation Award, San José Unified School District",
     subtitle: "Pioneer High School video news production",
     bullets: [
       "Created and anchored Pioneer High School's largest-scale video news production, reaching 1,500+ students.",
@@ -140,7 +152,7 @@ const organizational: Entry[] = [
     learned: ["Production leadership", "On-camera communication"],
   },
   {
-    date: "2023 — 2024",
+    date: "2023 - 2024",
     title: "Merit Scholar @ Alpha Gamma Sigma",
     subtitle: "Honors Society, West Valley College",
     location: "Saratoga, California",
@@ -369,37 +381,25 @@ export function CVSection() {
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
               <p>
-                I’m <strong>Cash Johnson</strong>, a{" "}
-                <strong>Silicon Valley operations and project manager</strong> who enjoys working
-                where <strong>enterprise operations, partnerships, and go-to-market strategy</strong>{" "}
-                meet. Give me an <strong>ambiguous, cross-functional problem</strong>, and I’ll turn
-                it into a <strong>clear plan that can actually ship</strong>.
+                I’m Cash Johnson, a Silicon Valley AI Solutions Architect who enjoys working where
+                enterprise operations, intelligent automation, and go-to-market strategy meet. Give
+                me an ambiguous, cross-functional problem, and I’ll turn it into an AI-powered
+                solution that actually ships.
               </p>
               <p>
-                I’m currently a <strong>Project Management Intern at Centene</strong>, where I’m
-                learning how to move quickly and thoughtfully within a{" "}
-                <strong>highly regulated healthcare environment</strong>. I also serve as{" "}
-                <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>,
-                leading events from <strong>initial idea through execution</strong>. Alongside that,
-                I’m finishing my{" "}
-                <strong>
-                  B.S. in Business Administration with a concentration in Management Information
-                  Systems at San José State University
-                </strong>
-                .
+                Most of my focus right now is on AI operations and building agents that solve real
+                operational problems. That usually starts with mapping a messy manual process,
+                figuring out where an agent actually belongs, and then shipping automated workflows
+                people will genuinely use. When I spent time as a Project Management Intern at
+                Centene, I applied that same thinking inside a highly regulated healthcare
+                environment where accuracy and documentation mattered as much as speed.
               </p>
               <p>
-                I bring a <strong>business mindset, technical instincts, and a practical approach</strong>{" "}
-                to getting things done. Outside of work and school, I’m usually{" "}
-                <strong>
-                  fishing, rock climbing, surfing, playing guitar, or making a mess with my watercolor
-                  set
-                </strong>
-                .
+                I bring a business mindset, technical instincts, and a practical approach to getting
+                things done. Outside of work, I’m usually fishing, rock climbing, surfing,
+                playing guitar, or making a mess with my watercolor set.
               </p>
-              <p>
-                Go ahead and <strong>message me, let's go grab coffee</strong>! (-:
-              </p>
+              <p>Go ahead and message me, let's go grab coffee! (-:</p>
             </div>
           </div>
           <div id="contact">
