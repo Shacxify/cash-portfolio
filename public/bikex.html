@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>BikeX Work Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F3F5F8;--panel:#FFF;--panel2:#F8F9FB;--ink:#1B2230;--ink2:#5A6475;--ink3:#8A93A3;--line:#E2E6EC;--line2:#EEF1F5;
+  --accent:#0E7C86;--accentInk:#FFF;
+  --s-done:#2E9E68;--s-working:#E39B2D;--s-stuck:#D6454B;--s-waiting:#7B68C8;--s-todo:#A3ACBA;
+  --today:#D6454B;--shadow:0 1px 2px rgba(20,30,50,.06),0 2px 8px rgba(20,30,50,.04);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#12161D;--panel:#1A1F28;--panel2:#161B23;--ink:#E7EAF0;--ink2:#A3ACBB;--ink3:#737D8E;--line:#2A313D;--line2:#222833;
+  --accent:#2BB3BE;--accentInk:#0B1417;--s-todo:#5C6574;--shadow:none;color-scheme:dark;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 16px 80px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+h1{font-size:24px;margin:0;letter-spacing:-.01em}
+.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+.sub{color:var(--ink2);margin-top:4px;font-size:13px}
+.sub a{color:var(--accent)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:14px;box-shadow:var(--shadow)}
+.bar label{font-size:12px;color:var(--ink2);font-weight:600}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;max-width:100%}
+button{font:inherit;font-weight:600;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+button.pri{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
+button:disabled{opacity:.5;cursor:default}
+.who{margin-left:auto;font-size:12px;color:var(--ink2)}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.tile .v{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile .l{color:var(--ink2);font-size:12px;margin-top:2px}
+.stack{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--line2);margin-top:8px}
+.stack i{display:block;height:100%}
+.filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 10px 4px 4px;font-size:13px;cursor:pointer;color:var(--ink)}
+.chip.plain{padding-left:10px}
+.chip[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.av{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;color:#fff;font-size:10px;font-weight:700;flex:none}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--ink2);margin-left:auto}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.group{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
+.ghead{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:12px 14px;border-left:5px solid var(--gc)}
+.ghead h2{font-size:16px;margin:0;color:var(--gc)}
+.ghead .meta{color:var(--ink2);font-size:12px}
+.ghead .gbar{flex:1 1 120px;max-width:220px;margin-left:auto}
+.ghead .gpct{font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums;min-width:36px;text-align:right}
+.tscroll{overflow-x:auto;border-top:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:900px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line2);vertical-align:middle}
+th{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;background:var(--panel2)}
+tr:last-child td{border-bottom:0}
+td.wbs{width:54px;color:var(--ink3);font-size:12px;border-left:5px solid var(--gc)}
+td.name{min-width:280px}
+td.name .dl{display:block;font-size:11px;color:var(--ink3)}
+td.own{width:170px}td.st{width:150px}td.due{width:140px}td.note{width:220px}td.upd{width:110px;font-size:12px;color:var(--ink3)}
+tr.done td.name .t{color:var(--ink3);text-decoration:line-through}
+.stsel{width:100%;color:#fff;font-weight:600;border:0;text-align-last:center;appearance:none;-webkit-appearance:none;padding:6px}
+.stsel option{color:var(--ink);background:var(--panel)}
+.ownsel{display:flex;align-items:center;gap:6px}
+.ownsel select{border-color:transparent;background:transparent;width:135px}
+.ownsel select:hover,td.due input:hover,td.note input:hover{border-color:var(--line)}
+td.due input,td.note input{border-color:transparent;background:transparent;width:100%}
+.late{color:var(--s-stuck);font-weight:600}
+.t{cursor:help;border-bottom:1px dotted var(--ink3)}
+#tip{position:fixed;z-index:50;max-width:340px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.5;box-shadow:0 8px 24px rgba(10,20,40,.18);white-space:pre-wrap;display:none}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;display:none;z-index:60}
+.ro{background:var(--panel2);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2);margin-bottom:14px}
+.err{color:var(--s-stuck)}
+@media (max-width:560px){h1{font-size:20px}.ghead .gbar{flex-basis:100%;margin-left:0;max-width:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">BUS4-119A · Silicon Valley Bicycle Exchange</div>
+      <h1>BikeX Work Board</h1>
+      <div class="sub" id="sub">Loading the board…</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="refresh">Refresh</button>
+    </div>
+  </header>
+
+  <div class="bar">
+    <label for="me">I am</label>
+    <select id="me"><option value="">pick your name</option></select>
+    <label for="pass">Your code</label>
+    <input id="pass" type="password" size="14" placeholder="personal code" autocomplete="off">
+    <button id="unlock" class="pri">Unlock editing</button>
+    <span class="who" id="who">Read only</span>
+  </div>
+
+  <div class="ro" id="rohint">Anyone with this link can read the board. To change an owner, status, due date, or note, enter your personal code. Every change writes straight to the Google Sheet and is logged with your name.</div>
+  <div class="ro" id="paused" style="display:none;border-color:var(--s-stuck);color:var(--s-stuck)">Web editing is paused by the PM right now. Changes have to go through the Google Sheet.</div>
+
+  <div class="summary" id="summary"></div>
+  <div class="filters" id="filters"></div>
+  <div id="groups"></div>
+</div>
+<div id="tip" role="tooltip"></div>
+<div id="toast"></div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Paste the /exec URL from the Apps Script deployment between the quotes.
+const API = "https://script.google.com/macros/s/AKfycbwp2Q3l9s4674OZLx5shd_JheTgZgyAyogctRXCFfLA8ehcGeZWAt8J_q-ooinoZs6PUw/exec";
+const SHEET = "https://docs.google.com/spreadsheets/d/1boE5WqMTrB8ZC7m74ieK3grTjf8e-usWxgi2usjn96U/edit";
+// ---------------------------------------------------------------------------
+
+const ST = {
+  "Not started":  "var(--s-todo)",
+  "Working on it":"var(--s-working)",
+  "Waiting":      "var(--s-waiting)",
+  "Stuck":        "var(--s-stuck)",
+  "Done":         "var(--s-done)"
+};
+const ORDER = ["Done","Working on it","Waiting","Stuck","Not started"];
+const COLORS = {"Cash Johnson":"#0E7C86","Alexander Ching":"#C2410C","Andrew Paran":"#7C3AED","Jaden Dang":"#2563EB","Brandon Le":"#B45309","Whole team":"#5A6475"};
+
+let DATA = {rows:[],owners:[],status:[]};
+let who = localStorage.getItem("bx-who") || "";
+let pass = sessionStorage.getItem("bx-pass") || "";
+let filter = null;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today = () => {const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());};
+const asDate = s => {if(!s)return null;const p=String(s).slice(0,10).split("-");return p.length===3?new Date(+p[0],+p[1]-1,+p[2]):null;};
+const fmtDay = s => {const d=asDate(s);return d?d.toLocaleDateString("en-US",{month:"short",day:"numeric"}):"TBD";};
+const initials = n => n==="Whole team" ? "ALL" : n.split(" ").map(x=>x[0]).join("").slice(0,2);
+const canEdit = () => !!(who && pass);
+
+function toast(msg, bad){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.style.background = bad ? "var(--s-stuck)" : "var(--ink)";
+  t.style.color = bad ? "#fff" : "var(--bg)";
+  t.style.display = "block";
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>{t.style.display="none";}, 2600);
+}
+
+async function load(){
+  try{
+    const r = await fetch(API + "?t=" + Date.now());
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.err || "bad response");
+    DATA = j;
+    render();
+    $("#sub").innerHTML = 'Live from the team Google Sheet · synced ' +
+      new Date(j.at).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}) +
+      ' · <a href="' + SHEET + '" target="_blank" rel="noopener">open the Sheet</a>';
+  }catch(err){
+    $("#sub").innerHTML = '<span class="err">Could not reach the board API. ' + esc(err.message) + '</span>';
+  }
+}
+
+async function save(row, field, value, was){
+  const res = await fetch(API, {
+    method: "POST",
+    headers: {"Content-Type": "text/plain;charset=utf-8"},
+    body: JSON.stringify({pass, who, row, field, value, was})
+  });
+  return res.json();
+}
+
+function late(t){
+  const d = asDate(t.due);
+  return t.status !== "Done" && d && d < today();
+}
+
+function stack(list){
+  if(!list.length) return '<div class="stack"></div>';
+  let h = "";
+  ORDER.forEach(k=>{
+    const n = list.filter(t=>t.status===k).length;
+    if(n) h += '<i style="width:'+(100*n/list.length)+'%;background:'+ST[k]+'" title="'+k+': '+n+'"></i>';
+  });
+  return '<div class="stack">'+h+'</div>';
+}
+
+function summary(list){
+  const done = list.filter(t=>t.status==="Done").length;
+  const overdue = list.filter(late).length;
+  const t0 = today(), wk = new Date(t0); wk.setDate(wk.getDate()+7);
+  const soon = list.filter(t=>{const d=asDate(t.due);return t.status!=="Done" && d && d>=t0 && d<=wk;}).length;
+  const held = list.filter(t=>t.status==="Waiting"||t.status==="Stuck").length;
+  const pct = list.length ? Math.round(100*done/list.length) : 0;
+  $("#summary").innerHTML =
+    tile(pct+"%", done+" of "+list.length+" done", stack(list)) +
+    tile(overdue, "Overdue", "", overdue?"var(--s-stuck)":"") +
+    tile(soon, "Due in the next 7 days") +
+    tile(held, "Waiting or stuck");
+}
+function tile(v,l,extra,color){
+  return '<div class="tile"><div class="v"'+(color?' style="color:'+color+'"':'')+'>'+v+'</div><div class="l">'+l+'</div>'+(extra||"")+'</div>';
+}
+
+function filters(){
+  let h = '<button class="chip plain" data-who="" aria-pressed="'+(!filter)+'">Everyone</button>';
+  DATA.owners.forEach(p=>{
+    const open = DATA.rows.filter(t=>t.owner===p && t.status!=="Done").length;
+    h += '<button class="chip" data-who="'+esc(p)+'" aria-pressed="'+(filter===p)+'">'+
+         '<span class="av" style="background:'+(COLORS[p]||"#5A6475")+'">'+initials(p)+'</span>'+
+         esc(p.split(" ")[0])+' <span class="mono" style="color:var(--ink3)">'+open+'</span></button>';
+  });
+  h += '<span class="legend">' + ORDER.map(k=>'<span><i class="dot" style="background:'+ST[k]+'"></i>'+k+'</span>').join("") + '</span>';
+  $("#filters").innerHTML = h;
+}
+
+function render(){
+  const all = DATA.rows;
+  const list = filter ? all.filter(t=>t.owner===filter) : all;
+  summary(list);
+  filters();
+
+  // owner picker
+  const me = $("#me");
+  if(me.options.length <= 1){
+    DATA.owners.filter(o=>o!=="Whole team").forEach(o=>{
+      const op = document.createElement("option");
+      op.value = o; op.textContent = o;
+      me.appendChild(op);
+    });
+    me.value = who;
+  }
+
+  const phases = [];
+  list.forEach(t=>{ if(!phases.includes(t.phase)) phases.push(t.phase); });
+
+  let h = "";
+  phases.forEach(ph=>{
+    const rows = list.filter(t=>t.phase===ph);
+    const done = rows.filter(t=>t.status==="Done").length;
+    const pct = rows.length ? Math.round(100*done/rows.length) : 0;
+    const gc = phaseColor(ph);
+    h += '<section class="group" style="--gc:'+gc+'"><div class="ghead">'+
+         '<h2>'+esc(ph)+'</h2><span class="meta">'+rows.length+' tasks</span>'+
+         '<div class="gbar">'+stack(rows)+'</div><span class="gpct">'+pct+'%</span></div>'+
+         '<div class="tscroll"><table><thead><tr><th>WBS</th><th>Task</th><th>Owner</th><th style="text-align:center">Status</th><th>Due</th><th>Notes</th><th>Updated</th></tr></thead><tbody>';
+    rows.forEach(t=>{
+      h += '<tr class="'+(t.status==="Done"?"done":"")+'" data-row="'+t.row+'">'+
+        '<td class="wbs mono">'+esc(t.wbs)+'</td>'+
+        '<td class="name"><span class="t" data-tip="'+esc(t.note||"")+'">'+esc(t.task)+'</span>'+
+          (t.deliv?'<span class="dl">Deliverable: '+esc(t.deliv)+'</span>':'')+'</td>'+
+        '<td class="own"><div class="ownsel"><span class="av" style="background:'+(COLORS[t.owner]||"#5A6475")+'">'+initials(t.owner||"?")+'</span>'+
+          sel("owner", DATA.owners, t.owner)+'</div></td>'+
+        '<td class="st">'+sel("status", DATA.status, t.status, 'class="stsel" style="background:'+ST[t.status]+'"')+'</td>'+
+        '<td class="due'+(late(t)?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
+        '<td class="note"><input type="text" data-f="notes" value="'+esc(t.notes||"")+'" placeholder="add a note"'+(canEdit()?"":" disabled")+'></td>'+
+        '<td class="upd">'+esc(t.upd||"")+'</td></tr>';
+    });
+    h += '</tbody></table></div></section>';
+  });
+  $("#groups").innerHTML = h;
+  $("#who").textContent = canEdit() ? ("Editing as " + who) : "Read only";
+  $("#rohint").style.display = canEdit() ? "none" : "block";
+  $("#paused").style.display = (DATA.writes === false) ? "block" : "none";
+}
+
+function sel(field, options, value, attrs){
+  let h = '<select data-f="'+field+'" '+(attrs||"")+(canEdit()?"":" disabled")+'>';
+  options.forEach(o=>{ h += '<option'+(o===value?" selected":"")+'>'+esc(o)+'</option>'; });
+  return h + '</select>';
+}
+
+function phaseColor(p){
+  const m = {"Project Management":"#0E7C86","Discovery & Training":"#4F6BED","Acknowledgements":"#E0663A",
+    "In-Kind Intake":"#8B5CF6","Outgoing Donations":"#2A9D8F","Pilot & Refinement":"#D4A017","Documentation & Handoff":"#C04E7A"};
+  return m[p] || "#0E7C86";
+}
+
+// ---- edits -----------------------------------------------------------------
+document.addEventListener("change", async e=>{
+  const el = e.target;
+  const field = el.dataset.f;
+  if(!field) return;
+  const tr = el.closest("tr");
+  const row = Number(tr.dataset.row);
+  const rec = DATA.rows.find(t=>t.row===row);
+  const before = rec[field];
+  const value = el.value;
+
+  el.disabled = true;
+  const r = await save(row, field, value, before == null ? "" : String(before))
+    .catch(err=>({ok:false,err:String(err)}));
+  el.disabled = false;
+
+  if(r.ok){
+    rec[field] = value;
+    rec.upd = r.upd;
+    toast("Saved to the Sheet");
+    render();
+  }else{
+    el.value = before;
+    toast(r.err || "Save failed", true);
+    if(r.now !== undefined) load();   // someone else got there first
+  }
+});
+
+document.addEventListener("click", e=>{
+  const chip = e.target.closest(".chip");
+  if(chip){ filter = chip.dataset.who || null; render(); }
+});
+
+$("#unlock").addEventListener("click", async ()=>{
+  who = $("#me").value;
+  pass = $("#pass").value.trim();
+  if(!pass){ toast("Enter your code", true); return; }
+  // check the code without touching the Sheet
+  const r = await save(0, "ping", "").catch(err=>({ok:false,err:String(err)}));
+  if(!r.ok){ pass=""; toast(r.err || "Could not unlock", true); return; }
+  if(r.who){ who = r.who; $("#me").value = who; }   // the code says who you are
+  if(!who){ pass=""; toast("Pick your name", true); return; }
+  localStorage.setItem("bx-who", who);
+  sessionStorage.setItem("bx-pass", pass);
+  $("#pass").value = "";
+  toast("Editing unlocked");
+  load();
+});
+
+$("#refresh").addEventListener("click", load);
+
+// ---- hover tooltips --------------------------------------------------------
+const tip = $("#tip");
+document.addEventListener("mouseover", e=>{
+  const t = e.target.closest("[data-tip]");
+  if(!t || !t.dataset.tip) return;
+  tip.textContent = t.dataset.tip;
+  tip.style.display = "block";
+  const r = t.getBoundingClientRect();
+  const top = r.bottom + 8 + tip.offsetHeight > innerHeight ? r.top - tip.offsetHeight - 8 : r.bottom + 8;
+  tip.style.top = Math.max(8, top) + "px";
+  tip.style.left = Math.min(Math.max(8, r.left), innerWidth - tip.offsetWidth - 8) + "px";
+});
+document.addEventListener("mouseout", e=>{
+  if(e.target.closest("[data-tip]")) tip.style.display = "none";
+});
+
+if(who) $("#me").value = who;
+load();
+setInterval(load, 120000);
+</script>
+</body>
+</html>
