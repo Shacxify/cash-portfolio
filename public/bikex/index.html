@@ -6,6 +6,21 @@
 <meta name="robots" content="noindex, nofollow">
 <title>BikeX Work Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<script>
+// ---------------------------------------------------------------------------
+// Paste the /exec URL from the Apps Script deployment between the quotes.
+const API = "https://script.google.com/macros/s/AKfycbwp2Q3l9s4674OZLx5shd_JheTgZgyAyogctRXCFfLA8ehcGeZWAt8J_q-ooinoZs6PUw/exec";
+const SHEET = "https://docs.google.com/spreadsheets/d/1boE5WqMTrB8ZC7m74ieK3grTjf8e-usWxgi2usjn96U/edit";
+// ---------------------------------------------------------------------------
+// The Apps Script call takes about three seconds, and a classic script does
+// not run until every pending stylesheet has loaded, so firing the request
+// from the end of <body> made it queue behind the web font. It starts here
+// instead, at parse time. The main script picks the promise up as BOOT.
+var BOOT = null;
+try{ BOOT = fetch(API + "?t=" + Date.now()).then(r => r.json()).catch(e => ({__bxerr: e})); }catch(e){}
+</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <style>
 :root{
@@ -310,6 +325,24 @@ th[aria-sort]:not([aria-sort="none"]) .sortb,
 th[aria-sort]:not([aria-sort="none"]) .sarr,
 .gh[aria-sort]:not([aria-sort="none"]) .sarr{opacity:1}
 
+/* ---- loading skeleton --------------------------------------------------- */
+.sk{display:inline-block;height:12px;border-radius:6px;background:var(--line2);
+  position:relative;overflow:hidden;vertical-align:middle;max-width:100%}
+.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(127,139,158,.18),transparent);
+  animation:bxsk 1.25s ease-in-out infinite}
+@keyframes bxsk{100%{transform:translateX(100%)}}
+@media (prefers-reduced-motion:reduce){.sk::after{animation:none}}
+.sk-h{height:15px}
+.sksec .ghead{border-left-color:var(--line)}
+.sksec td{padding:10px}
+.stale{color:var(--ink3)}
+.stale i{font-style:normal;display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--s-working);margin-right:5px;vertical-align:1px;
+  animation:bxpulse 1.4s ease-in-out infinite}
+@keyframes bxpulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.stale i{animation:none}}
+
 /* ---- note cell: hover to preview, click to edit ------------------------- */
 /* Two elements on purpose. overflow:hidden clips at the PADDING box, so a
    padded clamp lets the top of line three bleed into the bottom padding --
@@ -441,11 +474,7 @@ const Motion = (function(){
 
 Style.mount();
 
-// ---------------------------------------------------------------------------
-// Paste the /exec URL from the Apps Script deployment between the quotes.
-const API = "https://script.google.com/macros/s/AKfycbwp2Q3l9s4674OZLx5shd_JheTgZgyAyogctRXCFfLA8ehcGeZWAt8J_q-ooinoZs6PUw/exec";
-const SHEET = "https://docs.google.com/spreadsheets/d/1boE5WqMTrB8ZC7m74ieK3grTjf8e-usWxgi2usjn96U/edit";
-// ---------------------------------------------------------------------------
+// API and SHEET are declared in the <head> script, which starts the request.
 
 const ST = {
   "Not started":  "var(--s-todo)",
@@ -632,11 +661,71 @@ function sigOf(j){
 }
 let lastSig = null, booted = false;
 
+// ---- instant first paint ---------------------------------------------------
+// The Apps Script round trip is about three seconds and nothing this page does
+// will shorten it, so it stops being the thing you wait on: the last good
+// payload is kept in localStorage and drawn immediately, then quietly replaced
+// when the real one lands. A first-time visitor gets a skeleton instead of an
+// empty page.
+const CACHE_KEY = "bx-cache-v1";
+const CACHE_MAX_AGE = 7 * 864e5;
+
+function readCache(){
+  try{
+    const j = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+    if(!j || !j.ok || !Array.isArray(j.rows) || !j.rows.length) return null;
+    if(!j.at || !(Date.now() - new Date(j.at).getTime() < CACHE_MAX_AGE)) return null;
+    return j;
+  }catch(e){ return null; }
+}
+function writeCache(j){
+  try{ localStorage.setItem(CACHE_KEY, JSON.stringify(j)); }catch(e){}
+}
+
+function whenTxt(at){
+  const d = new Date(at);
+  if(isNaN(d.getTime())) return "an earlier sync";
+  const t = d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  return d.toDateString() === new Date().toDateString()
+    ? t : d.toLocaleDateString("en-US",{month:"short",day:"numeric"}) + ", " + t;
+}
+function syncedLine(at){
+  return 'Live from the team Google Sheet \u00b7 synced ' + whenTxt(at) +
+    ' \u00b7 <a href="' + SHEET + '" target="_blank" rel="noopener">open the Sheet</a>';
+}
+
+const SKW = ["44px","240px","120px","110px","90px","180px","70px"];
+function skeleton(){
+  const row = () => '<tr>' + SKW.map(w =>
+    '<td><span class="sk" style="width:' + w + '"></span></td>').join("") + '</tr>';
+  let h = "";
+  [6,5,4].forEach(n=>{
+    h += '<section class="group sksec"><div class="ghead">' +
+      '<span class="sk sk-h" style="width:180px"></span>' +
+      '<div class="gbar"><span class="sk" style="width:100%;height:8px"></span></div></div>' +
+      '<div class="tscroll"><table><tbody>' +
+      Array.from({length:n}, row).join("") + '</tbody></table></div></section>';
+  });
+  $("#groups").innerHTML = h;
+  $("#summary").innerHTML = Array.from({length:5}, () =>
+    '<div class="tile"><span class="sk sk-h" style="width:56px"></span>' +
+    '<div class="l"><span class="sk" style="width:104px"></span></div></div>').join("");
+  // there are no owners to filter by yet; render() puts this back
+  $("#filters").style.display = "none";
+}
+
 async function load(force){
   try{
-    const r = await fetch(API + "?t=" + Date.now());
-    const j = await r.json();
-    if(!j.ok) throw new Error(j.err || "bad response");
+    let j;
+    if(BOOT){                 // the request the <head> script already started
+      const b = BOOT; BOOT = null;
+      j = await b;
+      if(j && j.__bxerr) throw j.__bxerr;
+    }else{
+      const r = await fetch(API + "?t=" + Date.now());
+      j = await r.json();
+    }
+    if(!j || !j.ok) throw new Error((j && j.err) || "bad response");
     const sig = sigOf(j);
     const changed = force || !booted || sig !== lastSig;
     // An open note editor outranks a poll. Leave DATA and the fingerprint
@@ -645,12 +734,19 @@ async function load(force){
     if(changed && booted && document.querySelector("td.note.editing")) return;
     DATA = j;
     lastSig = sig;
-    if(changed){ booted = true; render(); }
-    $("#sub").innerHTML = 'Live from the team Google Sheet · synced ' +
-      new Date(j.at).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}) +
-      ' · <a href="' + SHEET + '" target="_blank" rel="noopener">open the Sheet</a>';
+    writeCache(j);
+    if(changed){ render(); }
+    booted = true;
+    $("#sub").innerHTML = syncedLine(j.at);
   }catch(err){
-    $("#sub").innerHTML = '<span class="err">Could not reach the board API. ' + esc(err.message) + '</span>';
+    // A cached board already on screen is still useful, so report that the
+    // refresh failed rather than replacing it with an error.
+    const msg = esc(err && err.message ? err.message : String(err));
+    $("#sub").innerHTML = booted
+      ? '<span class="err">Could not refresh, showing the board as of ' +
+        whenTxt(DATA.at) + '. ' + msg + '</span>'
+      : '<span class="err">Could not reach the board API. ' + msg + '</span>';
+    if(!booted) $("#groups").innerHTML = "";
   }
 }
 
@@ -1319,9 +1415,25 @@ document.addEventListener("mouseout", e=>{
 });
 
 if(who) $("#me").value = who;
-render();
-load();
-setInterval(()=>load(), 120000);
+
+(function boot(){
+  const cached = readCache();
+  if(cached){
+    // Draw the last known board at once. load() compares fingerprints, so if
+    // nothing moved on the Sheet this is also the final paint, with no flash.
+    DATA = cached;
+    lastSig = sigOf(cached);
+    booted = true;
+    render();
+    $("#sub").innerHTML = '<span class="stale"><i></i>Showing the board as of ' +
+      whenTxt(cached.at) + ', refreshing\u2026</span>';
+  }else{
+    render();
+    skeleton();
+  }
+  load();
+  setInterval(()=>load(), 120000);
+})();
 </script>
 </body>
 </html>
