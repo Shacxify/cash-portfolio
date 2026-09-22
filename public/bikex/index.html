@@ -66,14 +66,14 @@ tr:last-child td{border-bottom:0}
 td.wbs{width:54px;color:var(--ink3);font-size:12px;border-left:5px solid var(--gc)}
 td.name{min-width:280px}
 td.name .dl{display:block;font-size:11px;color:var(--ink3)}
-td.own{width:170px}td.st{width:150px}td.due{width:140px}td.note{width:220px}td.upd{width:110px;font-size:12px;color:var(--ink3)}
+td.own{width:170px}td.st{width:150px}td.due{width:140px}td.note{width:260px}td.upd{width:110px;font-size:12px;color:var(--ink3)}
 tr.done td.name .t{color:var(--ink3);text-decoration:line-through}
 .stsel{width:100%;color:#fff;font-weight:600;border:0;text-align-last:center;appearance:none;-webkit-appearance:none;padding:6px}
 .stsel option{color:var(--ink);background:var(--panel)}
 .ownsel{display:flex;align-items:center;gap:6px}
 .ownsel select{border-color:transparent;background:transparent;width:135px}
-.ownsel select:hover,td.due input:hover,td.note input:hover{border-color:var(--line)}
-td.due input,td.note input{border-color:transparent;background:transparent;width:100%}
+.ownsel select:hover,td.due input:hover{border-color:var(--line)}
+td.due input{border-color:transparent;background:transparent;width:100%}
 .late{color:var(--s-stuck);font-weight:600}
 .t{cursor:help;border-bottom:1px dotted var(--ink3)}
 #tip{position:fixed;z-index:50;max-width:340px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.5;box-shadow:0 8px 24px rgba(10,20,40,.18);white-space:pre-wrap;display:none}
@@ -309,6 +309,30 @@ th[aria-sort]:not([aria-sort="none"]) .sortb,
 .sortb:hover .sarr{opacity:.4}
 th[aria-sort]:not([aria-sort="none"]) .sarr,
 .gh[aria-sort]:not([aria-sort="none"]) .sarr{opacity:1}
+
+/* ---- note cell: hover to preview, click to edit ------------------------- */
+/* Two elements on purpose. overflow:hidden clips at the PADDING box, so a
+   padded clamp lets the top of line three bleed into the bottom padding --
+   and Chromium blockifies -webkit-box here anyway, so the clamp only adds the
+   ellipsis without shortening the layout. The inner box carries no padding,
+   so it cuts cleanly at two lines; the outer one carries the look. */
+.notechip{font-size:12.5px;line-height:1.4;color:var(--ink);
+  border:1px solid transparent;border-radius:8px;padding:5px 7px;min-height:28px;
+  transition:border-color var(--bx-fast) linear,background var(--bx-fast) linear}
+.nctext{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;max-height:2.8em;word-break:break-word}
+.notechip.empty{color:var(--ink3);font-style:italic}
+.notechip[role="button"]{cursor:text}
+.notechip[role="button"]:hover{border-color:var(--line);background:var(--panel2)}
+.notechip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+td.note.editing{padding:4px 6px}
+.noteta{display:block;width:100%;min-height:66px;max-height:260px;resize:vertical;
+  font:inherit;font-size:12.5px;line-height:1.45;padding:6px 8px;border-radius:8px;
+  border:1px solid var(--accent);background:var(--panel);color:var(--ink);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.noteta:focus{outline:none}
+.notehint{font-size:10px;color:var(--ink3);margin-top:4px;line-height:1.3}
+.notehint b{color:var(--ink2);font-weight:600}
 
 /* ---- WBS column fold ---------------------------------------------------- */
 .wcol .l1btn{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;cursor:pointer;
@@ -615,6 +639,10 @@ async function load(force){
     if(!j.ok) throw new Error(j.err || "bad response");
     const sig = sigOf(j);
     const changed = force || !booted || sig !== lastSig;
+    // An open note editor outranks a poll. Leave DATA and the fingerprint
+    // alone so the next poll redraws once the editor is closed, rather than
+    // tearing the textarea out from under whoever is typing in it.
+    if(changed && booted && document.querySelector("td.note.editing")) return;
     DATA = j;
     lastSig = sig;
     if(changed){ booted = true; render(); }
@@ -1012,7 +1040,7 @@ function boardView(){
           sel("owner", DATA.owners, t.owner)+'</div></td>'+
         '<td class="st">'+sel("status", DATA.status, t.status, 'class="stsel" style="background:'+ST[t.status]+'"')+'</td>'+
         '<td class="due'+(late(t)?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
-        '<td class="note"><input type="text" data-f="notes" value="'+esc(t.notes||"")+'" placeholder="add a note"'+(canEdit()?"":" disabled")+'></td>'+
+        '<td class="note">'+noteCell(t)+'</td>'+
         '<td class="upd">'+esc(t.upd||"")+'</td></tr>';
     });
     h += '</tbody></table></div></section>';
@@ -1021,6 +1049,87 @@ function boardView(){
   $("#who").textContent = canEdit() ? ("Editing as " + who) : "Read only";
   $("#rohint").style.display = canEdit() ? "none" : "block";
   $("#paused").style.display = (DATA.writes === false) ? "block" : "none";
+}
+
+// ---- notes: hover to preview, click to edit --------------------------------
+// The column used to be a one-line input: too narrow to read a note in and
+// too cramped to write one. It is now a two-line clamped chip carrying the
+// full text as a tooltip, which opens into a real textarea on click.
+function noteCell(t){
+  const v = t.notes == null ? "" : String(t.notes);
+  return '<div class="notechip' + (v ? '' : ' empty') + '"' +
+    (v ? ' data-tip="' + esc(v) + '"' : '') +
+    (canEdit() ? ' role="button" tabindex="0" aria-label="Edit note"' : '') + '>' +
+    '<span class="nctext">' +
+    (v ? esc(v) : (canEdit() ? 'add a note' : '\u2014')) + '</span></div>';
+}
+
+function growNote(el){
+  el.style.height = "auto";
+  el.style.height = Math.min(260, Math.max(66, el.scrollHeight + 2)) + "px";
+}
+
+function closeNote(td, rec){
+  td.classList.remove("editing");
+  td.innerHTML = noteCell(rec);
+}
+
+function openNote(chip){
+  if(!canEdit()) return;
+  hideTip();   // the chip is about to be replaced, so its mouseout never fires
+  const td = chip.closest("td.note"), tr = chip.closest("tr");
+  if(!td || !tr) return;
+  const row = Number(tr.dataset.row);
+  const rec = DATA.rows.find(x => x.row === row);
+  if(!rec) return;
+  const was = rec.notes == null ? "" : String(rec.notes);
+
+  td.classList.add("editing");
+  td.innerHTML = '<textarea class="noteta" aria-label="Note"></textarea>' +
+    '<div class="notehint"><b>Enter</b> saves &middot; <b>Shift+Enter</b> new line &middot; <b>Esc</b> cancels</div>';
+  const ta = td.querySelector("textarea");
+  ta.value = was;
+  growNote(ta);
+
+  // Enter and blur both land here; the guard keeps the second one from
+  // saving a second time after the first has already torn the field down.
+  let done = false;
+  const finish = commit => {
+    if(done) return;
+    done = true;
+    if(commit) commitNote(td, row, was, ta.value);
+    else closeNote(td, rec);
+  };
+  ta.addEventListener("input", () => growNote(ta));
+  ta.addEventListener("keydown", e => {
+    if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); finish(true); }
+    else if(e.key === "Escape"){ e.preventDefault(); finish(false); }
+  });
+  ta.addEventListener("blur", () => finish(true));
+  ta.focus();
+  ta.setSelectionRange(was.length, was.length);
+}
+
+async function commitNote(td, row, was, value){
+  const rec = DATA.rows.find(x => x.row === row);
+  if(!rec) return;
+  if(value === was){ closeNote(td, rec); return; }
+  const ta = td.querySelector("textarea");
+  if(ta) ta.disabled = true;
+  const r = await save(row, "notes", value, was).catch(err => ({ok:false, err:String(err)}));
+  if(r.ok){
+    rec.notes = value;
+    rec.upd = r.upd;
+    lastSig = sigOf(DATA);
+    toast("Saved to the Sheet");
+    render();
+    Motion.pulse(document.querySelector('tr[data-row="' + row + '"]'));
+  }else{
+    // keep what they wrote so a failed save is not a lost note
+    if(ta){ ta.disabled = false; ta.focus(); }
+    toast(r.err || "Save failed", true);
+    if(r.now !== undefined) load(true);
+  }
 }
 
 function sel(field, options, value, attrs){
@@ -1034,6 +1143,10 @@ function phaseColor(p){
     "In-Kind Intake":"#8B5CF6","Outgoing Donations":"#2A9D8F","Pilot & Refinement":"#D4A017","Documentation & Handoff":"#C04E7A"};
   return m[p] || "#0E7C86";
 }
+
+// A tooltip is anchored to an element a redraw may delete, and a deleted
+// element fires no mouseout, so the tooltip would hang over nothing.
+function hideTip(){ const t = document.getElementById("tip"); if(t) t.style.display = "none"; }
 
 // ---- master render ---------------------------------------------------------
 // Every fold key the Collapse all / Expand all button owns in the current
@@ -1059,6 +1172,7 @@ function syncFoldAll(){
 
 let lastView = null;
 function render(){
+  hideTip();
   renderTabs();
   const isB = view==="board", isG = view==="gantt", isW = view==="wbs", isT = view==="team";
   $("#bar").style.display = isB ? "flex" : "none";
@@ -1109,11 +1223,13 @@ document.addEventListener("change", async e=>{
   }else{
     el.value = before;
     toast(r.err || "Save failed", true);
-    if(r.now !== undefined) load();   // someone else got there first
+    if(r.now !== undefined) load(true);   // someone else got there first
   }
 });
 
 document.addEventListener("click", e=>{
+  const notechip = e.target.closest(".notechip[role='button']");
+  if(notechip){ openNote(notechip); return; }
   const fold = e.target.closest("[data-fold]");
   if(fold){
     const k = fold.dataset.fold;
@@ -1148,6 +1264,15 @@ document.addEventListener("click", e=>{
   }
 });
 
+// a focused chip opens the same way a click does
+document.addEventListener("keydown", e=>{
+  if(e.key !== "Enter" && e.key !== " ") return;
+  const chip = e.target.closest && e.target.closest(".notechip[role='button']");
+  if(!chip) return;
+  e.preventDefault();
+  openNote(chip);
+});
+
 $("#unlock").addEventListener("click", async ()=>{
   who = $("#me").value;
   pass = $("#pass").value.trim();
@@ -1161,7 +1286,10 @@ $("#unlock").addEventListener("click", async ()=>{
   sessionStorage.setItem("bx-pass", pass);
   $("#pass").value = "";
   toast("Editing unlocked");
-  load();
+  // Force it: unlocking changes how every row renders, but the Sheet payload
+  // is identical, so the fingerprint guard would otherwise skip the redraw
+  // and leave the board looking read-only.
+  load(true);
 });
 
 $("#foldall").addEventListener("click", ()=>{
