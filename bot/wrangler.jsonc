@@ -4,7 +4,9 @@
   "main": "worker.js",
   "compatibility_date": "2025-09-24",
   "triggers": {
-    // Weekdays 16:00 UTC = 9am PDT / 8am PST
-    "crons": ["0 16 * * 1-5"]
+    // Weekdays 16:00 UTC = 9am PDT / 8am PST: daily digest
+    // Saturdays 01:00 UTC = Friday 6pm PDT / 5pm PST: weekly scoreboard,
+    // after the Friday sponsor call. Must match SCOREBOARD_CRON in worker.js.
+    "crons": ["0 16 * * 1-5", "0 1 * * 6"]
   }
 }
