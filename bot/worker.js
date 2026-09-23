@@ -4,6 +4,9 @@
  *
  * Secrets / vars (set with `npx wrangler secret put -c bot/wrangler.jsonc <NAME>`):
  *   WEBHOOK_URL       required. Discord webhook for the reminders channel.
+ *   WEBHOOK_STANDUP   optional. Webhook for the standup channel. The standup
+ *                     digest and Friday scoreboard go here. Falls back to
+ *                     WEBHOOK_URL.
  *   WEBHOOK_ANNOUNCE  optional. Webhook for #announcements. Milestone posts go
  *                     here with @everyone. Falls back to WEBHOOK_URL, without
  *                     the @everyone.
@@ -12,12 +15,13 @@
  *                     get pinged on their own overdue/due items.
  *   RUN_KEY           optional. Enables manual runs: POST /run?key=...&dry=1
  *
- * Schedule: weekdays 16:00 UTC (9am PDT / 8am PST) for the digest, and
+ * Schedule: weekdays 16:00 UTC (9am PDT / 8am PST). Milestone announcements
+ * can post any weekday; the standup digest posts Mon/Wed/Fri. Plus
  * Saturdays 01:00 UTC (Friday 6pm PDT / 5pm PST, after the sponsor call) for
  * the weekly scoreboard. Posts only when there is something to say - a quiet
  * board means a quiet channel.
  *
- * Tone: the digest opens with wins (tasks marked Done since the last run) and
+ * Tone: the digest opens with wins (tasks marked Done since the last standup) and
  * credits anyone who flagged a task Stuck, before any reminders. Flagging
  * Stuck early is treated as a win, not a failure.
  */
@@ -108,7 +112,7 @@ function winsSections(data, since, mentions) {
   const wins = statusChanges(data, "Done", since);
   if (wins.length) {
     const lines = wins.map(c => `- **${c.wbs} ${c.row.task}** - ${tag(doneCredit(c), mentions)}`);
-    out.push(`__**Wins since last check**__ :tada:\n${lines.join("\n")}`);
+    out.push(`__**Wins since last standup**__ :tada:\n${lines.join("\n")}`);
   }
   const flags = statusChanges(data, "Stuck", since);
   if (flags.length) {
@@ -134,6 +138,7 @@ function buildMessages(data, todayIso, weekday, mentions, since) {
   const dueTomorrow = open.filter(r => r.due === tomorrowIso).map(r => line(r));
 
   const sections = [];
+
   if (overdue.length) sections.push(`__**Overdue**__\n${overdue.join("\n")}`);
   if (dueToday.length) sections.push(`__**Due today**__\n${dueToday.join("\n")}`);
   if (dueTomorrow.length) sections.push(`__**Due tomorrow**__\n${dueTomorrow.join("\n")}`);
@@ -159,8 +164,9 @@ function buildMessages(data, todayIso, weekday, mentions, since) {
   // Wins and Stuck flags open the message, ahead of any reminders
   sections.unshift(...wins);
 
-  const reminder = sections.length
-    ? { content: `**BikeX board check** - <${BOARD}>\n\n${sections.join("\n\n")}` }
+  const standupDay = weekday === "Mon" || weekday === "Wed" || weekday === "Fri";
+  const reminder = standupDay && sections.length
+    ? { content: `**BikeX standup** - <${BOARD}>\n\n${sections.join("\n\n")}` }
     : null;
 
   // Milestone announcements: 2 days out and day-of
@@ -239,23 +245,25 @@ async function runScoreboard(env, dry, nowMs) {
   const scoreboard = buildScoreboard(data, todayIso, weekday, mentions);
   const out = { todayIso, weekday, posted: [], skipped: !scoreboard };
   if (dry) return { ...out, scoreboard };
-  if (scoreboard && env.WEBHOOK_URL) { await post(env.WEBHOOK_URL, scoreboard, false); out.posted.push("scoreboard"); }
-  if (scoreboard && !env.WEBHOOK_URL) out.error = "WEBHOOK_URL not set, scoreboard skipped";
+  const standupUrl = env.WEBHOOK_STANDUP || env.WEBHOOK_URL;
+  if (scoreboard && standupUrl) { await post(standupUrl, scoreboard, false); out.posted.push("scoreboard"); }
+  if (scoreboard && !standupUrl) out.error = "no standup webhook set, scoreboard skipped";
   return out;
 }
 
 async function run(env, dry, nowMs) {
   const { data, mentions } = await loadBoard(env);
   const { iso: todayIso, weekday } = laParts(new Date(nowMs));
-  // "Since the last run": the digest runs weekdays, so Monday looks back to Friday
-  const since = nowMs - (weekday === "Mon" ? 3 : 1) * 864e5;
+  // Since the last standup: standups are Mon/Wed/Fri, so Monday looks back to Friday
+  const since = nowMs - (weekday === "Mon" ? 3 : 2) * 864e5;
   const { reminder, announcements } = buildMessages(data, todayIso, weekday, mentions, since);
 
   const out = { todayIso, weekday, posted: [], skipped: !reminder && !announcements.length };
   if (dry) return { ...out, reminder, announcements };
 
-  if (reminder && env.WEBHOOK_URL) { await post(env.WEBHOOK_URL, reminder, false); out.posted.push("reminder"); }
-  if (reminder && !env.WEBHOOK_URL) out.error = "WEBHOOK_URL not set, reminder skipped";
+  const standupUrl = env.WEBHOOK_STANDUP || env.WEBHOOK_URL;
+  if (reminder && standupUrl) { await post(standupUrl, reminder, false); out.posted.push("standup"); }
+  if (reminder && !standupUrl) out.error = "no standup webhook set, digest skipped";
   const annUrl = env.WEBHOOK_ANNOUNCE || env.WEBHOOK_URL;
   for (const a of announcements) {
     if (!annUrl) { out.error = "no webhook for announcements"; break; }
