@@ -2,12 +2,16 @@
 
 Scheduled Cloudflare Worker that reads the [BikeX board](https://cashjohnson.net/bikex)
 and posts reminders and announcements to Discord through channel webhooks.
-Runs weekdays at 16:00 UTC (9am PDT / 8am PST). Posts nothing when there is
-nothing to say.
+The cron runs weekdays at 16:00 UTC (9am PDT / 8am PST): milestone
+announcements can post any weekday, the standup digest posts Mon/Wed/Fri
+to WEBHOOK_STANDUP (falls back to WEBHOOK_URL). Posts nothing when there
+is nothing to say.
 
-What it posts:
+What the standup digest posts (Mon/Wed/Fri):
 
-- Daily: overdue tasks (with days late), due today, due tomorrow
+- Wins first: everything marked Done since the last standup, with names
+- Newly Stuck tasks, framed as a call for help
+- Overdue tasks (with days late), due today, due tomorrow
 - Mondays: stalled in-progress tasks and everything due later in the week
 - Sponsor call days: an update-your-rows nudge
 - Milestones: an @everyone announcement two days out and day-of
@@ -18,6 +22,9 @@ What it posts:
 # required: webhook for the reminders channel
 # (Discord channel settings > Integrations > Webhooks > New Webhook > Copy URL)
 npx wrangler secret put WEBHOOK_URL -c bot/wrangler.jsonc
+
+# recommended: webhook for #standup; the M/W/F digest goes here
+npx wrangler secret put WEBHOOK_STANDUP -c bot/wrangler.jsonc
 
 # optional: separate webhook for #announcements; milestone posts go here with @everyone
 npx wrangler secret put WEBHOOK_ANNOUNCE -c bot/wrangler.jsonc

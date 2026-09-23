@@ -85,6 +85,24 @@ function buildMessages(data, todayIso, weekday, mentions) {
   const dueTomorrow = open.filter(r => r.due === tomorrowIso).map(r => line(r));
 
   const sections = [];
+
+  // Wins first. Done transitions from the change log since the last standup
+  // (Mon looks back to Fri), so effort gets seen before anyone gets chased.
+  const log = data.log || [];
+  const sinceIso = isoAddDays(todayIso, weekday === "Mon" ? -3 : -2);
+  const rowByWbs = {};
+  data.rows.forEach(r => { rowByWbs[r.wbs] = r; });
+  const wins = [], newStuck = [];
+  for (const e of log) {
+    if (e.field !== "status" || String(e.t).slice(0, 10) < sinceIso) continue;
+    const r = rowByWbs[e.wbs];
+    if (!r) continue;
+    if (e.to === "Done" && r.status === "Done") wins.push(`- **${e.wbs} ${r.task}** - ${String(e.who).split(" ")[0]} got it done`);
+    if (e.to === "Stuck" && r.status === "Stuck") newStuck.push(line(r, " - flagged Stuck, who can unblock?"));
+  }
+  if (wins.length) sections.push(`__**Wins since last standup**__ :tada:\n${[...new Set(wins)].join("\n")}`);
+  if (newStuck.length) sections.push(`__**Newly stuck, jump in**__\n${[...new Set(newStuck)].join("\n")}`);
+
   if (overdue.length) sections.push(`__**Overdue**__\n${overdue.join("\n")}`);
   if (dueToday.length) sections.push(`__**Due today**__\n${dueToday.join("\n")}`);
   if (dueTomorrow.length) sections.push(`__**Due tomorrow**__\n${dueTomorrow.join("\n")}`);
@@ -107,8 +125,9 @@ function buildMessages(data, todayIso, weekday, mentions) {
   const callToday = MILESTONES.find(ms => ms.call && ms.d === todayIso);
   if (callToday) sections.unshift(`Sponsor call today at 4:00 PM. Update your rows on the board before the call.`);
 
-  const reminder = sections.length
-    ? { content: `**BikeX board check** - <${BOARD}>\n\n${sections.join("\n\n")}` }
+  const standupDay = weekday === "Mon" || weekday === "Wed" || weekday === "Fri";
+  const reminder = standupDay && sections.length
+    ? { content: `**BikeX standup** - <${BOARD}>\n\n${sections.join("\n\n")}` }
     : null;
 
   // Milestone announcements: 2 days out and day-of
@@ -148,8 +167,9 @@ async function run(env, dry) {
   const out = { todayIso, weekday, posted: [], skipped: !reminder && !announcements.length };
   if (dry) return { ...out, reminder, announcements };
 
-  if (reminder && env.WEBHOOK_URL) { await post(env.WEBHOOK_URL, reminder, false); out.posted.push("reminder"); }
-  if (reminder && !env.WEBHOOK_URL) out.error = "WEBHOOK_URL not set, reminder skipped";
+  const standupUrl = env.WEBHOOK_STANDUP || env.WEBHOOK_URL;
+  if (reminder && standupUrl) { await post(standupUrl, reminder, false); out.posted.push("standup"); }
+  if (reminder && !standupUrl) out.error = "no standup webhook set, digest skipped";
   const annUrl = env.WEBHOOK_ANNOUNCE || env.WEBHOOK_URL;
   for (const a of announcements) {
     if (!annUrl) { out.error = "no webhook for announcements"; break; }
