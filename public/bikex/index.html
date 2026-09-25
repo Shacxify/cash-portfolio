@@ -137,6 +137,39 @@ td.due input{border-color:transparent;background:transparent;width:100%}
 .att ul{margin:0;padding-left:18px;color:var(--ink2)}
 .att li{margin-bottom:4px}
 .att b{color:var(--ink)}
+/* ---- Leaderboard (Team view) ---- */
+.lb{--lb-1:#2a78d6;--lb-2:#eb6834;--lb-3:#1baf7a;--lb-4:#eda100;
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+@media (prefers-color-scheme:dark){.lb{--lb-1:#3987e5;--lb-2:#d95926;--lb-3:#199e70;--lb-4:#c98500}}
+.lb-head{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:10px}
+.lb-head h3{margin:0;font-size:15px}
+.lb-head .seg{display:flex;gap:2px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:2px;margin-left:auto}
+.lb-head .seg button{border:0;background:none;padding:4px 10px;font-size:12px;color:var(--ink2);border-radius:6px}
+.lb-head .seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.lb-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink2);margin-bottom:10px}
+.lb-legend span{display:inline-flex;align-items:center;gap:6px}
+.lb-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.lb-row{display:grid;grid-template-columns:22px minmax(92px,150px) 1fr 104px;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line2)}
+.lb-row:first-of-type{border-top:0}
+.lb-rank{font-family:"IBM Plex Mono",ui-monospace,monospace;color:var(--ink3);text-align:right;font-size:13px}
+.lb-name{display:flex;align-items:center;gap:8px;min-width:0;font-weight:600;font-size:13px}
+.lb-name .av{width:24px;height:24px;font-size:10px;flex:none}
+.lb-name span.n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-track{display:flex;align-items:center;gap:8px;min-width:0}
+.lb-bar{display:flex;gap:2px;height:14px;min-width:0}
+.lb-bar b{display:block;height:100%;min-width:3px}
+.lb-bar b:first-child{border-radius:4px 0 0 4px}
+.lb-bar b:last-child{border-radius:0 4px 4px 0}
+.lb-bar b:only-child{border-radius:4px}
+.lb-pts{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--ink);white-space:nowrap}
+.lb-st{font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px;justify-self:end;white-space:nowrap;color:var(--ink2)}
+.lb-st i{width:16px;height:16px;border-radius:50%;display:inline-grid;place-items:center;font-style:normal;font-size:10px;color:#fff;background:var(--sc)}
+.lb-note{font-size:12px;color:var(--ink3);margin:10px 0 0}
+.lb table{width:100%;border-collapse:collapse;font-size:12.5px}
+.lb th,.lb td{padding:6px 8px;border-top:1px solid var(--line2);text-align:right;font-variant-numeric:tabular-nums}
+.lb th:nth-child(-n+2),.lb td:nth-child(-n+2){text-align:left}
+.lb th{color:var(--ink3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-top:0}
+@media (max-width:560px){.lb-row{grid-template-columns:18px 1fr 92px}.lb-track{grid-column:2 / -1;grid-row:2}}
 /* ---- Gantt view ---- */
 .gbase{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;margin-bottom:10px;font-size:12.5px;color:var(--ink2)}
 .gbase b{color:var(--ink);font-weight:600}
@@ -922,10 +955,111 @@ function analytics(){
   });
   return { L, doneAt, hasLog: L.length > 0 };
 }
+// ---- Leaderboard (Team view) ----------------------------------------------
+// Points: 10 per task finished, +5 when it was finished on or before its due
+// date, 3 per task someone flagged Stuck (raising a blocker early counts), and
+// 1 per day with at least one edit on the board. Done and on-time come from
+// the change log when it has the entry; tasks marked Done straight in the
+// Sheet still count toward the semester total, just without a date.
+let lbRange = "all", lbTable = false;
+try{ lbRange = sessionStorage.getItem("bx-lb-range") || "all"; lbTable = sessionStorage.getItem("bx-lb-table") === "1"; }catch(x){}
+const LB_KEYS = [["done","Finished",10],["ontime","On time bonus",5],["flags","Stuck flags",3],["active","Active days",1]];
+function lbOwnerFor(who, people){
+  return people.find(p => p === who) || people.find(p => whoMatch(who, p)) || null;
+}
+function leaderboard(A){
+  const people = DATA.owners.filter(p => p !== "Whole team");
+  const t0 = today();
+  const monday = new Date(t0); monday.setDate(t0.getDate() - ((t0.getDay() + 6) % 7));
+  const inRange = d => lbRange === "all" || (d && d >= monday);
+  const S = {};
+  people.forEach(p => { S[p] = { done:0, ontime:0, flags:0, active:0 }; });
+  const byWbs = {}; DATA.rows.forEach(r => { byWbs[r.wbs] = r; });
+  // latest Done entry per task, so a Whole team task credits whoever closed it
+  const doneBy = {};
+  A.L.forEach(e => { if(e.field === "status" && e.to === "Done") doneBy[e.wbs] = e; });
+  DATA.rows.filter(r => r.status === "Done").forEach(r => {
+    const e = doneBy[r.wbs];
+    const who = r.owner === "Whole team" ? (e && lbOwnerFor(e.who, people)) : r.owner;
+    if(!who || !S[who]) return;
+    const d = A.doneAt[r.wbs] || null;
+    if(!inRange(d)) return;
+    S[who].done++;
+    if(d && asDate(r.due) && d <= asDate(r.due)) S[who].ontime++;
+  });
+  const flagged = {}, days = {};
+  A.L.forEach(e => {
+    const who = lbOwnerFor(e.who, people);
+    if(!who) return;
+    const d = new Date(e.t);
+    if(!inRange(d)) return;
+    if(e.field === "status" && e.to === "Stuck") flagged[who + "|" + e.wbs] = who;
+    (days[who] ||= new Set()).add(d.toDateString());
+  });
+  Object.values(flagged).forEach(who => S[who].flags++);
+  Object.keys(days).forEach(who => { S[who].active = days[who].size; });
+
+  // Falling behind is a separate signal from points on purpose: a person can
+  // rank high and still have something slipping, or rank low on a light week.
+  const status = p => {
+    const ts = DATA.rows.filter(t => t.owner === p);
+    const od = ts.filter(late);
+    const worst = od.length ? Math.max.apply(null, od.map(r => Math.round((t0 - asDate(r.due)) / 864e5))) : 0;
+    const stale = ts.filter(r => { if(r.status !== "Working on it") return false; const d = parseStampDate(r.upd); return d && (t0 - d) / 864e5 > 7; }).length;
+    let last = null;
+    A.L.forEach(e => { if(lbOwnerFor(e.who, people) === p){ const d = new Date(e.t); if(!last || d > last) last = d; } });
+    const open = ts.some(t => t.status !== "Done");
+    const quiet = A.hasLog && open && (!last || (t0 - last) / 864e5 > 7);
+    if(od.length >= 2 || worst > 3) return { k:"behind", label:"Behind", icon:"!", c:"var(--s-stuck)",
+      why: od.length + " overdue" + (worst ? ", oldest " + worst + "d late" : "") };
+    if(od.length || stale || quiet) return { k:"watch", label:"Watch", icon:"!", c:"var(--s-working)",
+      why: [od.length ? od.length + " overdue" : "", stale ? stale + " with no update in a week" : "", quiet ? "no edits in 7 days" : ""].filter(Boolean).join(", ") };
+    return { k:"ok", label:"On track", icon:"✓", c:"var(--s-done)", why:"Nothing overdue or stalled" };
+  };
+
+  const rows = people.map(p => {
+    const s = S[p];
+    const pts = LB_KEYS.reduce((a, [k,, w]) => a + s[k] * w, 0);
+    return { p, s, pts, st: status(p) };
+  }).sort((a, b) => b.pts - a.pts || a.p.localeCompare(b.p));
+  const max = Math.max(1, ...rows.map(r => r.pts));
+
+  let h = '<section class="lb" aria-label="Team leaderboard"><div class="lb-head"><h3>Leaderboard</h3>' +
+    '<div class="seg" role="group" aria-label="Range">' +
+      '<button data-lb-range="week" aria-pressed="'+(lbRange==="week")+'">This week</button>' +
+      '<button data-lb-range="all" aria-pressed="'+(lbRange==="all")+'">Semester</button></div>' +
+    '<div class="seg" role="group" aria-label="View">' +
+      '<button data-lb-table="0" aria-pressed="'+(!lbTable)+'">Chart</button>' +
+      '<button data-lb-table="1" aria-pressed="'+lbTable+'">Table</button></div></div>';
+  if(lbTable){
+    h += '<table><thead><tr><th>#</th><th>Name</th>' + LB_KEYS.map(([, l]) => '<th>'+l+'</th>').join("") + '<th>Points</th><th>Status</th></tr></thead><tbody>';
+    rows.forEach((r, i) => {
+      h += '<tr><td>'+(i+1)+'</td><td>'+esc(r.p)+'</td>' + LB_KEYS.map(([k]) => '<td>'+r.s[k]+'</td>').join("") +
+        '<td><b>'+r.pts+'</b></td><td>'+esc(r.st.label)+'</td></tr>';
+    });
+    h += '</tbody></table>';
+  }else{
+    h += '<div class="lb-legend">' + LB_KEYS.map(([k, l, w], i) =>
+      '<span><i style="background:var(--lb-'+(i+1)+')"></i>'+l+' ('+(w===1?'1 pt':w+' pts')+(k==="active"?' per day':' each')+')</span>').join("") + '</div>';
+    rows.forEach((r, i) => {
+      const segs = LB_KEYS.map(([k, l, w], j) => {
+        const v = r.s[k] * w;
+        if(!v) return "";
+        return '<b style="width:'+(100 * v / r.pts)+'%;background:var(--lb-'+(j+1)+')" data-tip="'+esc(r.p.split(" ")[0]+': '+r.s[k]+' '+l.toLowerCase()+' = '+v+' pts')+'"></b>';
+      }).join("");
+      h += '<div class="lb-row"><span class="lb-rank">'+(i+1)+'</span>' +
+        '<span class="lb-name">'+avN(r.p)+'<span class="n">'+esc(r.p)+'</span></span>' +
+        '<span class="lb-track"><span class="lb-bar" style="flex:0 1 '+(100 * r.pts / max)+'%">'+segs+'</span><span class="lb-pts">'+r.pts+(r.pts===1?' pt':' pts')+'</span></span>' +
+        '<span class="lb-st" style="--sc:'+r.st.c+'" data-tip="'+esc(r.st.why)+'"><i aria-hidden="true">'+r.st.icon+'</i>'+r.st.label+'</span></div>';
+    });
+  }
+  h += '<p class="lb-note">'+(lbRange==="week" ? "Since Monday. " : "")+'Stuck flags score points: raising a blocker early is a win. Status is separate from rank: <b>Watch</b> means one thing overdue, stalled, or no edits in a week; <b>Behind</b> means two or more overdue or one more than 3 days late. Hover a bar or status for details.</p></section>';
+  return h;
+}
 function teamView(){
   const A = analytics();
   const t0 = today(), wk = new Date(t0); wk.setDate(wk.getDate()+7);
-  let h = "";
+  let h = leaderboard(A);
   const overdueAll = DATA.rows.filter(late).sort((a,b)=>(a.due||"").localeCompare(b.due||""));
   const staleAll = DATA.rows.filter(r=>{
     if(r.status !== "Working on it") return false;
@@ -1361,6 +1495,18 @@ document.addEventListener("click", e=>{
     Motion.flip(root, sel, first);
     return;
   }
+  const lbr = e.target.closest("[data-lb-range]");
+  if(lbr){
+    lbRange = lbr.dataset.lbRange;
+    try{ sessionStorage.setItem("bx-lb-range", lbRange); }catch(x){}
+    render(); return;
+  }
+  const lbt = e.target.closest("[data-lb-table]");
+  if(lbt){
+    lbTable = lbt.dataset.lbTable === "1";
+    try{ sessionStorage.setItem("bx-lb-table", lbTable ? "1" : "0"); }catch(x){}
+    render(); return;
+  }
   const tab = e.target.closest("[data-view]");
   if(tab){
     view = tab.dataset.view;
@@ -1453,6 +1599,7 @@ if(who) $("#me").value = who;
   load();
   setInterval(()=>load(), 120000);
 })();
+
 </script>
 </body>
 </html>
