@@ -15,6 +15,9 @@ What the standup digest posts (Mon/Wed/Fri):
   The first Stuck flag on the board gets a louder shout-out.
 - Overdue tasks (with days late), due today, due tomorrow
 - Mondays: stalled in-progress tasks and everything due later in the week
+- Phase channels (if CHANNELS is set): each workstream's due today and due
+  tomorrow every weekday, its overdue tasks on standup days, and any task in
+  it newly flagged Stuck. The standup notes which phases went elsewhere.
 - Sponsor call days: an update-your-rows nudge
 - Milestones: an @everyone announcement two days out and day-of
 - Fridays 6pm PDT / 5pm PST: a scoreboard of the week's finished tasks and
@@ -37,6 +40,14 @@ npx wrangler secret put WEBHOOK_STANDUP -c bot/wrangler.jsonc
 
 # optional: separate webhook for #announcements; milestone posts go here with @everyone
 npx wrangler secret put WEBHOOK_ANNOUNCE -c bot/wrangler.jsonc
+
+# optional: send each workstream's reminders to its own channel.
+# JSON of phase -> webhook. Keys are the WBS phase number or the phase name.
+# Phases: 1 Project Management, 2 Discovery & Training, 3 Acknowledgements,
+# 4 In-Kind Intake, 5 Outgoing Donations, 6 Pilot & Refinement,
+# 7 Documentation & Handoff. Phases left out stay in the standup post.
+npx wrangler secret put CHANNELS -c bot/wrangler.jsonc
+# example value: {"3":"https://discord.com/api/webhooks/...","4":"https://discord.com/api/webhooks/..."}
 
 # optional: Discord user ids for pings, JSON of owner name -> id
 # (Discord: Settings > Advanced > Developer Mode, then right-click a user > Copy User ID)

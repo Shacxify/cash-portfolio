@@ -10,6 +10,12 @@
  *   WEBHOOK_ANNOUNCE  optional. Webhook for #announcements. Milestone posts go
  *                     here with @everyone. Falls back to WEBHOOK_URL, without
  *                     the @everyone.
+ *   CHANNELS          optional. JSON of phase -> webhook URL, so each task's
+ *                     reminders go to its workstream's channel. Keys are the
+ *                     WBS phase number or the phase name, e.g.
+ *                     {"3":"https://discord.com/api/webhooks/...",
+ *                      "In-Kind Intake":"https://discord.com/api/webhooks/..."}
+ *                     Phases without an entry stay in the standup post.
  *   MENTIONS          optional. JSON of owner name -> Discord user id, e.g.
  *                     {"Cash Johnson":"123","Brandon Le":"456"}. Named people
  *                     get pinged on their own overdue/due items.
@@ -126,24 +132,26 @@ function winsSections(data, since, mentions) {
   return out;
 }
 
-function buildMessages(data, todayIso, weekday, mentions, since) {
-  const open = data.rows.filter(r => r.status !== "Done");
-  const line = (r, extra) => `- **${r.wbs} ${r.task}** - ${tag(r.owner, mentions)}${extra || ""}`;
-  const wins = winsSections(data, since, mentions);
+// Phase channel routing: CHANNELS maps a WBS phase number ("3") or phase
+// name ("Acknowledgements", any case) to that workstream's webhook.
+function channelFor(r, channels) {
+  const num = String(r.wbs || "").split(".")[0];
+  return channels[num] || channels[String(r.phase || "").toLowerCase()] || null;
+}
 
+// The reminder sections for a set of open tasks. Due today and due tomorrow
+// go out every weekday; overdue waits for standup days so a late task is not
+// chased daily; Monday adds stalled work and the rest of the week.
+function reminderSections(open, todayIso, weekday, line, standupDay) {
+  const sections = [];
+  const tomorrowIso = isoAddDays(todayIso, 1);
   const overdue = open.filter(r => r.due && r.due < todayIso)
     .map(r => line(r, ` - **${daysBetween(r.due, todayIso)}d late**`));
   const dueToday = open.filter(r => r.due === todayIso).map(r => line(r));
-  const tomorrowIso = isoAddDays(todayIso, 1);
   const dueTomorrow = open.filter(r => r.due === tomorrowIso).map(r => line(r));
-
-  const sections = [];
-
-  if (overdue.length) sections.push(`__**Overdue**__\n${overdue.join("\n")}`);
+  if (standupDay && overdue.length) sections.push(`__**Overdue**__\n${overdue.join("\n")}`);
   if (dueToday.length) sections.push(`__**Due today**__\n${dueToday.join("\n")}`);
   if (dueTomorrow.length) sections.push(`__**Due tomorrow**__\n${dueTomorrow.join("\n")}`);
-
-  // Monday extras: stale in-progress work and the week ahead
   if (weekday === "Mon") {
     const stale = open.filter(r => {
       if (r.status !== "Working on it") return false;
@@ -156,6 +164,41 @@ function buildMessages(data, todayIso, weekday, mentions, since) {
       .map(r => line(r, ` - ${pretty(r.due)}`));
     if (thisWeek.length) sections.push(`__**Also due this week**__\n${thisWeek.join("\n")}`);
   }
+  return sections;
+}
+
+function buildMessages(data, todayIso, weekday, mentions, since, channels = {}) {
+  const open = data.rows.filter(r => r.status !== "Done");
+  const line = (r, extra) => `- **${r.wbs} ${r.task}** - ${tag(r.owner, mentions)}${extra || ""}`;
+  const wins = winsSections(data, since, mentions);
+  const standupDay = weekday === "Mon" || weekday === "Wed" || weekday === "Fri";
+
+  // Tasks whose phase has its own channel get their reminders there; the
+  // standup keeps everything else. Wins stay in the standup for everyone.
+  const byUrl = new Map();
+  const unrouted = [];
+  for (const r of open) {
+    const url = channelFor(r, channels);
+    if (!url) { unrouted.push(r); continue; }
+    if (!byUrl.has(url)) byUrl.set(url, { phases: new Set(), rows: [] });
+    byUrl.get(url).phases.add(r.phase);
+    byUrl.get(url).rows.push(r);
+  }
+  const channelPosts = [];
+  for (const [url, g] of byUrl) {
+    const secs = reminderSections(g.rows, todayIso, weekday, line, standupDay);
+    const stuck = statusChanges(data, "Stuck", since)
+      .filter(c => channelFor(c.row, channels) === url)
+      .map(c => `- **${c.wbs} ${c.row.task}** - flagged by ${tag(c.who || c.row.owner, mentions)}`);
+    if (stuck.length) secs.unshift(`__**Flagged Stuck, who can help?**__ :raised_hand:\n${stuck.join("\n")}`);
+    if (!secs.length) continue;
+    const phases = [...g.phases].join(" + ");
+    channelPosts.push({ url, phases, content: `**${phases} reminders** - <${BOARD}>\n\n${secs.join("\n\n")}` });
+  }
+
+  const sections = standupDay ? reminderSections(unrouted, todayIso, weekday, line, true) : [];
+  if (standupDay && channelPosts.length)
+    sections.push(`Reminders for ${channelPosts.map(c => c.phases).join(", ")} went to ${channelPosts.length === 1 ? "its own channel" : "their own channels"}.`);
 
   // Sponsor call day: update-your-rows nudge
   const callToday = MILESTONES.find(ms => ms.call && ms.d === todayIso);
@@ -164,7 +207,6 @@ function buildMessages(data, todayIso, weekday, mentions, since) {
   // Wins and Stuck flags open the message, ahead of any reminders
   sections.unshift(...wins);
 
-  const standupDay = weekday === "Mon" || weekday === "Wed" || weekday === "Fri";
   const reminder = standupDay && sections.length
     ? { content: `**BikeX standup** - <${BOARD}>\n\n${sections.join("\n\n")}` }
     : null;
@@ -176,7 +218,7 @@ function buildMessages(data, todayIso, weekday, mentions, since) {
     if (dd === 2) announcements.push({ content: `@everyone **In 2 days (${pretty(ms.d)}):** ${ms.n}\n<${BOARD}>`, everyone: true });
     if (dd === 0) announcements.push({ content: `@everyone **Today:** ${ms.n}\n<${BOARD}>`, everyone: true });
   }
-  return { reminder, announcements };
+  return { reminder, announcements, channelPosts };
 }
 
 // Friday evening scoreboard: the week's finished tasks and Stuck flags per
@@ -236,7 +278,12 @@ async function loadBoard(env) {
   if (!data.ok) throw new Error("board API: " + (data.err || "bad response"));
   let mentions = {};
   try { mentions = JSON.parse(env.MENTIONS || "{}"); } catch (e) {}
-  return { data, mentions };
+  let channels = {};
+  try {
+    for (const [k, v] of Object.entries(JSON.parse(env.CHANNELS || "{}")))
+      if (v) channels[String(k).trim().toLowerCase()] = v;
+  } catch (e) {}
+  return { data, mentions, channels };
 }
 
 async function runScoreboard(env, dry, nowMs) {
@@ -252,14 +299,20 @@ async function runScoreboard(env, dry, nowMs) {
 }
 
 async function run(env, dry, nowMs) {
-  const { data, mentions } = await loadBoard(env);
+  const { data, mentions, channels } = await loadBoard(env);
   const { iso: todayIso, weekday } = laParts(new Date(nowMs));
   // Since the last standup: standups are Mon/Wed/Fri, so Monday looks back to Friday
   const since = nowMs - (weekday === "Mon" ? 3 : 2) * 864e5;
-  const { reminder, announcements } = buildMessages(data, todayIso, weekday, mentions, since);
+  const { reminder, announcements, channelPosts } = buildMessages(data, todayIso, weekday, mentions, since, channels);
 
-  const out = { todayIso, weekday, posted: [], skipped: !reminder && !announcements.length };
-  if (dry) return { ...out, reminder, announcements };
+  const out = { todayIso, weekday, posted: [], skipped: !reminder && !announcements.length && !channelPosts.length };
+  // Dry runs show which phases post where, never the webhook URLs themselves
+  if (dry) return { ...out, reminder, announcements, channels: channelPosts.map(({ phases, content }) => ({ phases, content })) };
+
+  for (const c of channelPosts) {
+    try { await post(c.url, c, false); out.posted.push("channel: " + c.phases); }
+    catch (e) { out.error = (out.error ? out.error + "; " : "") + c.phases + ": " + e.message; }
+  }
 
   const standupUrl = env.WEBHOOK_STANDUP || env.WEBHOOK_URL;
   if (reminder && standupUrl) { await post(standupUrl, reminder, false); out.posted.push("standup"); }
