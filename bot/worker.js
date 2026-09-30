@@ -4,9 +4,8 @@
  *
  * Secrets / vars (set with `npx wrangler secret put -c bot/wrangler.jsonc <NAME>`):
  *   WEBHOOK_URL       required. Discord webhook for the reminders channel.
- *   WEBHOOK_STANDUP   optional. Webhook for the standup channel. The standup
- *                     digest and Friday scoreboard go here. Falls back to
- *                     WEBHOOK_URL.
+ *   WEBHOOK_STANDUP   optional. Webhook for the team channel. The Monday and
+ *                     Friday posts go here. Falls back to WEBHOOK_URL.
  *   WEBHOOK_ANNOUNCE  optional. Webhook for #announcements. Milestone posts go
  *                     here with @everyone. Falls back to WEBHOOK_URL, without
  *                     the @everyone.
@@ -21,20 +20,23 @@
  *                     get pinged on their own overdue/due items.
  *   RUN_KEY           optional. Enables manual runs: POST /run?key=...&dry=1
  *
- * Schedule: weekdays 16:00 UTC (9am PDT / 8am PST). Milestone announcements
- * can post any weekday; the standup digest posts Mon/Wed/Fri. Plus
- * Saturdays 01:00 UTC (Friday 6pm PDT / 5pm PST, after the sponsor call) for
- * the weekly scoreboard. Posts only when there is something to say - a quiet
- * board means a quiet channel.
+ * Schedule: 10am Pacific, every weekday, all year. The cron fires at both
+ * 17:00 and 18:00 UTC and the worker only acts on the one that lands on 10am
+ * in Los Angeles, so daylight saving never shifts it.
+ *   Monday   weekly kickoff: board update, wins since Friday, Stuck flags,
+ *            overdue, everything due this week, stalled work.
+ *   Friday   weekly wrap: weekly wins, the morale scoreboard, and critical
+ *            reminders (overdue, due today, due before Monday, still Stuck).
+ *   Any day  milestone announcements two days out and day-of.
+ * Posts only when there is something to say - a quiet board means a quiet
+ * channel.
  *
- * Tone: the digest opens with wins (tasks marked Done since the last standup) and
- * credits anyone who flagged a task Stuck, before any reminders. Flagging
- * Stuck early is treated as a win, not a failure.
+ * Tone: both posts open with wins and credit anyone who flagged a task
+ * Stuck, before any reminders. Flagging Stuck early is treated as a win.
  */
 
 const API = "https://script.google.com/macros/s/AKfycbwp2Q3l9s4674OZLx5shd_JheTgZgyAyogctRXCFfLA8ehcGeZWAt8J_q-ooinoZs6PUw/exec";
 const BOARD = "https://cashjohnson.net/bikex";
-const SCOREBOARD_CRON = "0 1 * * 6";
 
 const MILESTONES = [
   { d: "2026-09-25", n: "Sponsor call 1: live DonorView walkthrough; three as-is flowcharts due", call: true },
@@ -54,10 +56,11 @@ const MILESTONES = [
 function laParts(date) {
   const fmt = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit", weekday: "short",
+    hour: "2-digit", hourCycle: "h23",
   });
   const parts = {};
   for (const p of fmt.formatToParts(date)) parts[p.type] = p.value;
-  return { iso: `${parts.year}-${parts.month}-${parts.day}`, weekday: parts.weekday };
+  return { iso: `${parts.year}-${parts.month}-${parts.day}`, weekday: parts.weekday, hour: Number(parts.hour) };
 }
 function laIso(t) { return laParts(new Date(t)).iso; }
 function isoAddDays(iso, n) {
@@ -113,12 +116,12 @@ function statusChanges(data, to, since) {
 // whoever marked it Done, so a name still gets attached.
 function doneCredit(c) { return c.row.owner === "Whole team" ? c.who || "Whole team" : c.row.owner; }
 
-function winsSections(data, since, mentions) {
+function winsSections(data, since, mentions, title = "Wins since last check") {
   const out = [];
   const wins = statusChanges(data, "Done", since);
   if (wins.length) {
     const lines = wins.map(c => `- **${c.wbs} ${c.row.task}** - ${tag(doneCredit(c), mentions)}`);
-    out.push(`__**Wins since last standup**__ :tada:\n${lines.join("\n")}`);
+    out.push(`__**${title}**__ :tada:\n${lines.join("\n")}`);
   }
   const flags = statusChanges(data, "Stuck", since);
   if (flags.length) {
@@ -139,42 +142,89 @@ function channelFor(r, channels) {
   return channels[num] || channels[String(r.phase || "").toLowerCase()] || null;
 }
 
-// The reminder sections for a set of open tasks. Due today and due tomorrow
-// go out every weekday; overdue waits for standup days so a late task is not
-// chased daily; Monday adds stalled work and the rest of the week.
-function reminderSections(open, todayIso, weekday, line, standupDay) {
+// The reminder sections for a set of open tasks. Monday looks ahead at the
+// whole week; Friday keeps to what is critical: late, due today, due before
+// Monday's post, or still Stuck. `skip` holds tasks already shown as newly
+// Stuck higher up, so they are not listed twice.
+function reminderSections(open, todayIso, kind, line, skip = new Set()) {
   const sections = [];
-  const tomorrowIso = isoAddDays(todayIso, 1);
-  const overdue = open.filter(r => r.due && r.due < todayIso)
+  const byDue = (a, b) => String(a.due).localeCompare(String(b.due));
+  const overdue = open.filter(r => r.due && r.due < todayIso).sort(byDue)
     .map(r => line(r, ` - **${daysBetween(r.due, todayIso)}d late**`));
-  const dueToday = open.filter(r => r.due === todayIso).map(r => line(r));
-  const dueTomorrow = open.filter(r => r.due === tomorrowIso).map(r => line(r));
-  if (standupDay && overdue.length) sections.push(`__**Overdue**__\n${overdue.join("\n")}`);
-  if (dueToday.length) sections.push(`__**Due today**__\n${dueToday.join("\n")}`);
-  if (dueTomorrow.length) sections.push(`__**Due tomorrow**__\n${dueTomorrow.join("\n")}`);
-  if (weekday === "Mon") {
+  if (overdue.length) sections.push(`__**Overdue**__\n${overdue.join("\n")}`);
+  if (kind === "monday") {
+    const weekEnd = isoAddDays(todayIso, 6);
+    const week = open.filter(r => r.due && r.due >= todayIso && r.due <= weekEnd).sort(byDue)
+      .map(r => line(r, ` - ${r.due === todayIso ? "today" : pretty(r.due)}`));
+    if (week.length) sections.push(`__**Due this week**__\n${week.join("\n")}`);
     const stale = open.filter(r => {
       if (r.status !== "Working on it") return false;
       const age = stampAgeDays(r.upd, todayIso);
       return age != null && age > 7;
     }).map(r => line(r, " - no update in over a week"));
     if (stale.length) sections.push(`__**Stalled**__\n${stale.join("\n")}`);
-    const weekEnd = isoAddDays(todayIso, 6);
-    const thisWeek = open.filter(r => r.due && r.due > tomorrowIso && r.due <= weekEnd)
+  } else {
+    const dueToday = open.filter(r => r.due === todayIso).map(r => line(r));
+    if (dueToday.length) sections.push(`__**Due today**__\n${dueToday.join("\n")}`);
+    const mondayIso = isoAddDays(todayIso, 3);
+    const soon = open.filter(r => r.due && r.due > todayIso && r.due <= mondayIso).sort(byDue)
       .map(r => line(r, ` - ${pretty(r.due)}`));
-    if (thisWeek.length) sections.push(`__**Also due this week**__\n${thisWeek.join("\n")}`);
+    if (soon.length) sections.push(`__**Due before Monday's check-in**__\n${soon.join("\n")}`);
   }
+  const stuck = open.filter(r => r.status === "Stuck" && !skip.has(r.wbs)).map(r => line(r));
+  if (stuck.length) sections.push(`__**Still Stuck, who can help?**__\n${stuck.join("\n")}`);
   return sections;
 }
 
-function buildMessages(data, todayIso, weekday, mentions, since, channels = {}) {
+// Friday's morale scoreboard: the week's finished tasks and Stuck flags per
+// person, plus overall progress. Stuck flags count as points on purpose.
+function scoreboardSection(data, weekSince, mentions) {
+  const wins = statusChanges(data, "Done", weekSince);
+  const flags = statusChanges(data, "Stuck", weekSince);
+  const total = data.rows.length;
+  const doneAll = data.rows.filter(r => r.status === "Done").length;
+  const pct = total ? Math.round((100 * doneAll) / total) : 0;
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  const head = `__**Morale scoreboard**__ :trophy:\n${plural(wins.length, "task", "tasks")} finished this week. Board: ${doneAll}/${total} done (${pct}%).`;
+  if (!wins.length && !flags.length) return `${head}\nNo scores yet this week. One Done or one honest Stuck flag gets you on the board.`;
+  const people = {};
+  const bump = (name, k) => { (people[name] ||= { done: 0, flags: 0 })[k]++; };
+  wins.forEach(c => bump(doneCredit(c), "done"));
+  flags.forEach(c => bump(c.who || c.row.owner, "flags"));
+  const lines = Object.entries(people)
+    .sort((a, b) => (b[1].done + b[1].flags) - (a[1].done + a[1].flags) || a[0].localeCompare(b[0]))
+    .map(([name, p]) => {
+      const bits = [];
+      if (p.done) bits.push(`${p.done} done`);
+      if (p.flags) bits.push(plural(p.flags, "Stuck flag", "Stuck flags"));
+      return `- ${tag(name, mentions)} - ${bits.join(", ")}`;
+    });
+  const foot = flags.length ? "\nStuck flags score here too. Raising a blocker early is a win." : "";
+  return `${head}\n${lines.join("\n")}${foot}`;
+}
+
+// kind is "monday", "friday", or null (announcements only).
+function buildMessages(data, todayIso, kind, mentions, nowMs, channels = {}) {
   const open = data.rows.filter(r => r.status !== "Done");
   const line = (r, extra) => `- **${r.wbs} ${r.task}** - ${tag(r.owner, mentions)}${extra || ""}`;
-  const wins = winsSections(data, since, mentions);
-  const standupDay = weekday === "Mon" || weekday === "Wed" || weekday === "Fri";
+  // Monday looks back to Friday's post; Friday looks back to Monday morning
+  const dow = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(laParts(new Date(nowMs)).weekday);
+  const weekSince = Date.parse(isoAddDays(todayIso, -Math.max(dow, 0)) + "T07:00:00Z");
+  const since = kind === "monday" ? nowMs - 3 * 864e5 : weekSince;
+
+  // Milestone announcements: 2 days out and day-of, any weekday
+  const announcements = [];
+  for (const ms of MILESTONES) {
+    const dd = daysBetween(todayIso, ms.d);
+    if (dd === 2) announcements.push({ content: `@everyone **In 2 days (${pretty(ms.d)}):** ${ms.n}\n<${BOARD}>`, everyone: true });
+    if (dd === 0) announcements.push({ content: `@everyone **Today:** ${ms.n}\n<${BOARD}>`, everyone: true });
+  }
+  if (!kind) return { reminder: null, announcements, channelPosts: [] };
 
   // Tasks whose phase has its own channel get their reminders there; the
-  // standup keeps everything else. Wins stay in the standup for everyone.
+  // team post keeps everything else. Wins and the scoreboard stay together.
+  const newlyStuck = statusChanges(data, "Stuck", since);
+  const shown = new Set(newlyStuck.map(c => c.wbs));
   const byUrl = new Map();
   const unrouted = [];
   for (const r of open) {
@@ -186,86 +236,72 @@ function buildMessages(data, todayIso, weekday, mentions, since, channels = {}) 
   }
   const channelPosts = [];
   for (const [url, g] of byUrl) {
-    const secs = reminderSections(g.rows, todayIso, weekday, line, standupDay);
-    const stuck = statusChanges(data, "Stuck", since)
-      .filter(c => channelFor(c.row, channels) === url)
+    const secs = reminderSections(g.rows, todayIso, kind, line, shown);
+    const stuck = newlyStuck.filter(c => channelFor(c.row, channels) === url)
       .map(c => `- **${c.wbs} ${c.row.task}** - flagged by ${tag(c.who || c.row.owner, mentions)}`);
     if (stuck.length) secs.unshift(`__**Flagged Stuck, who can help?**__ :raised_hand:\n${stuck.join("\n")}`);
     if (!secs.length) continue;
     const phases = [...g.phases].join(" + ");
-    channelPosts.push({ url, phases, content: `**${phases} reminders** - <${BOARD}>\n\n${secs.join("\n\n")}` });
+    const label = kind === "monday" ? "this week" : "Friday check";
+    channelPosts.push({ url, phases, content: `**${phases}: ${label}** - <${BOARD}>\n\n${secs.join("\n\n")}` });
   }
 
-  const sections = standupDay ? reminderSections(unrouted, todayIso, weekday, line, true) : [];
-  if (standupDay && channelPosts.length)
+  const sections = [];
+  if (kind === "monday") {
+    const total = data.rows.length, done = total - open.length;
+    const dueWeek = open.filter(r => r.due && r.due >= todayIso && r.due <= isoAddDays(todayIso, 6)).length;
+    const late = open.filter(r => r.due && r.due < todayIso).length;
+    sections.push(`Board: ${done}/${total} done (${total ? Math.round(100 * done / total) : 0}%). ${dueWeek} due this week, ${late} overdue.`);
+    const call = MILESTONES.find(ms => ms.call && daysBetween(todayIso, ms.d) >= 0 && daysBetween(todayIso, ms.d) <= 6);
+    if (call) sections.push(`${call.n.split(":")[0]} is ${pretty(call.d)} at 4:00 PM. Update your rows on the board before then.`);
+    sections.push(...winsSections(data, since, mentions, "Wins since Friday"));
+  } else {
+    const callToday = MILESTONES.find(ms => ms.call && ms.d === todayIso);
+    if (callToday) sections.push(`Sponsor call today at 4:00 PM. Update your rows on the board before the call.`);
+    sections.push(...winsSections(data, since, mentions, "Weekly wins"));
+    sections.push(scoreboardSection(data, weekSince, mentions));
+  }
+  sections.push(...reminderSections(unrouted, todayIso, kind, line, shown));
+  if (channelPosts.length)
     sections.push(`Reminders for ${channelPosts.map(c => c.phases).join(", ")} went to ${channelPosts.length === 1 ? "its own channel" : "their own channels"}.`);
 
-  // Sponsor call day: update-your-rows nudge
-  const callToday = MILESTONES.find(ms => ms.call && ms.d === todayIso);
-  if (callToday) sections.unshift(`Sponsor call today at 4:00 PM. Update your rows on the board before the call.`);
-
-  // Wins and Stuck flags open the message, ahead of any reminders
-  sections.unshift(...wins);
-
-  const reminder = standupDay && sections.length
-    ? { content: `**BikeX standup** - <${BOARD}>\n\n${sections.join("\n\n")}` }
-    : null;
-
-  // Milestone announcements: 2 days out and day-of
-  const announcements = [];
-  for (const ms of MILESTONES) {
-    const dd = daysBetween(todayIso, ms.d);
-    if (dd === 2) announcements.push({ content: `@everyone **In 2 days (${pretty(ms.d)}):** ${ms.n}\n<${BOARD}>`, everyone: true });
-    if (dd === 0) announcements.push({ content: `@everyone **Today:** ${ms.n}\n<${BOARD}>`, everyone: true });
-  }
+  const title = kind === "monday" ? "BikeX weekly kickoff" : "BikeX weekly wrap";
+  const reminder = { content: `**${title}** - <${BOARD}>\n\n${sections.join("\n\n")}` };
   return { reminder, announcements, channelPosts };
 }
 
-// Friday evening scoreboard: the week's finished tasks and Stuck flags per
-// person, plus overall progress. Stuck flags count as points on purpose.
-function buildScoreboard(data, todayIso, weekday, mentions) {
-  const dow = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(weekday);
-  const mondayIso = isoAddDays(todayIso, -(dow < 0 ? 0 : dow));
-  const since = Date.parse(mondayIso + "T00:00:00Z") - 864e5; // widen, then filter by LA date
-  const inWeek = c => laIso(c.t) >= mondayIso;
-  const wins = statusChanges(data, "Done", since).filter(inWeek);
-  const flags = statusChanges(data, "Stuck", since).filter(inWeek);
-  if (!wins.length && !flags.length) return null;
-
-  const people = {};
-  const bump = (name, k) => { (people[name] ||= { done: 0, flags: 0 })[k]++; };
-  wins.forEach(c => bump(doneCredit(c), "done"));
-  flags.forEach(c => bump(c.who || c.row.owner, "flags"));
-  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-  const lines = Object.entries(people)
-    .sort((a, b) => (b[1].done + b[1].flags) - (a[1].done + a[1].flags) || a[0].localeCompare(b[0]))
-    .map(([name, p]) => {
-      const bits = [];
-      if (p.done) bits.push(plural(p.done, "done", "done"));
-      if (p.flags) bits.push(plural(p.flags, "Stuck flag", "Stuck flags"));
-      return `- ${tag(name, mentions)} - ${bits.join(", ")}`;
-    });
-
-  const total = data.rows.length;
-  const doneAll = data.rows.filter(r => r.status === "Done").length;
-  const pct = total ? Math.round((100 * doneAll) / total) : 0;
-  const foot = flags.length ? "\nStuck flags score here too. Raising a blocker early is a win." : "";
-  return {
-    content: `**Week of ${pretty(mondayIso)} scoreboard** - <${BOARD}>\n` +
-      `${plural(wins.length, "task", "tasks")} finished this week. Board: ${doneAll}/${total} done (${pct}%).\n\n` +
-      `${lines.join("\n")}${foot}`,
+// ---- posting ----------------------------------------------------------------
+// Discord caps a message at 2000 characters. Split at section breaks, and
+// break an oversized section line by line so no task is dropped.
+function chunks(text, max = 1900) {
+  const out = [];
+  let cur = "";
+  const add = (piece, sep) => {
+    const next = cur ? cur + sep + piece : piece;
+    if (next.length <= max) { cur = next; return; }
+    if (cur) out.push(cur);
+    cur = piece.slice(0, max);
   };
+  for (const part of text.split("\n\n")) {
+    if (part.length <= max) { add(part, "\n\n"); continue; }
+    part.split("\n").forEach((ln, i) => add(ln, i ? "\n" : "\n\n"));
+  }
+  if (cur) out.push(cur);
+  return out;
 }
 
-// ---- posting ----------------------------------------------------------------
 async function post(url, msg, allowEveryone) {
+  for (const content of chunks(msg.content)) await postOne(url, content, allowEveryone);
+}
+
+async function postOne(url, content, allowEveryone) {
   const res = await fetch(url + (url.includes("?") ? "&" : "?") + "wait=true", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: "BikeX Board",
       avatar_url: "https://cashjohnson.net/favicon.ico",
-      content: msg.content,
+      content,
       allowed_mentions: { parse: allowEveryone ? ["users", "everyone"] : ["users"] },
     }),
   });
@@ -286,37 +322,26 @@ async function loadBoard(env) {
   return { data, mentions, channels };
 }
 
-async function runScoreboard(env, dry, nowMs) {
-  const { data, mentions } = await loadBoard(env);
-  const { iso: todayIso, weekday } = laParts(new Date(nowMs));
-  const scoreboard = buildScoreboard(data, todayIso, weekday, mentions);
-  const out = { todayIso, weekday, posted: [], skipped: !scoreboard };
-  if (dry) return { ...out, scoreboard };
-  const standupUrl = env.WEBHOOK_STANDUP || env.WEBHOOK_URL;
-  if (scoreboard && standupUrl) { await post(standupUrl, scoreboard, false); out.posted.push("scoreboard"); }
-  if (scoreboard && !standupUrl) out.error = "no standup webhook set, scoreboard skipped";
-  return out;
-}
-
-async function run(env, dry, nowMs) {
+// Scheduled runs only act at 10am Los Angeles time. Manual runs (/run) act
+// whenever they are called, and `as` forces "monday" or "friday" for previews.
+async function run(env, dry, nowMs, as, manual) {
   const { data, mentions, channels } = await loadBoard(env);
-  const { iso: todayIso, weekday } = laParts(new Date(nowMs));
-  // Since the last standup: standups are Mon/Wed/Fri, so Monday looks back to Friday
-  const since = nowMs - (weekday === "Mon" ? 3 : 2) * 864e5;
-  const { reminder, announcements, channelPosts } = buildMessages(data, todayIso, weekday, mentions, since, channels);
+  const { iso: todayIso, weekday, hour } = laParts(new Date(nowMs));
+  if (!manual && hour !== 10) return { todayIso, weekday, hour, posted: [], skipped: "not 10am in Los Angeles" };
+  const kind = as || (weekday === "Mon" ? "monday" : weekday === "Fri" ? "friday" : null);
+  const { reminder, announcements, channelPosts } = buildMessages(data, todayIso, kind, mentions, nowMs, channels);
 
-  const out = { todayIso, weekday, posted: [], skipped: !reminder && !announcements.length && !channelPosts.length };
+  const out = { todayIso, weekday, kind, posted: [], skipped: !reminder && !announcements.length && !channelPosts.length };
   // Dry runs show which phases post where, never the webhook URLs themselves
   if (dry) return { ...out, reminder, announcements, channels: channelPosts.map(({ phases, content }) => ({ phases, content })) };
 
+  const standupUrl = env.WEBHOOK_STANDUP || env.WEBHOOK_URL;
+  if (reminder && standupUrl) { await post(standupUrl, reminder, false); out.posted.push(kind); }
+  if (reminder && !standupUrl) out.error = "no team webhook set, post skipped";
   for (const c of channelPosts) {
     try { await post(c.url, c, false); out.posted.push("channel: " + c.phases); }
     catch (e) { out.error = (out.error ? out.error + "; " : "") + c.phases + ": " + e.message; }
   }
-
-  const standupUrl = env.WEBHOOK_STANDUP || env.WEBHOOK_URL;
-  if (reminder && standupUrl) { await post(standupUrl, reminder, false); out.posted.push("standup"); }
-  if (reminder && !standupUrl) out.error = "no standup webhook set, digest skipped";
   const annUrl = env.WEBHOOK_ANNOUNCE || env.WEBHOOK_URL;
   for (const a of announcements) {
     if (!annUrl) { out.error = "no webhook for announcements"; break; }
@@ -328,8 +353,7 @@ async function run(env, dry, nowMs) {
 
 export default {
   async scheduled(event, env, ctx) {
-    const now = event.scheduledTime || Date.now();
-    ctx.waitUntil(event.cron === SCOREBOARD_CRON ? runScoreboard(env, false, now) : run(env, false, now));
+    ctx.waitUntil(run(env, false, event.scheduledTime || Date.now()));
   },
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -338,10 +362,8 @@ export default {
         return new Response("forbidden", { status: 403 });
       try {
         const dry = url.searchParams.get("dry") === "1";
-        const result = url.searchParams.get("mode") === "scoreboard"
-          ? await runScoreboard(env, dry, Date.now())
-          : await run(env, dry, Date.now());
-        return Response.json(result);
+        const as = ["monday", "friday"].includes(url.searchParams.get("as")) ? url.searchParams.get("as") : undefined;
+        return Response.json(await run(env, dry, Date.now(), as, true));
       } catch (e) {
         return new Response("error: " + e.message, { status: 500 });
       }
