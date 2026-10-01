@@ -91,6 +91,7 @@ tr.done td.name .t{color:var(--ink3);text-decoration:line-through}
 td.due input{border-color:transparent;background:transparent;width:100%}
 .late{color:var(--s-stuck);font-weight:600}
 .t{cursor:help;border-bottom:1px dotted var(--ink3)}
+.nowpill{background:var(--gc);color:#fff;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 8px;flex:none}
 .tlink{color:inherit;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1.5px;text-underline-offset:2px}
 .tlink:hover{color:var(--accent)}
 .tlink .lnk{font-style:normal;font-size:10px;color:var(--accent)}
@@ -1168,6 +1169,23 @@ function boardView(){
   const phases = [];
   list.forEach(t=>{ if(!phases.includes(t.phase)) phases.push(t.phase); });
 
+  // The phase the team is living in sorts to the top: current phases first
+  // with the soonest deadline leading, then upcoming, finished at the bottom.
+  const t0 = today();
+  const tIso = t0.getFullYear()+"-"+String(t0.getMonth()+1).padStart(2,"0")+"-"+String(t0.getDate()).padStart(2,"0");
+  const phaseState = ph => {
+    const g = PLAN.groups.find(x=>x.name===ph);
+    if(!g || !g.start) return {k:1, d:"9999"};
+    if(tIso > g.end) return {k:2, d:g.end};
+    if(tIso < g.start) return {k:1, d:g.start};
+    return {k:0, d:g.end};
+  };
+  phases.sort((a,b)=>{
+    const A = phaseState(a), B = phaseState(b);
+    if(A.k !== B.k) return A.k - B.k;
+    return A.k === 2 ? B.d.localeCompare(A.d) : A.d.localeCompare(B.d);
+  });
+
   let h = "";
   phases.forEach(ph=>{
     const rows = list.filter(t=>t.phase===ph);
@@ -1181,6 +1199,7 @@ function boardView(){
            '<button class="gtog" data-fold="'+esc(fk)+'" aria-expanded="'+(!fd)+'">'+
              '<i class="chev"></i><span class="ht">'+esc(ph)+'</span>'+
              '<span class="meta">'+rows.length+' tasks</span></button>'+
+           (phaseState(ph).k===0?'<span class="nowpill">Now</span>':'')+
            (fd?pills(rows):'')+
            '<div class="gbar">'+stack(rows)+'</div><span class="gpct">'+pct+'%</span></div>';
     if(fd){ h += '</section>'; return; }
