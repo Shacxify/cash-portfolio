@@ -1175,6 +1175,11 @@ function boardView(){
   const tIso = t0.getFullYear()+"-"+String(t0.getMonth()+1).padStart(2,"0")+"-"+String(t0.getDate()).padStart(2,"0");
   const phaseState = ph => {
     const g = PLAN.groups.find(x=>x.name===ph);
+    const rows = list.filter(t=>t.phase===ph);
+    // Fully done sections park at the very bottom; Project Management, which
+    // is "current" all term, sits just above them so real phases lead.
+    if(rows.length && rows.every(t=>t.status==="Done")) return {k:4, d:(g&&g.end)||"9999"};
+    if(ph === "Project Management") return {k:3, d:"9999"};
     if(!g || !g.start) return {k:1, d:"9999"};
     if(tIso > g.end) return {k:2, d:g.end};
     if(tIso < g.start) return {k:1, d:g.start};
