@@ -83,6 +83,14 @@ td.name{min-width:280px}
 td.name .dl{display:block;font-size:11px;color:var(--ink3)}
 td.own{width:170px}td.st{width:150px}td.due{width:140px}td.note{width:260px}td.upd{width:110px;font-size:12px;color:var(--ink3)}
 tr.done td.name .t{color:var(--ink3);text-decoration:line-through}
+tr.odrow td{background:rgba(214,69,75,.08)}
+tr.odrow td.wbs{border-left-color:var(--s-stuck)}
+tr.odrow td.name .t,tr.odrow td.due input{font-weight:600}
+.odbadge{display:inline-block;margin-left:8px;background:var(--s-stuck);color:#fff;font-size:10px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:1px 6px;white-space:nowrap;vertical-align:1px;
+  animation:odpulse 2.4s ease-in-out infinite}
+@keyframes odpulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.odbadge{animation:none}}
 .stsel{width:100%;color:#fff;font-weight:600;border:0;text-align-last:center;appearance:none;-webkit-appearance:none;padding:6px}
 .stsel option{color:var(--ink);background:var(--panel)}
 .ownsel{display:flex;align-items:center;gap:6px}
@@ -1213,14 +1221,17 @@ function boardView(){
                      sortBtn(scope,c[0],c[1],c[2])+'</th>').join("")+
          '</tr></thead><tbody>';
     sortRows(rows, sortBy[scope]).forEach(t=>{
-      h += '<tr class="'+(t.status==="Done"?"done":"")+'" data-row="'+t.row+'">'+
+      const od = late(t);
+      const odDays = od ? Math.round((today()-asDate(t.due))/864e5) : 0;
+      h += '<tr class="'+(t.status==="Done"?"done":"")+(od?" odrow":"")+'" data-row="'+t.row+'">'+
         '<td class="wbs mono">'+esc(t.wbs)+'</td>'+
         '<td class="name"><span class="t" data-tip="'+esc(t.note||"")+'">'+tinner(t)+'</span>'+
+          (od?'<span class="odbadge">'+odDays+'d late</span>':'')+
           (t.deliv?'<span class="dl">Deliverable: '+esc(t.deliv)+'</span>':'')+'</td>'+
         '<td class="own"><div class="ownsel">'+avN(t.owner||"?")+
           sel("owner", DATA.owners, t.owner)+'</div></td>'+
         '<td class="st">'+sel("status", DATA.status, t.status, 'class="stsel" style="background:'+ST[t.status]+'"')+'</td>'+
-        '<td class="due'+(late(t)?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
+        '<td class="due'+(od?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
         '<td class="note">'+noteCell(t)+'</td>'+
         '<td class="upd">'+esc(t.upd||"")+'</td></tr>';
     });
