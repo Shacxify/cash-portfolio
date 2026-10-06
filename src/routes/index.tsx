@@ -16,13 +16,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Cash Johnson is an AI Solutions Architect based in Silicon Valley, specializing in sales development and data analytics across operations, partnerships, and go-to-market.",
+          "Cash Johnson is an AI Solutions Architect based in Silicon Valley, designing AI-powered products and automations that streamline operations, partnerships, and go-to-market.",
       },
       { property: "og:title", content: "Cash Johnson - AI Solutions Architect" },
       {
         property: "og:description",
         content:
-          "Portfolio of Cash Johnson - operations, events, and growth across Centene, LinkedIn, and The Intern Ship.",
+          "Portfolio of Cash Johnson - AI-powered products and automation, plus operations and growth work across Centene, LinkedIn, and The Intern Ship.",
       },
       { property: "og:url", content: "https://cashjohnson.net/" },
       { property: "og:image", content: "https://cashjohnson.net/og-home.jpg" },
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/")({
             image: "https://cashjohnson.net/og-home.jpg",
             email: "mailto:me@cashjohnson.net",
             description:
-              "Cash Johnson is an AI Solutions Architect based in Silicon Valley, specializing in sales development and data analytics at the intersection of enterprise operations, partnerships, and go-to-market strategy.",
+              "Cash Johnson is an AI Solutions Architect based in Silicon Valley who designs AI-powered products and automations at the intersection of enterprise operations, partnerships, and go-to-market strategy.",
             address: {
               "@type": "PostalAddress",
               addressLocality: "San José",
