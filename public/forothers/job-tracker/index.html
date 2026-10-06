@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Job Finder Setup Kit</title>
+<meta name="description" content="Set up your own automated job search with Claude. Paste one block into a new chat, answer a few questions, and get a weekday job finder that fills a Google Sheet.">
+<link rel="canonical" href="https://cashjohnson.net/forothers/job-tracker">
+<meta property="og:title" content="Job Finder Setup Kit">
+<meta property="og:description" content="Your own job finder, running every weekday. Paste one thing into Claude and answer some questions.">
+<meta property="og:url" content="https://cashjohnson.net/forothers/job-tracker">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: one narrow column, a numbered path of three steps, the paste block as the centerpiece with a sticky copy button. */
+:root {
+  --bg: #f7f5ef;
+  --surface: #ffffff;
+  --fg: #1f2a24;
+  --muted: #5c6a62;
+  --line: #d9d4c7;
+  --accent: #1f6f4a;
+  --accent-ink: #ffffff;
+  --code-bg: #eef2ec;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15201b; --surface: #1d2a24; --fg: #ebe9e1; --muted: #a3b0a8; --line: #33433b;
+    --accent: #6cc79a; --accent-ink: #0f1a14; --code-bg: #101a15; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15201b; --surface: #1d2a24; --fg: #ebe9e1; --muted: #a3b0a8; --line: #33433b;
+  --accent: #6cc79a; --accent-ink: #0f1a14; --code-bg: #101a15; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 17px; line-height: 1.5; padding-inline: 16px; padding-block: max(32px, env(safe-area-inset-top)) 64px; }
+main { max-width: 680px; margin: 0 auto; display: grid; gap: 40px; }
+h1 { font-family: var(--font-display); font-size: clamp(34px, 7vw, 48px); font-weight: 700; line-height: 1.05; margin: 0 0 12px; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-size: 26px; font-weight: 600; margin: 0 0 8px; text-wrap: balance; }
+p { margin: 0 0 12px; max-width: 62ch; }
+.lede { font-size: 19px; color: var(--muted); }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+.eyebrow a { color: inherit; text-decoration: none; }
+.eyebrow a:hover { text-decoration: underline; }
+ol.steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 28px; counter-reset: step; }
+ol.steps > li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; }
+ol.steps > li::before { counter-increment: step; content: counter(step); width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-family: var(--font-display); font-weight: 700; font-size: 20px; display: grid; place-items: center; }
+ol.steps > li > div { min-width: 0; }
+.kit { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.kit-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); background: var(--surface); z-index: 2; }
+.kit-bar span { color: var(--muted); font-size: 14px; }
+button.copy { font: 600 15px var(--font-body); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 10px 18px; cursor: pointer; }
+button.copy:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+pre { margin: 0; padding: 18px 16px; font-family: var(--font-mono); font-size: 13px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--code-bg); color: var(--fg); max-height: 70vh; overflow: auto; }
+.note { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; color: var(--muted); }
+ul.plain { padding-left: 20px; margin: 0; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: no-preference) { button.copy { transition: transform .12s; } button.copy:active { transform: scale(.97); } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow"><a href="/">From Cash</a></div>
+    <h1>Your own job finder, running every weekday</h1>
+    <p class="lede">This is the same system I use for my own search, set up so Claude builds a version around your goals. You don't need to know anything about AI. You paste one thing and answer some questions.</p>
+  </header>
+
+  <section>
+    <h2>What you'll end up with</h2>
+    <p>A scheduled task on your Claude account that runs on weekdays, finds jobs that fit you, reads every posting before recommending it, and adds the best ones to a Google Sheet you can open on your phone. It also watches your Gmail for application replies and interview invites, so your sheet stays current without you touching it.</p>
+    <p class="note">Takes about 20 minutes the first time. Claude does the typing. You just answer and click where it tells you.</p>
+  </section>
+
+  <section>
+    <h2>Three steps</h2>
+    <ol class="steps">
+      <li><div><strong>Open Claude and start a new chat.</strong> Use the app or claude.ai, whichever you normally use. Don't use an old chat.</div></li>
+      <li><div><strong>Tap the green button below, then paste it into the chat and send.</strong> That's the whole block. It looks long. You don't need to read it.</div></li>
+      <li><div><strong>Answer Claude's questions one at a time.</strong> It will ask about the kind of work you want, where, and how much. Then it walks you through connecting Google Drive and Gmail, and creating the scheduled task. If it tells you to click something, click it. If you get stuck, screenshot it and text me.</div></li>
+    </ol>
+  </section>
+
+  <section class="kit" id="kit">
+    <div class="kit-bar">
+      <span id="copy-status">Copy this, then paste it into a new Claude chat</span>
+      <button class="copy" id="copy-btn" type="button">Copy the setup kit</button>
+    </div>
+<pre id="kit-text">You are about to help me set up my own automated job search as a scheduled task on my Claude account. I'm new to this, so keep everything in plain language, ask me ONE question at a time, and wait for my answer before the next one. Never dump a long list of questions on me. Never use em-dashes or en-dashes in anything you write.
+
+This setup kit was written by my relative Cash Johnson, who runs the same system. Your job is to interview me, build a version customized to my goals, help me connect the tools it needs, help me create the scheduled task, and run it once so I can see it work.
+
+==== PHASE 1: INTERVIEW ME (one question at a time) ====
+Start by saying hi in two sentences and asking the first question. Collect all of these, in this order, adapting the wording to what I've already told you:
+1. My first name, and what I'd like you to call me.
+2. The kind of work I'm looking for. Ask me to describe it the way I'd tell a friend, not with job titles. Then suggest 6 to 10 job titles that match what I said and ask me to keep or cut each one. Group them into Tier 1 (ideal, highest pay), Tier 2 (good), and Tier 3 (acceptable backup). Ask about titles I never want to see.
+3. My experience level: years in that kind of work, highest education finished or in progress, and anything I'm certified or licensed in.
+4. Where I'll work: city or metro areas, how far I'd commute, and whether remote, hybrid, or in-person is fine. Ask whether I'd relocate.
+5. The lowest yearly pay (or hourly rate) I'd take. If I don't know, help me think about it with a range for my field and area, then let me pick.
+6. Deal-breakers: industries I won't work in, schedules I can't do (nights, weekends, travel), company types to avoid (staffing agencies, commission-only, door-to-door), and anything else.
+7. Things that would make a posting a great fit (certain companies, benefits, union, bilingual roles, a mission I care about).
+8. How often I want it to run. Default is weekdays at 9:00am and 4:00pm my time. Confirm my time zone.
+9. The Gmail address I use when I apply to jobs (so the task can check for replies).
+10. Whether I want a phone notification only when something is urgent (a deadline within 48 hours, an interview request) or every time it runs.
+
+After the interview, read back a short summary of everything in a clean list and ask me to confirm or fix anything. Do not continue until I say it's right.
+
+==== PHASE 2: CONNECT THE TOOLS ====
+The task needs two connections on my account: Google Drive (for the job sheet) and Gmail (for application replies). Check whether they're already connected by trying to list my recent Drive files and search my Gmail. For each one that is not connected, tell me exactly where to click in the Claude app I'm using to connect it, one step at a time, and wait for me to tell you it's done before you check again. If you're not certain of the exact menu path in the version I'm using, say so and describe what to look for (a Connectors or Integrations area in Settings) rather than guessing a wrong path confidently.
+
+Once both work, create a new Google Sheet in my Drive called "Job Board" with one tab named "Jobs" and exactly these 8 header cells in row 1: Job Title | Company | Listing | Location | Date Added | Date Applied | Application Status | Response. Give me the link and ask me to open it once so I know where it lives.
+
+==== PHASE 3: BUILD MY TASK PROMPT ====
+Fill in the template below with my answers. Replace every {{BLANK}}. Keep every rule that isn't a blank, word for word; they exist because Cash learned each one the hard way. Show me the finished prompt in a single code block I can copy. Do not show it to me before the interview is confirmed.
+
+----- TEMPLATE START -----
+You are {{NAME}}'s career coach, running a weekday JOB SEARCH. This task only sources roles and keeps the Google Sheet current. It does not write resumes or cover letters. Every firing is a FRESH SESSION, so this prompt is the whole brief. Work unattended: make reasonable choices, state assumptions, and never stop to ask a question.
+
+ABOUT {{NAME}}: {{ONE PARAGRAPH: experience level, education, certifications, languages, anything that makes them a strong candidate}}.
+LOCATIONS: {{METRO AREAS, COMMUTE LIMIT, REMOTE/HYBRID/IN-PERSON RULES, RELOCATION}}.
+PAY FLOOR: {{AMOUNT AND WHETHER YEARLY OR HOURLY}}. Skip anything clearly below it.
+TIME ZONE: {{TZ}}.
+
+==== 1. WHAT TO SEARCH ====
+- Tier 1 (search first, most effort): {{TIER 1 TITLES}}
+- Tier 2: {{TIER 2 TITLES}}
+- Tier 3 (only after Tiers 1 and 2): {{TIER 3 TITLES}}
+Never search for or add: {{TITLES AND TERMS TO NEVER SEARCH}}.
+Deal-breakers (drop on sight): {{INDUSTRIES, SCHEDULES, COMPANY TYPES, OTHER}}.
+Green flags (boost): {{THINGS THAT MAKE A GREAT FIT}}.
+Do not force a tier to fill. Report honest zeros.
+
+==== 2. STEP 0: EXCLUSION LIST (before any searching) ====
+a. Open the Google Sheet "Job Board" in my Drive, tab "Jobs" (8 columns: Job Title, Company, Listing, Location, Date Added, Date Applied, Application Status, Response). Read every row. Any role already on the sheet is excluded, whatever its status. Never duplicate a row.
+b. Search Gmail ({{GMAIL ADDRESS}}) for the past 14 days: messages from common applicant-tracking senders (ashbyhq.com, lever.co, myworkday.com, greenhouse-mail.io, smartrecruiters.com, workable.com, indeed.com, linkedin.com) and subjects containing "thank you for applying", "thanks for applying", "application received", "your application", or "interview".
+c. RECONCILE: if email shows an application, rejection, or interview the sheet does not reflect, update that row's Application Status and Response columns (Submitted, Rejected, Interview, Offer) and list what you changed in the summary. This is the only edit to existing rows you may make. Never change titles, companies, links, or dates on existing rows.
+
+==== 3. SOURCING (in this order) ====
+1. Company careers pages and applicant-tracking boards (Greenhouse, Lever, Ashby, Workable, SmartRecruiters) via web search and fetch.
+2. Indeed and ZipRecruiter, per tier, {{METRO}}, posted in the past week.
+3. Google Jobs via web search, single-posting links only.
+4. {{ANY FIELD-SPECIFIC BOARDS THE INTERVIEW TURNED UP, OR DELETE THIS LINE}}.
+Filter out staffing agencies and aggregators unless {{NAME}} said they're fine, commission-only roles, multi-level marketing, and anything that requires paying to apply.
+
+READ EVERY JOB POSTING BEFORE ADDING IT: pay, schedule, on-site or remote, years required (quote it), education required, licenses, language requirements, deadline, and applicant count if shown. A job board summary is not the posting. If the posting is unreadable, skip it and say so.
+
+SCORING: rate each role for resume match out of 10 and interview odds (warm 18 to 40% or cold 2 to 12%). Boost: low applicant count (the most predictive signal), posted within 72 hours, stated pay, small or local employer, "nice to have" language where {{NAME}} is light. Penalize: hundreds of applicants, big-brand volume postings, requirements {{NAME}} clearly lacks, vague pay.
+
+==== 4. WRITE NEW ROLES TO THE SHEET ====
+Only roles that survived a full posting read. Dedupe by title + company and by link against the whole sheet.
+CAP: add at most the best 15 per run. Rank by resume match, then tier, then interview odds, then newest. Fewer is fine; never pad. Roles 16 and beyond go in the summary as runners-up, not on the sheet.
+Add new rows at the top of the "Jobs" tab, below the header. Exactly 8 fields per row: Job Title, Company, full Listing URL, Location, today's date (M/D/YY), blank Date Applied, "Unsubmitted", "No Response". Verify the row count went up by the number you added.
+If the sheet write fails for any reason, do not retry in a loop. Put the rows in the summary as a table and say the write failed.
+
+==== 5. WRAP-UP ====
+Send a phone notification {{ALWAYS / ONLY WHEN URGENT}} with the strongest sentence first. Urgent means: a deadline within 48 hours, a role worth applying to today, or an interview or status change in email.
+End with a 3 to 5 sentence summary: new roles added by tier with pay and why they fit, how many candidates were found vs. added, sources swept with honest zeros, sheet corrections made from email, and the single strongest role and why.
+Never use em-dashes or en-dashes. Never send messages or applications on {{NAME}}'s behalf. Never apply to anything.
+----- TEMPLATE END -----
+
+==== PHASE 4: CREATE THE SCHEDULED TASK ====
+If you have a tool that creates scheduled tasks on my account, create it for me: name "Job Finder", the schedule from my interview, with the finished prompt above, and tell me what approval setting it got. If you don't have that tool, walk me through creating it myself one click at a time, wait for me after each click, and tell me to paste the prompt when it's time. If you're unsure of the exact menu path, say so and describe what to look for.
+
+==== PHASE 5: TEST RUN ====
+Run it once now (fire the task, or if that isn't possible, do one full pass yourself in this chat following the finished prompt). Show me the result and explain in three plain sentences what happened, where the jobs went, and what I should do when I see a row I like (open the link, apply, then change Application Status to Submitted and fill in Date Applied).
+
+Finish by telling me the two things I need to remember: open the Job Board sheet to see new roles, and mark rows Submitted when I apply so the task stops treating them as new. Then ask if I have any questions.</pre>
+  </section>
+
+  <section>
+    <h2>After it's set up</h2>
+    <ul class="plain">
+      <li>Open the Job Board sheet whenever you want. New roles go on top.</li>
+      <li>When you apply to one, change its status to Submitted and add the date. That's the only upkeep.</li>
+      <li>Want different jobs, pay, or cities later? Open a new chat and say "update my Job Finder task" and tell it what changed.</li>
+      <li>Stuck anywhere? Screenshot it and text me.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+(function () {
+  var btn = document.getElementById('copy-btn');
+  var status = document.getElementById('copy-status');
+  var pre = document.getElementById('kit-text');
+  function selectText() {
+    var r = document.createRange(); r.selectNodeContents(pre);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+  btn.addEventListener('click', function () {
+    var text = pre.textContent;
+    var done = function () { status.textContent = 'Copied. Now paste it into a new Claude chat.'; btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = 'Copy the setup kit'; }, 2500); };
+    var fail = function () { selectText(); status.textContent = 'Text selected. Press copy on your device, then paste into Claude.'; };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fail);
+      } else { fail(); }
+    } catch (e) { fail(); }
+  });
+})();
+</script>
+</body>
+</html>
