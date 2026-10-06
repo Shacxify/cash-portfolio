@@ -12,13 +12,13 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "Cash Johnson - Sales Growth Architect" },
+      { title: "Cash Johnson - AI Solutions Architect" },
       {
         name: "description",
         content:
-          "Cash Johnson is a Sales Growth Architect based in Silicon Valley, specializing in sales development and data analytics across operations, partnerships, and go-to-market.",
+          "Cash Johnson is an AI Solutions Architect based in Silicon Valley, specializing in sales development and data analytics across operations, partnerships, and go-to-market.",
       },
-      { property: "og:title", content: "Cash Johnson - Sales Growth Architect" },
+      { property: "og:title", content: "Cash Johnson - AI Solutions Architect" },
       {
         property: "og:description",
         content:
@@ -38,17 +38,17 @@ export const Route = createFileRoute("/")({
           "@type": "ProfilePage",
           "@id": "https://cashjohnson.net/#profilepage",
           url: "https://cashjohnson.net/",
-          name: "Cash Johnson - Sales Growth Architect",
+          name: "Cash Johnson - AI Solutions Architect",
           mainEntity: {
             "@type": "Person",
             "@id": "https://cashjohnson.net/#person",
             name: "Cash Johnson",
-            jobTitle: "Sales Growth Architect",
+            jobTitle: "AI Solutions Architect",
             url: "https://cashjohnson.net/",
             image: "https://cashjohnson.net/og-home.jpg",
             email: "mailto:me@cashjohnson.net",
             description:
-              "Cash Johnson is a Sales Growth Architect based in Silicon Valley, specializing in sales development and data analytics at the intersection of enterprise operations, partnerships, and go-to-market strategy.",
+              "Cash Johnson is an AI Solutions Architect based in Silicon Valley, specializing in sales development and data analytics at the intersection of enterprise operations, partnerships, and go-to-market strategy.",
             address: {
               "@type": "PostalAddress",
               addressLocality: "San José",
