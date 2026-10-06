@@ -83,6 +83,37 @@ td.name{min-width:280px}
 td.name .dl{display:block;font-size:11px;color:var(--ink3)}
 td.own{width:170px}td.st{width:150px}td.due{width:140px}td.note{width:260px}td.upd{width:110px;font-size:12px;color:var(--ink3)}
 tr.done td.name .t{color:var(--ink3);text-decoration:line-through}
+tr.odrow td{background:rgba(214,69,75,.08)}
+tr.odrow td.wbs{border-left-color:var(--s-stuck)}
+tr.odrow td.name .t,tr.odrow td.due input{font-weight:600}
+.odbadge{display:inline-block;margin-left:8px;background:var(--s-stuck);color:#fff;font-size:10px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:1px 6px;white-space:nowrap;vertical-align:1px;
+  animation:odpulse 2.4s ease-in-out infinite}
+@keyframes odpulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.odbadge{animation:none}}
+tr.atrow td{background:rgba(227,155,45,.09)}
+tr.atrow td.wbs{border-left-color:var(--s-working)}
+.arbadge{display:inline-block;margin-left:8px;background:var(--s-working);color:#33230a;font-size:10px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:1px 6px;white-space:nowrap;vertical-align:1px}
+/* ---- at-risk radar ---- */
+#radar{position:fixed;right:16px;bottom:16px;z-index:55}
+#radarpill{display:flex;align-items:center;gap:6px;background:var(--s-working);color:#33230a;border:0;border-radius:999px;
+  padding:9px 14px;font:inherit;font-weight:700;box-shadow:0 4px 14px rgba(10,20,40,.3);cursor:pointer}
+#radarpill.od{background:var(--s-stuck);color:#fff}
+#radarbox{width:302px;max-height:min(50vh,420px);display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(10,20,40,.3);overflow:hidden}
+#radarbox .rhead{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--panel2)}
+#radarbox .rtitle{font-weight:700;font-size:13px}
+#radarbox .rcount{font-size:11px;color:var(--ink2);margin-left:auto}
+#radarx{border:0;background:none;font-size:17px;line-height:1;color:var(--ink3);cursor:pointer;padding:0 2px}
+#radarbox ul{list-style:none;margin:0;padding:6px;overflow-y:auto}
+#radarbox li{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:12.5px}
+#radarbox li:hover{background:var(--panel2)}
+#radarbox li .ri{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#radarbox li .rd{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;font-weight:700;white-space:nowrap}
+#radarbox li.rl .rd{color:var(--s-stuck)}
+#radarbox li.rr .rd{color:var(--s-working)}
+@media (max-width:700px){#radarbox{width:min(302px,calc(100vw - 32px))}}
 .stsel{width:100%;color:#fff;font-weight:600;border:0;text-align-last:center;appearance:none;-webkit-appearance:none;padding:6px}
 .stsel option{color:var(--ink);background:var(--panel)}
 .ownsel{display:flex;align-items:center;gap:6px}
@@ -91,6 +122,7 @@ tr.done td.name .t{color:var(--ink3);text-decoration:line-through}
 td.due input{border-color:transparent;background:transparent;width:100%}
 .late{color:var(--s-stuck);font-weight:600}
 .t{cursor:help;border-bottom:1px dotted var(--ink3)}
+.nowpill{background:var(--gc);color:#fff;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 8px;flex:none}
 .tlink{color:inherit;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1.5px;text-underline-offset:2px}
 .tlink:hover{color:var(--accent)}
 .tlink .lnk{font-style:normal;font-size:10px;color:var(--accent)}
@@ -302,6 +334,7 @@ td.due input{border-color:transparent;background:transparent;width:100%}
 </div>
 <div id="tip" role="tooltip"></div>
 <div id="toast"></div>
+<div id="radar"></div>
 
 <script>
 /* =========================================================================
@@ -505,7 +538,49 @@ const Motion = (function(){
       {duration:700, easing:E.out});
   }
 
-  return { reveal, capture, flip, countUp, pulse,
+  // Confetti burst from a point on screen. One throwaway canvas per burst,
+  // pinned over the page and removed once the last piece falls off.
+  const CONF = ["#2E9E68","#E39B2D","#7B68C8","#0E7C86","#D6454B","#F2C94C"];
+  function confetti(x, y, n){
+    if(off()) return;
+    n = n || 90;
+    const cv = document.createElement("canvas"), dpr = window.devicePixelRatio || 1;
+    const W = innerWidth, H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.setAttribute("aria-hidden", "true");
+    cv.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+    document.body.appendChild(cv);
+    const cx = cv.getContext("2d");
+    cx.scale(dpr, dpr);
+    const bits = [];
+    for(let i = 0; i < n; i++){
+      const a = -Math.PI/2 + (Math.random() - .5) * Math.PI * 1.1, v = 6 + Math.random() * 9;
+      bits.push({x, y, vx:Math.cos(a)*v, vy:Math.sin(a)*v, r:Math.random()*6.3, vr:(Math.random()-.5)*.35,
+        w:5 + Math.random()*5, h:3 + Math.random()*4, c:CONF[i % CONF.length], round:Math.random() < .3});
+    }
+    const t0 = performance.now();
+    (function step(now){
+      const life = now - t0;
+      cx.clearRect(0, 0, W, H);
+      let alive = 0;
+      bits.forEach(b => {
+        b.vy += .32; b.vx *= .985; b.vy *= .985;
+        b.x += b.vx; b.y += b.vy; b.r += b.vr;
+        if(b.y > H + 20) return;
+        alive++;
+        cx.save();
+        cx.globalAlpha = Math.max(0, 1 - Math.max(0, life - 1600) / 600);
+        cx.translate(b.x, b.y); cx.rotate(b.r);
+        cx.fillStyle = b.c;
+        if(b.round){ cx.beginPath(); cx.arc(0, 0, b.h/1.5, 0, 7); cx.fill(); }
+        else cx.fillRect(-b.w/2, -b.h/2, b.w, b.h * Math.abs(Math.cos(b.r * 2)) + 1);
+        cx.restore();
+      });
+      if(alive && life < 2200) requestAnimationFrame(step); else cv.remove();
+    })(t0);
+  }
+
+  return { reveal, capture, flip, countUp, pulse, confetti,
            get reduced(){ return mq.matches; } };
 })();
 
@@ -802,6 +877,14 @@ async function save(row, field, value, was){
 function late(t){
   const d = asDate(t.due);
   return t.status !== "Done" && d && d < today();
+}
+// The amber tier: open tasks inside the danger zone, due within RISK_DAYS.
+const RISK_DAYS = 3;
+function dueGap(t){ const d = asDate(t.due); return d ? Math.round((d - today())/864e5) : null; }
+function atRisk(t){
+  if(t.status === "Done" || late(t)) return false;
+  const g = dueGap(t);
+  return g != null && g >= 0 && g <= RISK_DAYS;
 }
 
 function stack(list){
@@ -1260,6 +1343,28 @@ function boardView(){
   const phases = [];
   list.forEach(t=>{ if(!phases.includes(t.phase)) phases.push(t.phase); });
 
+  // The phase the team is living in sorts to the top: current phases first
+  // with the soonest deadline leading, then upcoming, finished at the bottom.
+  const t0 = today();
+  const tIso = t0.getFullYear()+"-"+String(t0.getMonth()+1).padStart(2,"0")+"-"+String(t0.getDate()).padStart(2,"0");
+  const phaseState = ph => {
+    const g = PLAN.groups.find(x=>x.name===ph);
+    const rows = list.filter(t=>t.phase===ph);
+    // Fully done sections park at the very bottom; Project Management, which
+    // is "current" all term, sits just above them so real phases lead.
+    if(rows.length && rows.every(t=>t.status==="Done")) return {k:4, d:(g&&g.end)||"9999"};
+    if(ph === "Project Management") return {k:3, d:"9999"};
+    if(!g || !g.start) return {k:1, d:"9999"};
+    if(tIso > g.end) return {k:2, d:g.end};
+    if(tIso < g.start) return {k:1, d:g.start};
+    return {k:0, d:g.end};
+  };
+  phases.sort((a,b)=>{
+    const A = phaseState(a), B = phaseState(b);
+    if(A.k !== B.k) return A.k - B.k;
+    return A.k === 2 ? B.d.localeCompare(A.d) : A.d.localeCompare(B.d);
+  });
+
   let h = "";
   phases.forEach(ph=>{
     const rows = list.filter(t=>t.phase===ph);
@@ -1273,6 +1378,7 @@ function boardView(){
            '<button class="gtog" data-fold="'+esc(fk)+'" aria-expanded="'+(!fd)+'">'+
              '<i class="chev"></i><span class="ht">'+esc(ph)+'</span>'+
              '<span class="meta">'+rows.length+' tasks</span></button>'+
+           (phaseState(ph).k===0?'<span class="nowpill">Now</span>':'')+
            (fd?pills(rows):'')+
            '<div class="gbar">'+stack(rows)+'</div><span class="gpct">'+pct+'%</span></div>';
     if(fd){ h += '</section>'; return; }
@@ -1281,14 +1387,20 @@ function boardView(){
                      sortBtn(scope,c[0],c[1],c[2])+'</th>').join("")+
          '</tr></thead><tbody>';
     sortRows(rows, sortBy[scope]).forEach(t=>{
-      h += '<tr class="'+(t.status==="Done"?"done":"")+'" data-row="'+t.row+'">'+
+      const od = late(t);
+      const ar = !od && atRisk(t);
+      const odDays = od ? Math.round((today()-asDate(t.due))/864e5) : 0;
+      const arGap = ar ? dueGap(t) : 0;
+      h += '<tr class="'+(t.status==="Done"?"done":"")+(od?" odrow":"")+(ar?" atrow":"")+'" data-row="'+t.row+'">'+
         '<td class="wbs mono">'+esc(t.wbs)+'</td>'+
         '<td class="name"><span class="t" data-tip="'+esc(t.note||"")+'">'+tinner(t)+'</span>'+
+          (od?'<span class="odbadge">'+odDays+'d late</span>':'')+
+          (ar?'<span class="arbadge">'+(arGap===0?'due today':'due in '+arGap+'d')+'</span>':'')+
           (t.deliv?'<span class="dl">Deliverable: '+esc(t.deliv)+'</span>':'')+'</td>'+
         '<td class="own"><div class="ownsel">'+avN(t.owner||"?")+
           sel("owner", DATA.owners, t.owner)+'</div></td>'+
         '<td class="st">'+sel("status", DATA.status, t.status, 'class="stsel" style="background:'+ST[t.status]+'"')+'</td>'+
-        '<td class="due'+(late(t)?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
+        '<td class="due'+(od?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
         '<td class="note">'+noteCell(t)+'</td>'+
         '<td class="upd">'+esc(t.upd||"")+'</td></tr>';
     });
@@ -1420,6 +1532,70 @@ function syncFoldAll(){
 }
 
 let lastView = null;
+// ---- at-risk radar ----------------------------------------------------------
+// Floats bottom-right on every tab. The X collapses it to a pill rather than
+// killing it, and it re-expands on its own only when the set of at-risk or
+// overdue tasks actually changes, so a dismissal is respected until the
+// situation does something new. Narrow screens start at the pill.
+function renderRadar(){
+  const box = $("#radar");
+  if(!box) return;
+  const od = DATA.rows.filter(late).map(t=>({t, late:true, d:Math.round((today()-asDate(t.due))/864e5)}))
+    .sort((a,b)=>b.d-a.d);
+  const ar = DATA.rows.filter(atRisk).map(t=>({t, late:false, d:dueGap(t)}))
+    .sort((a,b)=>a.d-b.d);
+  const items = od.concat(ar);
+  if(!items.length){ box.innerHTML = ""; return; }
+  const sig = items.map(i=>i.t.wbs+":"+i.t.due+(i.late?"L":"R")).join("|");
+  let open = innerWidth > 700;
+  try{
+    if(localStorage.getItem("bx-radar-sig") === sig){
+      const st = localStorage.getItem("bx-radar");
+      if(st) open = st === "open";
+    }else{
+      localStorage.setItem("bx-radar-sig", sig);
+      localStorage.setItem("bx-radar", open ? "open" : "closed");
+    }
+  }catch(e){}
+  if(!open){
+    box.innerHTML = '<button id="radarpill"'+(od.length?' class="od"':'')+' aria-label="Show at-risk tasks">&#9888; '+items.length+'</button>';
+    return;
+  }
+  let h = '<div id="radarbox"><div class="rhead"><span class="rtitle">&#9888; At risk</span>'+
+    '<span class="rcount">'+od.length+' overdue &middot; '+ar.length+' due soon</span>'+
+    '<button id="radarx" aria-label="Collapse to pill">&times;</button></div><ul>';
+  items.forEach(i=>{
+    const t = i.t;
+    const lbl = i.late ? i.d+"d late" : (i.d===0 ? "today" : "in "+i.d+"d");
+    h += '<li data-goto="'+t.row+'" class="'+(i.late?'rl':'rr')+'" title="'+esc(t.task)+'">'+
+      avN(t.owner||"?")+'<span class="ri"><b class="mono">'+esc(t.wbs)+'</b> '+esc(t.task)+'</span>'+
+      '<span class="rd">'+lbl+'</span></li>';
+  });
+  box.innerHTML = h + '</ul></div>';
+}
+document.addEventListener("click", e=>{
+  if(e.target.closest("#radarx")){
+    try{ localStorage.setItem("bx-radar", "closed"); }catch(x){}
+    renderRadar(); return;
+  }
+  if(e.target.closest("#radarpill")){
+    try{ localStorage.setItem("bx-radar", "open"); }catch(x){}
+    renderRadar(); return;
+  }
+  const it = e.target.closest("#radar [data-goto]");
+  if(it){
+    const row = Number(it.dataset.goto);
+    if(view !== "board"){
+      view = "board";
+      try{ sessionStorage.setItem("bx-view", "board"); }catch(x){}
+      render();
+    }
+    let tr = document.querySelector('tr[data-row="'+row+'"]');
+    if(!tr && filter){ filter = null; render(); tr = document.querySelector('tr[data-row="'+row+'"]'); }
+    if(tr){ tr.scrollIntoView({behavior:"smooth", block:"center"}); Motion.pulse(tr); }
+  }
+});
+
 function render(){
   hideTip();
   renderTabs();
@@ -1436,6 +1612,7 @@ function render(){
   if(isB||isG) filters();
   if(isB) boardView();
   $("#alt").innerHTML = isG ? ganttView() : isW ? wbsView() : isT ? teamView() : "";
+  renderRadar();
   syncFoldAll();
   // Stagger the entrance on arrival at a view, not on every redraw inside it.
   if(view !== lastView){
@@ -1466,9 +1643,18 @@ document.addEventListener("change", async e=>{
     rec[field] = value;
     rec.upd = r.upd;
     lastSig = sigOf(DATA);   // our own edit is not a change to redraw over
-    toast("Saved to the Sheet");
+    const finished = field === "status" && value === "Done" && before !== "Done";
+    const phaseDone = finished && DATA.rows.filter(t=>t.phase===rec.phase).every(t=>t.status==="Done");
+    toast(phaseDone ? "Phase complete! Every task in "+rec.phase+" is done"
+        : finished ? "Nice work! Marked done" : "Saved to the Sheet");
     render();
-    Motion.pulse(document.querySelector('[data-row="'+row+'"]'));
+    const tr2 = document.querySelector('[data-row="'+row+'"]');
+    Motion.pulse(tr2);
+    if(finished){
+      const cell = tr2 && (tr2.querySelector(".st") || tr2);
+      const b = cell ? cell.getBoundingClientRect() : {left:innerWidth/2, width:0, top:innerHeight/2};
+      Motion.confetti(b.left + b.width/2, b.top, phaseDone ? 220 : 90);
+    }
   }else{
     el.value = before;
     toast(r.err || "Save failed", true);

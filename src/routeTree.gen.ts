@@ -9,18 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BlogPmVsOperationsRouteImport } from './routes/blog.pm-vs-operations'
-import { Route as BlogOperationsProjectManagerRoleRouteImport } from './routes/blog.operations-project-manager-role'
-import { Route as BlogOperationsAndProjectManagementRouteImport } from './routes/blog.operations-and-project-management'
-import { Route as BlogHowToDocumentSopsRouteImport } from './routes/blog.how-to-document-sops'
+import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ApiVisitRouteImport } from './routes/api.visit'
+import { Route as BlogHowToDocumentSopsRouteImport } from './routes/blog.how-to-document-sops'
+import { Route as BlogOperationsAndProjectManagementRouteImport } from './routes/blog.operations-and-project-management'
+import { Route as BlogOperationsProjectManagerRoleRouteImport } from './routes/blog.operations-project-manager-role'
+import { Route as BlogPmVsOperationsRouteImport } from './routes/blog.pm-vs-operations'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsRoute = ProjectsRouteImport.update({
@@ -28,36 +28,36 @@ const ProjectsRoute = ProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogPmVsOperationsRoute = BlogPmVsOperationsRouteImport.update({
-  id: '/blog/pm-vs-operations',
-  path: '/blog/pm-vs-operations',
+const ApiVisitRoute = ApiVisitRouteImport.update({
+  id: '/api/visit',
+  path: '/api/visit',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogOperationsProjectManagerRoleRoute =
-  BlogOperationsProjectManagerRoleRouteImport.update({
-    id: '/blog/operations-project-manager-role',
-    path: '/blog/operations-project-manager-role',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const BlogHowToDocumentSopsRoute = BlogHowToDocumentSopsRouteImport.update({
+  id: '/blog/how-to-document-sops',
+  path: '/blog/how-to-document-sops',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogOperationsAndProjectManagementRoute =
   BlogOperationsAndProjectManagementRouteImport.update({
     id: '/blog/operations-and-project-management',
     path: '/blog/operations-and-project-management',
     getParentRoute: () => rootRouteImport,
   } as any)
-const BlogHowToDocumentSopsRoute = BlogHowToDocumentSopsRouteImport.update({
-  id: '/blog/how-to-document-sops',
-  path: '/blog/how-to-document-sops',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiVisitRoute = ApiVisitRouteImport.update({
-  id: '/api/visit',
-  path: '/api/visit',
+const BlogOperationsProjectManagerRoleRoute =
+  BlogOperationsProjectManagerRoleRouteImport.update({
+    id: '/blog/operations-project-manager-role',
+    path: '/blog/operations-project-manager-role',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const BlogPmVsOperationsRoute = BlogPmVsOperationsRouteImport.update({
+  id: '/blog/pm-vs-operations',
+  path: '/blog/pm-vs-operations',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -138,11 +138,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects': {
@@ -152,32 +152,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog/pm-vs-operations': {
-      id: '/blog/pm-vs-operations'
-      path: '/blog/pm-vs-operations'
-      fullPath: '/blog/pm-vs-operations'
-      preLoaderRoute: typeof BlogPmVsOperationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog/operations-project-manager-role': {
-      id: '/blog/operations-project-manager-role'
-      path: '/blog/operations-project-manager-role'
-      fullPath: '/blog/operations-project-manager-role'
-      preLoaderRoute: typeof BlogOperationsProjectManagerRoleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog/operations-and-project-management': {
-      id: '/blog/operations-and-project-management'
-      path: '/blog/operations-and-project-management'
-      fullPath: '/blog/operations-and-project-management'
-      preLoaderRoute: typeof BlogOperationsAndProjectManagementRouteImport
+    '/api/visit': {
+      id: '/api/visit'
+      path: '/api/visit'
+      fullPath: '/api/visit'
+      preLoaderRoute: typeof ApiVisitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/how-to-document-sops': {
@@ -187,11 +173,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogHowToDocumentSopsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/visit': {
-      id: '/api/visit'
-      path: '/api/visit'
-      fullPath: '/api/visit'
-      preLoaderRoute: typeof ApiVisitRouteImport
+    '/blog/operations-and-project-management': {
+      id: '/blog/operations-and-project-management'
+      path: '/blog/operations-and-project-management'
+      fullPath: '/blog/operations-and-project-management'
+      preLoaderRoute: typeof BlogOperationsAndProjectManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/operations-project-manager-role': {
+      id: '/blog/operations-project-manager-role'
+      path: '/blog/operations-project-manager-role'
+      fullPath: '/blog/operations-project-manager-role'
+      preLoaderRoute: typeof BlogOperationsProjectManagerRoleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/pm-vs-operations': {
+      id: '/blog/pm-vs-operations'
+      path: '/blog/pm-vs-operations'
+      fullPath: '/blog/pm-vs-operations'
+      preLoaderRoute: typeof BlogPmVsOperationsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
