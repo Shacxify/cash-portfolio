@@ -91,6 +91,29 @@ tr.odrow td.name .t,tr.odrow td.due input{font-weight:600}
   animation:odpulse 2.4s ease-in-out infinite}
 @keyframes odpulse{0%,100%{opacity:1}50%{opacity:.55}}
 @media (prefers-reduced-motion:reduce){.odbadge{animation:none}}
+tr.atrow td{background:rgba(227,155,45,.09)}
+tr.atrow td.wbs{border-left-color:var(--s-working)}
+.arbadge{display:inline-block;margin-left:8px;background:var(--s-working);color:#33230a;font-size:10px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:1px 6px;white-space:nowrap;vertical-align:1px}
+/* ---- at-risk radar ---- */
+#radar{position:fixed;right:16px;bottom:16px;z-index:55}
+#radarpill{display:flex;align-items:center;gap:6px;background:var(--s-working);color:#33230a;border:0;border-radius:999px;
+  padding:9px 14px;font:inherit;font-weight:700;box-shadow:0 4px 14px rgba(10,20,40,.3);cursor:pointer}
+#radarpill.od{background:var(--s-stuck);color:#fff}
+#radarbox{width:302px;max-height:min(50vh,420px);display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(10,20,40,.3);overflow:hidden}
+#radarbox .rhead{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--panel2)}
+#radarbox .rtitle{font-weight:700;font-size:13px}
+#radarbox .rcount{font-size:11px;color:var(--ink2);margin-left:auto}
+#radarx{border:0;background:none;font-size:17px;line-height:1;color:var(--ink3);cursor:pointer;padding:0 2px}
+#radarbox ul{list-style:none;margin:0;padding:6px;overflow-y:auto}
+#radarbox li{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:12.5px}
+#radarbox li:hover{background:var(--panel2)}
+#radarbox li .ri{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#radarbox li .rd{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;font-weight:700;white-space:nowrap}
+#radarbox li.rl .rd{color:var(--s-stuck)}
+#radarbox li.rr .rd{color:var(--s-working)}
+@media (max-width:700px){#radarbox{width:min(302px,calc(100vw - 32px))}}
 .stsel{width:100%;color:#fff;font-weight:600;border:0;text-align-last:center;appearance:none;-webkit-appearance:none;padding:6px}
 .stsel option{color:var(--ink);background:var(--panel)}
 .ownsel{display:flex;align-items:center;gap:6px}
@@ -278,6 +301,7 @@ td.due input{border-color:transparent;background:transparent;width:100%}
 </div>
 <div id="tip" role="tooltip"></div>
 <div id="toast"></div>
+<div id="radar"></div>
 
 <script>
 /* =========================================================================
@@ -821,6 +845,14 @@ function late(t){
   const d = asDate(t.due);
   return t.status !== "Done" && d && d < today();
 }
+// The amber tier: open tasks inside the danger zone, due within RISK_DAYS.
+const RISK_DAYS = 3;
+function dueGap(t){ const d = asDate(t.due); return d ? Math.round((d - today())/864e5) : null; }
+function atRisk(t){
+  if(t.status === "Done" || late(t)) return false;
+  const g = dueGap(t);
+  return g != null && g >= 0 && g <= RISK_DAYS;
+}
 
 function stack(list){
   if(!list.length) return '<div class="stack"></div>';
@@ -1222,11 +1254,14 @@ function boardView(){
          '</tr></thead><tbody>';
     sortRows(rows, sortBy[scope]).forEach(t=>{
       const od = late(t);
+      const ar = !od && atRisk(t);
       const odDays = od ? Math.round((today()-asDate(t.due))/864e5) : 0;
-      h += '<tr class="'+(t.status==="Done"?"done":"")+(od?" odrow":"")+'" data-row="'+t.row+'">'+
+      const arGap = ar ? dueGap(t) : 0;
+      h += '<tr class="'+(t.status==="Done"?"done":"")+(od?" odrow":"")+(ar?" atrow":"")+'" data-row="'+t.row+'">'+
         '<td class="wbs mono">'+esc(t.wbs)+'</td>'+
         '<td class="name"><span class="t" data-tip="'+esc(t.note||"")+'">'+tinner(t)+'</span>'+
           (od?'<span class="odbadge">'+odDays+'d late</span>':'')+
+          (ar?'<span class="arbadge">'+(arGap===0?'due today':'due in '+arGap+'d')+'</span>':'')+
           (t.deliv?'<span class="dl">Deliverable: '+esc(t.deliv)+'</span>':'')+'</td>'+
         '<td class="own"><div class="ownsel">'+avN(t.owner||"?")+
           sel("owner", DATA.owners, t.owner)+'</div></td>'+
@@ -1363,6 +1398,70 @@ function syncFoldAll(){
 }
 
 let lastView = null;
+// ---- at-risk radar ----------------------------------------------------------
+// Floats bottom-right on every tab. The X collapses it to a pill rather than
+// killing it, and it re-expands on its own only when the set of at-risk or
+// overdue tasks actually changes, so a dismissal is respected until the
+// situation does something new. Narrow screens start at the pill.
+function renderRadar(){
+  const box = $("#radar");
+  if(!box) return;
+  const od = DATA.rows.filter(late).map(t=>({t, late:true, d:Math.round((today()-asDate(t.due))/864e5)}))
+    .sort((a,b)=>b.d-a.d);
+  const ar = DATA.rows.filter(atRisk).map(t=>({t, late:false, d:dueGap(t)}))
+    .sort((a,b)=>a.d-b.d);
+  const items = od.concat(ar);
+  if(!items.length){ box.innerHTML = ""; return; }
+  const sig = items.map(i=>i.t.wbs+":"+i.t.due+(i.late?"L":"R")).join("|");
+  let open = innerWidth > 700;
+  try{
+    if(localStorage.getItem("bx-radar-sig") === sig){
+      const st = localStorage.getItem("bx-radar");
+      if(st) open = st === "open";
+    }else{
+      localStorage.setItem("bx-radar-sig", sig);
+      localStorage.setItem("bx-radar", open ? "open" : "closed");
+    }
+  }catch(e){}
+  if(!open){
+    box.innerHTML = '<button id="radarpill"'+(od.length?' class="od"':'')+' aria-label="Show at-risk tasks">&#9888; '+items.length+'</button>';
+    return;
+  }
+  let h = '<div id="radarbox"><div class="rhead"><span class="rtitle">&#9888; At risk</span>'+
+    '<span class="rcount">'+od.length+' overdue &middot; '+ar.length+' due soon</span>'+
+    '<button id="radarx" aria-label="Collapse to pill">&times;</button></div><ul>';
+  items.forEach(i=>{
+    const t = i.t;
+    const lbl = i.late ? i.d+"d late" : (i.d===0 ? "today" : "in "+i.d+"d");
+    h += '<li data-goto="'+t.row+'" class="'+(i.late?'rl':'rr')+'" title="'+esc(t.task)+'">'+
+      avN(t.owner||"?")+'<span class="ri"><b class="mono">'+esc(t.wbs)+'</b> '+esc(t.task)+'</span>'+
+      '<span class="rd">'+lbl+'</span></li>';
+  });
+  box.innerHTML = h + '</ul></div>';
+}
+document.addEventListener("click", e=>{
+  if(e.target.closest("#radarx")){
+    try{ localStorage.setItem("bx-radar", "closed"); }catch(x){}
+    renderRadar(); return;
+  }
+  if(e.target.closest("#radarpill")){
+    try{ localStorage.setItem("bx-radar", "open"); }catch(x){}
+    renderRadar(); return;
+  }
+  const it = e.target.closest("#radar [data-goto]");
+  if(it){
+    const row = Number(it.dataset.goto);
+    if(view !== "board"){
+      view = "board";
+      try{ sessionStorage.setItem("bx-view", "board"); }catch(x){}
+      render();
+    }
+    let tr = document.querySelector('tr[data-row="'+row+'"]');
+    if(!tr && filter){ filter = null; render(); tr = document.querySelector('tr[data-row="'+row+'"]'); }
+    if(tr){ tr.scrollIntoView({behavior:"smooth", block:"center"}); Motion.pulse(tr); }
+  }
+});
+
 function render(){
   hideTip();
   renderTabs();
@@ -1379,6 +1478,7 @@ function render(){
   if(isB||isG) filters();
   if(isB) boardView();
   $("#alt").innerHTML = isG ? ganttView() : isW ? wbsView() : isT ? teamView() : "";
+  renderRadar();
   syncFoldAll();
   // Stagger the entrance on arrival at a view, not on every redraw inside it.
   if(view !== lastView){
