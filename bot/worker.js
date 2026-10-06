@@ -231,8 +231,17 @@ async function post(url, msg, allowEveryone) {
 }
 
 async function loadBoard(env) {
-  const res = await fetch(API + "?t=" + Date.now(), { redirect: "follow" });
-  const data = await res.json();
+  // Apps Script answers an HTML error page for the odd request; retry a
+  // couple of times before letting a scheduled run fail.
+  let data, lastErr;
+  for (let i = 0; i < 3 && !data; i++) {
+    if (i) await new Promise(r => setTimeout(r, 2000 * i));
+    try {
+      const res = await fetch(API + "?t=" + Date.now(), { redirect: "follow" });
+      data = await res.json();
+    } catch (e) { lastErr = e; }
+  }
+  if (!data) throw lastErr;
   if (!data.ok) throw new Error("board API: " + (data.err || "bad response"));
   let mentions = {};
   try { mentions = JSON.parse(env.MENTIONS || "{}"); } catch (e) {}

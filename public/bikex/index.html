@@ -796,16 +796,29 @@ function skeleton(){
   $("#filters").style.display = "none";
 }
 
+// Apps Script hiccups now and then, answering an HTML error page instead of
+// JSON for a single request. A couple of spaced retries turn those blips
+// into non-events instead of error banners.
+async function fetchBoard(){
+  let last;
+  for(let i = 0; i < 3; i++){
+    if(i) await new Promise(res=>setTimeout(res, 1800 * i));
+    try{
+      const r = await fetch(API + "?t=" + Date.now());
+      return await r.json();
+    }catch(e){ last = e; }
+  }
+  throw last;
+}
 async function load(force){
   try{
     let j;
     if(BOOT){                 // the request the <head> script already started
       const b = BOOT; BOOT = null;
       j = await b;
-      if(j && j.__bxerr) throw j.__bxerr;
+      if(j && j.__bxerr) j = await fetchBoard();   // boot request blipped, retry
     }else{
-      const r = await fetch(API + "?t=" + Date.now());
-      j = await r.json();
+      j = await fetchBoard();
     }
     if(!j || !j.ok) throw new Error((j && j.err) || "bad response");
     const sig = sigOf(j);
@@ -822,8 +835,12 @@ async function load(force){
     $("#sub").innerHTML = syncedLine(j.at);
   }catch(err){
     // A cached board already on screen is still useful, so report that the
-    // refresh failed rather than replacing it with an error.
-    const msg = esc(err && err.message ? err.message : String(err));
+    // refresh failed rather than replacing it with an error. A JSON parse
+    // error means Google served an error page; say that in plain words.
+    const raw = err && err.message ? err.message : String(err);
+    const msg = /JSON|token|fetch/i.test(raw)
+      ? "The board service hiccuped; it retries on its own."
+      : esc(raw);
     $("#sub").innerHTML = booted
       ? '<span class="err">Could not refresh, showing the board as of ' +
         whenTxt(DATA.at) + '. ' + msg + '</span>'
