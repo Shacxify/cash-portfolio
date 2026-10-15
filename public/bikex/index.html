@@ -123,9 +123,12 @@ tr.atrow td.wbs{border-left-color:var(--s-working)}
 .sup select{border-color:transparent;background:transparent;font-size:11.5px;padding:2px 4px;color:var(--ink2);width:135px}
 .sup.empty select{color:var(--ink3)}
 .sup select:hover{border-color:var(--line)}
-.gsup{display:inline-flex;align-items:center;gap:2px;margin-left:4px;font-size:10px;color:var(--ink3)}
-.gsup .av{width:16px;height:16px;font-size:8px}
 .suptag{font-size:10.5px;color:var(--accent);white-space:nowrap}
+.supbadge{display:inline-flex;align-items:center;gap:5px;margin-left:8px;border:1.5px solid var(--pc);color:var(--pc);
+  background:color-mix(in srgb,var(--pc) 10%,transparent);font-size:10px;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;border-radius:999px;padding:1px 7px 1px 2px;vertical-align:1px;white-space:nowrap;font-style:normal}
+.supbadge .av{width:14px;height:14px;font-size:7px;background:var(--pc);font-style:normal}
+tr.done .supbadge{opacity:.55}
 .ownsel select:hover,td.due input:hover{border-color:var(--line)}
 td.due input{border-color:transparent;background:transparent;width:100%}
 .late{color:var(--s-stuck);font-weight:600}
@@ -726,15 +729,20 @@ const canPM = () => canEdit() && role === "pm";
 // Support is a second person on a task. The owner keeps the task and the
 // credit; the supporter shows up beside them and gets the reminders too.
 function supportCell(t){
+  if(!canPM()) return "";   // members see the badge by the task title instead
   const s = t.support || "";
-  if(canPM()){
-    let o = '<option value="">+ support</option>';
-    DATA.owners.filter(x=>x!=="Whole team").forEach(x=>{
-      o += '<option value="'+esc(x)+'"'+(x===s?' selected':'')+'>'+esc(x.split(" ")[0])+' supporting</option>';
-    });
-    return '<div class="sup'+(s?'':' empty')+'">'+(s?avN(s):'')+'<select data-f="support" aria-label="Support">'+o+'</select></div>';
-  }
-  return s ? '<div class="sup">'+avN(s)+'<span>'+esc(s.split(" ")[0])+' supporting</span></div>' : '';
+  let o = '<option value="">+ support</option>';
+  DATA.owners.filter(x=>x!=="Whole team").forEach(x=>{
+    o += '<option value="'+esc(x)+'"'+(x===s?' selected':'')+'>'+esc(x.split(" ")[0])+' supporting</option>';
+  });
+  return '<div class="sup'+(s?'':' empty')+'"><select data-f="support" aria-label="Support">'+o+'</select></div>';
+}
+// The pill beside the task title, in the supporter's own color
+function supportBadge(t){
+  const s = t.support || "";
+  if(!s) return "";
+  return '<span class="supbadge" style="--pc:'+(COLORS[s]||"#5A6475")+'" title="'+esc(s)+' is supporting '+esc(t.owner||"")+' on this task">'+
+    '<i class="av">'+esc(initials(s))+'</i>'+esc(s.split(" ")[0])+' supporting</span>';
 }
 const avN = n => '<span class="av" style="background:'+(COLORS[n]||"#5A6475")+'">'+initials(n||"?")+'</span>';
 
@@ -1182,10 +1190,10 @@ function ganttView(){
       const s0 = tStart(x,g), d0 = tDue(x,g);
       h += '<div class="gr gtr'+(cp?' cp':'')+'" style="--gc:'+g.color+'" data-row="'+x.row+'">'+
         '<div class="w">'+esc(x.wbs)+'</div>'+
-        '<div class="n"><span class="gt">'+tinner(x)+(cp?'<span class="cpf">CP</span>':'')+'</span>'+
+        '<div class="n"><span class="gt">'+tinner(x)+(cp?'<span class="cpf">CP</span>':'')+supportBadge(x)+'</span>'+
           '<span class="sm">'+esc(x.deliv||STK[k][0])+(dep?' &middot; after <b>'+esc(dep)+'</b>':'')+'</span></div>'+
         '<div class="o"><i class="sdot" style="background:'+ST[x.status]+'" title="'+esc(x.status)+'"></i>'+avN(x.owner)+esc(x.owner==="Whole team"?"Team":String(x.owner||"?").split(" ")[0])+
-          (x.support?'<span class="gsup" title="'+esc(x.support)+' supporting">+'+avN(x.support)+'</span>':'')+'</div>'+
+          '</div>'+
         '<div class="dt">'+fmtDay(s0)+'&nbsp;&ndash;&nbsp;<span class="'+(late(x)?'lt':'')+'">'+fmtDay(d0)+'</span></div>'+
         '<div class="gtrk" style="'+trkStyle+'"><span class="gb '+cls+(cp?' cpb':'')+'" style="left:'+gx(s0)+'%;width:'+gwid(s0,d0)+'%" '+
           'title="'+esc(x.wbs+' '+x.task+' | '+fmtDay(s0)+' to '+fmtDay(d0)+' | '+x.status)+'">'+
@@ -1306,6 +1314,7 @@ function boardView(){
         '<td class="name"><span class="t" data-tip="'+esc(t.note||"")+'">'+tinner(t)+'</span>'+
           (od?'<span class="odbadge">'+odDays+'d late</span>':'')+
           (ar?'<span class="arbadge">'+(arGap===0?'due today':'due in '+arGap+'d')+'</span>':'')+
+          supportBadge(t)+
           (t.deliv?'<span class="dl">Deliverable: '+esc(t.deliv)+'</span>':'')+'</td>'+
         '<td class="own"><div class="ownsel">'+avN(t.owner||"?")+
           sel("owner", DATA.owners, t.owner)+'</div>'+supportCell(t)+'</td>'+
