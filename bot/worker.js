@@ -128,7 +128,8 @@ function winsSections(data, since, mentions) {
 
 function buildMessages(data, todayIso, weekday, mentions, since) {
   const open = data.rows.filter(r => r.status !== "Done");
-  const line = (r, extra) => `- **${r.wbs} ${r.task}** - ${tag(r.owner, mentions)}${extra || ""}`;
+  // A supporter gets pinged alongside the owner; credit for wins stays with the owner.
+  const line = (r, extra) => `- **${r.wbs} ${r.task}** - ${tag(r.owner, mentions)}${r.support ? " + " + tag(r.support, mentions) : ""}${extra || ""}`;
   const wins = winsSections(data, since, mentions);
 
   const overdue = open.filter(r => r.due && r.due < todayIso)

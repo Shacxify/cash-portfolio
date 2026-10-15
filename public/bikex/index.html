@@ -118,6 +118,14 @@ tr.atrow td.wbs{border-left-color:var(--s-working)}
 .stsel option{color:var(--ink);background:var(--panel)}
 .ownsel{display:flex;align-items:center;gap:6px}
 .ownsel select{border-color:transparent;background:transparent;width:135px}
+.sup{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11.5px;color:var(--ink2)}
+.sup .av{width:18px;height:18px;font-size:9px}
+.sup select{border-color:transparent;background:transparent;font-size:11.5px;padding:2px 4px;color:var(--ink2);width:135px}
+.sup.empty select{color:var(--ink3)}
+.sup select:hover{border-color:var(--line)}
+.gsup{display:inline-flex;align-items:center;gap:2px;margin-left:4px;font-size:10px;color:var(--ink3)}
+.gsup .av{width:16px;height:16px;font-size:8px}
+.suptag{font-size:10.5px;color:var(--accent);white-space:nowrap}
 .ownsel select:hover,td.due input:hover{border-color:var(--line)}
 td.due input{border-color:transparent;background:transparent;width:100%}
 .late{color:var(--s-stuck);font-weight:600}
@@ -612,6 +620,7 @@ const KORDER = ["done","working","waiting","stuck","todo"];
 let DATA = {rows:[],owners:[],status:[]};
 let who = localStorage.getItem("bx-who") || "";
 let pass = sessionStorage.getItem("bx-pass") || "";
+let role = sessionStorage.getItem("bx-role") || "";   // "pm" unlocks the support controls
 let filter = null;
 let view = "board";
 let critOnly = false;
@@ -713,6 +722,20 @@ const asDate = s => {if(!s)return null;const p=String(s).slice(0,10).split("-");
 const fmtDay = s => {const d=asDate(s);return d?d.toLocaleDateString("en-US",{month:"short",day:"numeric"}):"TBD";};
 const initials = n => n==="Whole team" ? "ALL" : n.split(" ").map(x=>x[0]).join("").slice(0,2);
 const canEdit = () => !!(who && pass);
+const canPM = () => canEdit() && role === "pm";
+// Support is a second person on a task. The owner keeps the task and the
+// credit; the supporter shows up beside them and gets the reminders too.
+function supportCell(t){
+  const s = t.support || "";
+  if(canPM()){
+    let o = '<option value="">+ support</option>';
+    DATA.owners.filter(x=>x!=="Whole team").forEach(x=>{
+      o += '<option value="'+esc(x)+'"'+(x===s?' selected':'')+'>'+esc(x.split(" ")[0])+' supporting</option>';
+    });
+    return '<div class="sup'+(s?'':' empty')+'">'+(s?avN(s):'')+'<select data-f="support" aria-label="Support">'+o+'</select></div>';
+  }
+  return s ? '<div class="sup">'+avN(s)+'<span>'+esc(s.split(" ")[0])+' supporting</span></div>' : '';
+}
 const avN = n => '<span class="av" style="background:'+(COLORS[n]||"#5A6475")+'">'+initials(n||"?")+'</span>';
 
 function toast(msg, bad){
@@ -1078,6 +1101,9 @@ function teamView(){
     });
     if(open.length>6) h += '<li class="note-sm">+'+(open.length-6)+' more on the board</li>';
     if(!open.length) h += '<li class="note-sm">All clear.</li>';
+    DATA.rows.filter(t=>t.support===p && t.status!=="Done").forEach(t=>{
+      h += '<li><i class="dot" style="background:'+ST[t.status]+'"></i><span>'+tinner(t)+' <span class="suptag">supporting '+esc(String(t.owner||"").split(" ")[0])+'</span></span><span class="d'+(late(t)?' late':'')+'">'+fmtDay(t.due)+'</span></li>';
+    });
     h += '</ul></article>';
   });
   h += '</div>';
@@ -1158,7 +1184,8 @@ function ganttView(){
         '<div class="w">'+esc(x.wbs)+'</div>'+
         '<div class="n"><span class="gt">'+tinner(x)+(cp?'<span class="cpf">CP</span>':'')+'</span>'+
           '<span class="sm">'+esc(x.deliv||STK[k][0])+(dep?' &middot; after <b>'+esc(dep)+'</b>':'')+'</span></div>'+
-        '<div class="o"><i class="sdot" style="background:'+ST[x.status]+'" title="'+esc(x.status)+'"></i>'+avN(x.owner)+esc(x.owner==="Whole team"?"Team":String(x.owner||"?").split(" ")[0])+'</div>'+
+        '<div class="o"><i class="sdot" style="background:'+ST[x.status]+'" title="'+esc(x.status)+'"></i>'+avN(x.owner)+esc(x.owner==="Whole team"?"Team":String(x.owner||"?").split(" ")[0])+
+          (x.support?'<span class="gsup" title="'+esc(x.support)+' supporting">+'+avN(x.support)+'</span>':'')+'</div>'+
         '<div class="dt">'+fmtDay(s0)+'&nbsp;&ndash;&nbsp;<span class="'+(late(x)?'lt':'')+'">'+fmtDay(d0)+'</span></div>'+
         '<div class="gtrk" style="'+trkStyle+'"><span class="gb '+cls+(cp?' cpb':'')+'" style="left:'+gx(s0)+'%;width:'+gwid(s0,d0)+'%" '+
           'title="'+esc(x.wbs+' '+x.task+' | '+fmtDay(s0)+' to '+fmtDay(d0)+' | '+x.status)+'">'+
@@ -1281,7 +1308,7 @@ function boardView(){
           (ar?'<span class="arbadge">'+(arGap===0?'due today':'due in '+arGap+'d')+'</span>':'')+
           (t.deliv?'<span class="dl">Deliverable: '+esc(t.deliv)+'</span>':'')+'</td>'+
         '<td class="own"><div class="ownsel">'+avN(t.owner||"?")+
-          sel("owner", DATA.owners, t.owner)+'</div></td>'+
+          sel("owner", DATA.owners, t.owner)+'</div>'+supportCell(t)+'</td>'+
         '<td class="st">'+sel("status", DATA.status, t.status, 'class="stsel" style="background:'+ST[t.status]+'"')+'</td>'+
         '<td class="due'+(od?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
         '<td class="note">'+noteCell(t)+'</td>'+
@@ -1451,7 +1478,7 @@ function renderRadar(){
     const t = i.t;
     const lbl = i.late ? i.d+"d late" : (i.d===0 ? "today" : "in "+i.d+"d");
     h += '<li data-goto="'+t.row+'" class="'+(i.late?'rl':'rr')+'" title="'+esc(t.task)+'">'+
-      avN(t.owner||"?")+'<span class="ri"><b class="mono">'+esc(t.wbs)+'</b> '+esc(t.task)+'</span>'+
+      avN(t.owner||"?")+(t.support?avN(t.support):'')+'<span class="ri"><b class="mono">'+esc(t.wbs)+'</b> '+esc(t.task)+'</span>'+
       '<span class="rd">'+lbl+'</span></li>';
   });
   box.innerHTML = h + '</ul></div>';
@@ -1600,8 +1627,10 @@ $("#unlock").addEventListener("click", async ()=>{
   if(!r.ok){ pass=""; toast(r.err || "Could not unlock", true); return; }
   if(r.who){ who = r.who; $("#me").value = who; }   // the code says who you are
   if(!who){ pass=""; toast("Pick your name", true); return; }
+  role = r.role || "";
   localStorage.setItem("bx-who", who);
   sessionStorage.setItem("bx-pass", pass);
+  sessionStorage.setItem("bx-role", role);
   $("#pass").value = "";
   toast("Editing unlocked");
   // Force it: unlocking changes how every row renders, but the Sheet payload
