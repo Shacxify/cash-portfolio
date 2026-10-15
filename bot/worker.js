@@ -114,6 +114,18 @@ function winsSections(data, since, mentions) {
     const lines = wins.map(c => `- **${c.wbs} ${c.row.task}** - ${tag(doneCredit(c), mentions)}`);
     out.push(`__**Wins since last standup**__ :tada:\n${lines.join("\n")}`);
   }
+  // Someone stepping in to support a teammate is announced, so the team sees
+  // it as the gesture it is rather than a quiet reassignment.
+  const stepIns = (data.log || []).filter(e => e.field === "support" && e.to && Date.parse(e.t) >= since);
+  if (stepIns.length) {
+    const byWbs = {};
+    for (const r of data.rows) byWbs[r.wbs] = r;
+    const lines = stepIns.map(e => {
+      const r = byWbs[e.wbs] || {};
+      return `- **${e.wbs} ${r.task || ""}** - ${tag(e.to, mentions)} stepped in to support ${tag(r.owner || "", mentions)}`;
+    });
+    out.push(`__**Stepped in**__ :handshake:\n${[...new Set(lines)].join("\n")}`);
+  }
   const flags = statusChanges(data, "Stuck", since);
   if (flags.length) {
     const firstEver = !(data.log || []).some(e => e.field === "status" && e.to === "Stuck" && Date.parse(e.t) < since);

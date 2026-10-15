@@ -124,11 +124,27 @@ tr.atrow td.wbs{border-left-color:var(--s-working)}
 .sup.empty select{color:var(--ink3)}
 .sup select:hover{border-color:var(--line)}
 .suptag{font-size:10.5px;color:var(--accent);white-space:nowrap}
-.supbadge{display:inline-flex;align-items:center;gap:5px;margin-left:8px;border:1.5px solid var(--pc);color:var(--pc);
-  background:color-mix(in srgb,var(--pc) 10%,transparent);font-size:10px;font-weight:700;letter-spacing:.04em;
-  text-transform:uppercase;border-radius:999px;padding:1px 7px 1px 2px;vertical-align:1px;white-space:nowrap;font-style:normal}
-.supbadge .av{width:14px;height:14px;font-size:7px;background:var(--pc);font-style:normal}
-tr.done .supbadge{opacity:.55}
+/* Holographic support badge: iridescent border, gradient text that drifts,
+   and a glossy sheen that sweeps across every few seconds. Reads as a
+   bonus, not a status. */
+.supbadge{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:5px;margin-left:8px;
+  border:1.5px solid transparent;border-radius:999px;padding:1px 8px 1px 2px;vertical-align:1px;white-space:nowrap;
+  font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-style:normal;
+  background:linear-gradient(var(--panel),var(--panel)) padding-box,
+             linear-gradient(120deg,#2BB3BE,#7C3AED,#E39B2D,#2E9E68,#2BB3BE) border-box;
+  box-shadow:0 0 0 1px rgba(124,58,237,.08),0 2px 8px rgba(124,58,237,.18)}
+.supbadge .lbl{background:linear-gradient(120deg,#0E7C86,#7C3AED,#B45309,#2E9E68,#0E7C86);background-size:250% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:holo 7s linear infinite}
+.supbadge .lbl b{font-weight:800}
+.supbadge::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.6) 50%,transparent 65%);
+  transform:translateX(-130%);animation:sheen 5s ease-in-out infinite}
+.supbadge .av{width:14px;height:14px;font-size:7px;background:var(--pc);position:relative;z-index:1}
+@keyframes holo{to{background-position:250% 0}}
+@keyframes sheen{0%,65%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+@media (prefers-color-scheme:dark){.supbadge .lbl{background-image:linear-gradient(120deg,#2BB3BE,#A78BFA,#F2B45C,#4ADE80,#2BB3BE)}}
+@media (prefers-reduced-motion:reduce){.supbadge .lbl,.supbadge::after{animation:none}}
+tr.done .supbadge{opacity:.7}
 .ownsel select:hover,td.due input:hover{border-color:var(--line)}
 td.due input{border-color:transparent;background:transparent;width:100%}
 .late{color:var(--s-stuck);font-weight:600}
@@ -737,12 +753,24 @@ function supportCell(t){
   });
   return '<div class="sup'+(s?'':' empty')+'"><select data-f="support" aria-label="Support">'+o+'</select></div>';
 }
-// The pill beside the task title, in the supporter's own color
+// Every support change the Sheet has ever logged. The API sends these
+// outside the rolling log window, so the trail never ages out of the page.
+function supportLog(){
+  const L = DATA.support_log || (DATA.log || []).filter(e=>e.field==="support");
+  return L.map(e=>({ t:String(e.t||""), day:String(e.t||"").slice(0,10), who:String(e.who||""), wbs:String(e.wbs||""), from:String(e.from||""), to:String(e.to||"") }));
+}
+function supportSince(t){
+  const hits = supportLog().filter(e=>e.wbs===t.wbs && e.to===t.support);
+  return hits.length ? hits[hits.length-1].day : "";
+}
+// The pill beside the task title, in the supporter's own color, dated from
+// the moment they stepped in
 function supportBadge(t){
   const s = t.support || "";
   if(!s) return "";
-  return '<span class="supbadge" style="--pc:'+(COLORS[s]||"#5A6475")+'" title="'+esc(s)+' is supporting '+esc(t.owner||"")+' on this task">'+
-    '<i class="av">'+esc(initials(s))+'</i>'+esc(s.split(" ")[0])+' supporting</span>';
+  const since = supportSince(t);
+  return '<span class="supbadge" style="--pc:'+(COLORS[s]||"#5A6475")+'" title="'+esc(s)+' stepped in'+(since?' on '+esc(fmtDay(since)):'')+' to support '+esc(t.owner||"")+' on this task">'+
+    '<i class="av">'+esc(initials(s))+'</i><span class="lbl">&#10022; '+esc(s.split(" ")[0])+' supporting'+(since?' <b>&middot; '+esc(fmtDay(since))+'</b>':'')+'</span></span>';
 }
 const avN = n => '<span class="av" style="background:'+(COLORS[n]||"#5A6475")+'">'+initials(n||"?")+'</span>';
 
@@ -1110,12 +1138,30 @@ function teamView(){
     if(open.length>6) h += '<li class="note-sm">+'+(open.length-6)+' more on the board</li>';
     if(!open.length) h += '<li class="note-sm">All clear.</li>';
     DATA.rows.filter(t=>t.support===p && t.status!=="Done").forEach(t=>{
-      h += '<li><i class="dot" style="background:'+ST[t.status]+'"></i><span>'+tinner(t)+' <span class="suptag">supporting '+esc(String(t.owner||"").split(" ")[0])+'</span></span><span class="d'+(late(t)?' late':'')+'">'+fmtDay(t.due)+'</span></li>';
+      const since = supportSince(t);
+      h += '<li><i class="dot" style="background:'+ST[t.status]+'"></i><span>'+tinner(t)+' <span class="suptag">supporting '+esc(String(t.owner||"").split(" ")[0])+(since?' since '+esc(fmtDay(since)):'')+'</span></span><span class="d'+(late(t)?' late':'')+'">'+fmtDay(t.due)+'</span></li>';
     });
     h += '</ul></article>';
   });
   h += '</div>';
   if(!A.hasLog) h += '<p class="note-sm" style="margin-top:10px">On-time rates and reliable last-active dates switch on once the Apps Script shares its change log with this page.</p>';
+  // Permanent trail of who stepped in for whom. Reads from the logged
+  // support changes, so it stays even after a task is done or handed back.
+  const sl = supportLog();
+  if(sl.length){
+    const byWbs = {}; DATA.rows.forEach(r=>{ byWbs[r.wbs] = r; });
+    h += '<div class="why suphist"><h3>Support history</h3><ul>';
+    sl.slice().reverse().forEach(e=>{
+      const r = byWbs[e.wbs] || {};
+      const task = r.task ? esc(e.wbs)+' '+esc(r.task) : esc(e.wbs);
+      const line = e.to
+        ? '<b>'+esc(e.to.split(" ")[0])+'</b> stepped in to support <b>'+esc(String(r.owner||"").split(" ")[0]||"the owner")+'</b> on '+task
+        : '<b>'+esc(e.from.split(" ")[0])+'</b> stepped back from '+task;
+      h += '<li><span class="mono" style="color:var(--ink3)">'+esc(fmtDay(e.day))+'</span> &middot; '+line+
+        (e.who && e.who!==e.to ? ' <span class="note-sm">(set by '+esc(e.who.split(" ")[0])+')</span>' : '')+'</li>';
+    });
+    h += '</ul></div>';
+  }
   h += '<div class="why"><h3>Scoring the team, not just the tasks</h3><ul>'+
     '<li>Board = execution: on-time rate, overdue count, stuck count. Review it before every Friday call.</li>'+
     '<li>Sponsor satisfaction is 20% of the grade. Ask Kelly for a 1-5 pulse at the end of each bi-weekly call.</li>'+
