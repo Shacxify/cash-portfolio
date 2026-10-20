@@ -118,6 +118,33 @@ tr.atrow td.wbs{border-left-color:var(--s-working)}
 .stsel option{color:var(--ink);background:var(--panel)}
 .ownsel{display:flex;align-items:center;gap:6px}
 .ownsel select{border-color:transparent;background:transparent;width:135px}
+.sup{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11.5px;color:var(--ink2)}
+.sup .av{width:18px;height:18px;font-size:9px}
+.sup select{border-color:transparent;background:transparent;font-size:11.5px;padding:2px 4px;color:var(--ink2);width:135px}
+.sup.empty select{color:var(--ink3)}
+.sup select:hover{border-color:var(--line)}
+.suptag{font-size:10.5px;color:var(--accent);white-space:nowrap}
+/* Holographic support badge: iridescent border, gradient text that drifts,
+   and a glossy sheen that sweeps across every few seconds. Reads as a
+   bonus, not a status. */
+.supbadge{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:5px;margin-left:8px;
+  border:1.5px solid transparent;border-radius:999px;padding:1px 8px 1px 2px;vertical-align:1px;white-space:nowrap;
+  font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-style:normal;
+  background:linear-gradient(var(--panel),var(--panel)) padding-box,
+             linear-gradient(120deg,#2BB3BE,#7C3AED,#E39B2D,#2E9E68,#2BB3BE) border-box;
+  box-shadow:0 0 0 1px rgba(124,58,237,.08),0 2px 8px rgba(124,58,237,.18)}
+.supbadge .lbl{background:linear-gradient(120deg,#0E7C86,#7C3AED,#B45309,#2E9E68,#0E7C86);background-size:250% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:holo 7s linear infinite}
+.supbadge .lbl b{font-weight:800}
+.supbadge::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.6) 50%,transparent 65%);
+  transform:translateX(-130%);animation:sheen 5s ease-in-out infinite}
+.supbadge .av{width:14px;height:14px;font-size:7px;background:var(--pc);position:relative;z-index:1}
+@keyframes holo{to{background-position:250% 0}}
+@keyframes sheen{0%,65%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+@media (prefers-color-scheme:dark){.supbadge .lbl{background-image:linear-gradient(120deg,#2BB3BE,#A78BFA,#F2B45C,#4ADE80,#2BB3BE)}}
+@media (prefers-reduced-motion:reduce){.supbadge .lbl,.supbadge::after{animation:none}}
+tr.done .supbadge{opacity:.7}
 .ownsel select:hover,td.due input:hover{border-color:var(--line)}
 td.due input{border-color:transparent;background:transparent;width:100%}
 .late{color:var(--s-stuck);font-weight:600}
@@ -645,6 +672,7 @@ const KORDER = ["done","working","waiting","stuck","todo"];
 let DATA = {rows:[],owners:[],status:[]};
 let who = localStorage.getItem("bx-who") || "";
 let pass = sessionStorage.getItem("bx-pass") || "";
+let role = sessionStorage.getItem("bx-role") || "";   // "pm" unlocks the support controls
 let filter = null;
 let view = "board";
 let critOnly = false;
@@ -746,6 +774,37 @@ const asDate = s => {if(!s)return null;const p=String(s).slice(0,10).split("-");
 const fmtDay = s => {const d=asDate(s);return d?d.toLocaleDateString("en-US",{month:"short",day:"numeric"}):"TBD";};
 const initials = n => n==="Whole team" ? "ALL" : n.split(" ").map(x=>x[0]).join("").slice(0,2);
 const canEdit = () => !!(who && pass);
+const canPM = () => canEdit() && role === "pm";
+// Support is a second person on a task. The owner keeps the task and the
+// credit; the supporter shows up beside them and gets the reminders too.
+function supportCell(t){
+  if(!canPM()) return "";   // members see the badge by the task title instead
+  const s = t.support || "";
+  let o = '<option value="">+ support</option>';
+  DATA.owners.filter(x=>x!=="Whole team").forEach(x=>{
+    o += '<option value="'+esc(x)+'"'+(x===s?' selected':'')+'>'+esc(x.split(" ")[0])+' supporting</option>';
+  });
+  return '<div class="sup'+(s?'':' empty')+'"><select data-f="support" aria-label="Support">'+o+'</select></div>';
+}
+// Every support change the Sheet has ever logged. The API sends these
+// outside the rolling log window, so the trail never ages out of the page.
+function supportLog(){
+  const L = DATA.support_log || (DATA.log || []).filter(e=>e.field==="support");
+  return L.map(e=>({ t:String(e.t||""), day:String(e.t||"").slice(0,10), who:String(e.who||""), wbs:String(e.wbs||""), from:String(e.from||""), to:String(e.to||"") }));
+}
+function supportSince(t){
+  const hits = supportLog().filter(e=>e.wbs===t.wbs && e.to===t.support);
+  return hits.length ? hits[hits.length-1].day : "";
+}
+// The pill beside the task title, in the supporter's own color, dated from
+// the moment they stepped in
+function supportBadge(t){
+  const s = t.support || "";
+  if(!s) return "";
+  const since = supportSince(t);
+  return '<span class="supbadge" style="--pc:'+(COLORS[s]||"#5A6475")+'" title="'+esc(s)+' stepped in'+(since?' on '+esc(fmtDay(since)):'')+' to support '+esc(t.owner||"")+' on this task">'+
+    '<i class="av">'+esc(initials(s))+'</i><span class="lbl">&#10022; '+esc(s.split(" ")[0])+' supporting'+(since?' <b>&middot; '+esc(fmtDay(since))+'</b>':'')+'</span></span>';
+}
 const avN = n => '<span class="av" style="background:'+(COLORS[n]||"#5A6475")+'">'+initials(n||"?")+'</span>';
 
 function toast(msg, bad){
@@ -829,16 +888,29 @@ function skeleton(){
   $("#filters").style.display = "none";
 }
 
+// Apps Script hiccups now and then, answering an HTML error page instead of
+// JSON for a single request. A couple of spaced retries turn those blips
+// into non-events instead of error banners.
+async function fetchBoard(){
+  let last;
+  for(let i = 0; i < 3; i++){
+    if(i) await new Promise(res=>setTimeout(res, 1800 * i));
+    try{
+      const r = await fetch(API + "?t=" + Date.now());
+      return await r.json();
+    }catch(e){ last = e; }
+  }
+  throw last;
+}
 async function load(force){
   try{
     let j;
     if(BOOT){                 // the request the <head> script already started
       const b = BOOT; BOOT = null;
       j = await b;
-      if(j && j.__bxerr) throw j.__bxerr;
+      if(j && j.__bxerr) j = await fetchBoard();   // boot request blipped, retry
     }else{
-      const r = await fetch(API + "?t=" + Date.now());
-      j = await r.json();
+      j = await fetchBoard();
     }
     if(!j || !j.ok) throw new Error((j && j.err) || "bad response");
     const sig = sigOf(j);
@@ -855,8 +927,12 @@ async function load(force){
     $("#sub").innerHTML = syncedLine(j.at);
   }catch(err){
     // A cached board already on screen is still useful, so report that the
-    // refresh failed rather than replacing it with an error.
-    const msg = esc(err && err.message ? err.message : String(err));
+    // refresh failed rather than replacing it with an error. A JSON parse
+    // error means Google served an error page; say that in plain words.
+    const raw = err && err.message ? err.message : String(err);
+    const msg = /JSON|token|fetch/i.test(raw)
+      ? "The board service hiccuped; it retries on its own."
+      : esc(raw);
     $("#sub").innerHTML = booted
       ? '<span class="err">Could not refresh, showing the board as of ' +
         whenTxt(DATA.at) + '. ' + msg + '</span>'
@@ -1195,10 +1271,31 @@ function teamView(){
     });
     if(open.length>6) h += '<li class="note-sm">+'+(open.length-6)+' more on the board</li>';
     if(!open.length) h += '<li class="note-sm">All clear.</li>';
+    DATA.rows.filter(t=>t.support===p && t.status!=="Done").forEach(t=>{
+      const since = supportSince(t);
+      h += '<li><i class="dot" style="background:'+ST[t.status]+'"></i><span>'+tinner(t)+' <span class="suptag">supporting '+esc(String(t.owner||"").split(" ")[0])+(since?' since '+esc(fmtDay(since)):'')+'</span></span><span class="d'+(late(t)?' late':'')+'">'+fmtDay(t.due)+'</span></li>';
+    });
     h += '</ul></article>';
   });
   h += '</div>';
   if(!A.hasLog) h += '<p class="note-sm" style="margin-top:10px">On-time rates and reliable last-active dates switch on once the Apps Script shares its change log with this page.</p>';
+  // Permanent trail of who stepped in for whom. Reads from the logged
+  // support changes, so it stays even after a task is done or handed back.
+  const sl = supportLog();
+  if(sl.length){
+    const byWbs = {}; DATA.rows.forEach(r=>{ byWbs[r.wbs] = r; });
+    h += '<div class="why suphist"><h3>Support history</h3><ul>';
+    sl.slice().reverse().forEach(e=>{
+      const r = byWbs[e.wbs] || {};
+      const task = r.task ? esc(e.wbs)+' '+esc(r.task) : esc(e.wbs);
+      const line = e.to
+        ? '<b>'+esc(e.to.split(" ")[0])+'</b> stepped in to support <b>'+esc(String(r.owner||"").split(" ")[0]||"the owner")+'</b> on '+task
+        : '<b>'+esc(e.from.split(" ")[0])+'</b> stepped back from '+task;
+      h += '<li><span class="mono" style="color:var(--ink3)">'+esc(fmtDay(e.day))+'</span> &middot; '+line+
+        (e.who && e.who!==e.to ? ' <span class="note-sm">(set by '+esc(e.who.split(" ")[0])+')</span>' : '')+'</li>';
+    });
+    h += '</ul></div>';
+  }
   h += '<div class="why"><h3>Scoring the team, not just the tasks</h3><ul>'+
     '<li>Board = execution: on-time rate, overdue count, stuck count. Review it before every Friday call.</li>'+
     '<li>Sponsor satisfaction is 20% of the grade. Ask Kelly for a 1-5 pulse at the end of each bi-weekly call.</li>'+
@@ -1273,9 +1370,10 @@ function ganttView(){
       const s0 = tStart(x,g), d0 = tDue(x,g);
       h += '<div class="gr gtr'+(cp?' cp':'')+'" style="--gc:'+g.color+'" data-row="'+x.row+'">'+
         '<div class="w">'+esc(x.wbs)+'</div>'+
-        '<div class="n"><span class="gt">'+tinner(x)+(cp?'<span class="cpf">CP</span>':'')+'</span>'+
+        '<div class="n"><span class="gt">'+tinner(x)+(cp?'<span class="cpf">CP</span>':'')+supportBadge(x)+'</span>'+
           '<span class="sm">'+esc(x.deliv||STK[k][0])+(dep?' &middot; after <b>'+esc(dep)+'</b>':'')+'</span></div>'+
-        '<div class="o"><i class="sdot" style="background:'+ST[x.status]+'" title="'+esc(x.status)+'"></i>'+avN(x.owner)+esc(x.owner==="Whole team"?"Team":String(x.owner||"?").split(" ")[0])+'</div>'+
+        '<div class="o"><i class="sdot" style="background:'+ST[x.status]+'" title="'+esc(x.status)+'"></i>'+avN(x.owner)+esc(x.owner==="Whole team"?"Team":String(x.owner||"?").split(" ")[0])+
+          '</div>'+
         '<div class="dt">'+fmtDay(s0)+'&nbsp;&ndash;&nbsp;<span class="'+(late(x)?'lt':'')+'">'+fmtDay(d0)+'</span></div>'+
         '<div class="gtrk" style="'+trkStyle+'"><span class="gb '+cls+(cp?' cpb':'')+'" style="left:'+gx(s0)+'%;width:'+gwid(s0,d0)+'%" '+
           'title="'+esc(x.wbs+' '+x.task+' | '+fmtDay(s0)+' to '+fmtDay(d0)+' | '+x.status)+'">'+
@@ -1396,9 +1494,10 @@ function boardView(){
         '<td class="name"><span class="t" data-tip="'+esc(t.note||"")+'">'+tinner(t)+'</span>'+
           (od?'<span class="odbadge">'+odDays+'d late</span>':'')+
           (ar?'<span class="arbadge">'+(arGap===0?'due today':'due in '+arGap+'d')+'</span>':'')+
+          supportBadge(t)+
           (t.deliv?'<span class="dl">Deliverable: '+esc(t.deliv)+'</span>':'')+'</td>'+
         '<td class="own"><div class="ownsel">'+avN(t.owner||"?")+
-          sel("owner", DATA.owners, t.owner)+'</div></td>'+
+          sel("owner", DATA.owners, t.owner)+'</div>'+supportCell(t)+'</td>'+
         '<td class="st">'+sel("status", DATA.status, t.status, 'class="stsel" style="background:'+ST[t.status]+'"')+'</td>'+
         '<td class="due'+(od?' late':'')+'"><input type="date" data-f="due" value="'+esc(t.due)+'"'+(canEdit()?"":" disabled")+'></td>'+
         '<td class="note">'+noteCell(t)+'</td>'+
@@ -1568,7 +1667,7 @@ function renderRadar(){
     const t = i.t;
     const lbl = i.late ? i.d+"d late" : (i.d===0 ? "today" : "in "+i.d+"d");
     h += '<li data-goto="'+t.row+'" class="'+(i.late?'rl':'rr')+'" title="'+esc(t.task)+'">'+
-      avN(t.owner||"?")+'<span class="ri"><b class="mono">'+esc(t.wbs)+'</b> '+esc(t.task)+'</span>'+
+      avN(t.owner||"?")+(t.support?avN(t.support):'')+'<span class="ri"><b class="mono">'+esc(t.wbs)+'</b> '+esc(t.task)+'</span>'+
       '<span class="rd">'+lbl+'</span></li>';
   });
   box.innerHTML = h + '</ul></div>';
@@ -1729,8 +1828,10 @@ $("#unlock").addEventListener("click", async ()=>{
   if(!r.ok){ pass=""; toast(r.err || "Could not unlock", true); return; }
   if(r.who){ who = r.who; $("#me").value = who; }   // the code says who you are
   if(!who){ pass=""; toast("Pick your name", true); return; }
+  role = r.role || "";
   localStorage.setItem("bx-who", who);
   sessionStorage.setItem("bx-pass", pass);
+  sessionStorage.setItem("bx-role", role);
   $("#pass").value = "";
   toast("Editing unlocked");
   // Force it: unlocking changes how every row renders, but the Sheet payload

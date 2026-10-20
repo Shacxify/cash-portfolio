@@ -123,6 +123,18 @@ function winsSections(data, since, mentions, title = "Wins since last check") {
     const lines = wins.map(c => `- **${c.wbs} ${c.row.task}** - ${tag(doneCredit(c), mentions)}`);
     out.push(`__**${title}**__ :tada:\n${lines.join("\n")}`);
   }
+  // Someone stepping in to support a teammate is announced, so the team sees
+  // it as the gesture it is rather than a quiet reassignment.
+  const stepIns = (data.log || []).filter(e => e.field === "support" && e.to && Date.parse(e.t) >= since);
+  if (stepIns.length) {
+    const byWbs = {};
+    for (const r of data.rows) byWbs[r.wbs] = r;
+    const lines = stepIns.map(e => {
+      const r = byWbs[e.wbs] || {};
+      return `- **${e.wbs} ${r.task || ""}** - ${tag(e.to, mentions)} stepped in to support ${tag(r.owner || "", mentions)}`;
+    });
+    out.push(`__**Stepped in**__ :handshake:\n${[...new Set(lines)].join("\n")}`);
+  }
   const flags = statusChanges(data, "Stuck", since);
   if (flags.length) {
     const firstEver = !(data.log || []).some(e => e.field === "status" && e.to === "Stuck" && Date.parse(e.t) < since);
@@ -206,7 +218,8 @@ function scoreboardSection(data, weekSince, mentions) {
 // kind is "monday", "friday", or null (announcements only).
 function buildMessages(data, todayIso, kind, mentions, nowMs, channels = {}) {
   const open = data.rows.filter(r => r.status !== "Done");
-  const line = (r, extra) => `- **${r.wbs} ${r.task}** - ${tag(r.owner, mentions)}${extra || ""}`;
+  // A supporter gets pinged alongside the owner; credit for wins stays with the owner.
+  const line = (r, extra) => `- **${r.wbs} ${r.task}** - ${tag(r.owner, mentions)}${r.support ? " + " + tag(r.support, mentions) : ""}${extra || ""}`;
   // Monday looks back to Friday's post; Friday looks back to Monday morning
   const dow = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(laParts(new Date(nowMs)).weekday);
   const weekSince = Date.parse(isoAddDays(todayIso, -Math.max(dow, 0)) + "T07:00:00Z");
@@ -309,8 +322,17 @@ async function postOne(url, content, allowEveryone) {
 }
 
 async function loadBoard(env) {
-  const res = await fetch(API + "?t=" + Date.now(), { redirect: "follow" });
-  const data = await res.json();
+  // Apps Script answers an HTML error page for the odd request; retry a
+  // couple of times before letting a scheduled run fail.
+  let data, lastErr;
+  for (let i = 0; i < 3 && !data; i++) {
+    if (i) await new Promise(r => setTimeout(r, 2000 * i));
+    try {
+      const res = await fetch(API + "?t=" + Date.now(), { redirect: "follow" });
+      data = await res.json();
+    } catch (e) { lastErr = e; }
+  }
+  if (!data) throw lastErr;
   if (!data.ok) throw new Error("board API: " + (data.err || "bad response"));
   let mentions = {};
   try { mentions = JSON.parse(env.MENTIONS || "{}"); } catch (e) {}
