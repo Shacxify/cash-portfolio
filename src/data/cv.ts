@@ -42,7 +42,7 @@ export const education: Entry[] = [
 
 export const professional: Entry[] = [
   {
-    date: "May 2025 — Present",
+    date: "May 2025 — Aug 2026",
     title: "Operations PM Intern @ Centene",
     subtitle: "St. Louis, MO · Hybrid · Enterprise Operations",
     location: "Hybrid",
@@ -61,7 +61,7 @@ export const professional: Entry[] = [
     ],
   },
   {
-    date: "Jan 2025 — Present",
+    date: "Jan 2025 — Aug 2026",
     title: "Director of Events @ LinkedIn Campus Ambassador Program",
     subtitle: "Promoted from LinkedIn Ambassador · SJSU",
     location: "San José, California",

@@ -17,7 +17,7 @@ function entryText(e: Entry) {
 
 const facts = `
 # Profile
-Cash Johnson is based in San José, California (Silicon Valley). Headline: AI Solutions Architect. Cash works where enterprise operations, partnerships, and go-to-market strategy meet, turning ambiguous, cross-functional problems into clear plans that ship. Cash is currently a Project Management Intern at Centene (regulated healthcare), Director of Events for LinkedIn's SJSU Campus Ambassador program, and is finishing a B.S. in Business Administration (MIS concentration) at San José State University. Outside work Cash enjoys fishing, rock climbing, surfing, guitar, and watercolor.
+Cash Johnson is based in San José, California (Silicon Valley). Headline: AI Solutions Architect. Cash works where enterprise operations, partnerships, and go-to-market strategy meet, turning ambiguous, cross-functional problems into clear plans that ship. Cash recently architected and built VNTG OS (a production retail platform with an AI resale pricing engine) and led development of Sammy's Source (a multilingual AI financial-aid assistant built on Gemini 2.0 Flash in Python). Cash spent May 2025 to Aug 2026 as an Operations Project Management Intern at Centene (regulated healthcare) and Jan 2025 to Aug 2026 as Director of Events for LinkedIn's SJSU Campus Ambassador program, and graduated in 2026 with a B.S. in Business Administration (MIS concentration) from San José State University. Cash shipped a first app to the App Store and Google Play at 16. Outside work Cash enjoys fishing, rock climbing, surfing, guitar, and watercolor.
 
 # Contact
 Email: ${EMAIL}
