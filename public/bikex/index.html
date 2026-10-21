@@ -624,12 +624,10 @@ const PLAN = {
     {d:"2026-09-30",n:"High-level presentation to class (10 to 12 minutes, scheduled by Prof. Sridar)"},
     {d:"2026-10-02",n:"Phase 2.0 exit: user requirements specs complete for all three processes"},
     {d:"2026-10-09",n:"Sponsor call 2: gap analysis and proposal deck",gate:1},
-    {d:"2026-10-23",n:"Sponsor call 3; CPM diagram and risk register due to Prof. Sridar"},
-    {d:"2026-10-30",n:"Project plan v1 submitted"},
-    {d:"2026-11-06",n:"Sponsor call 4: in-kind and outgoing feasibility memos",gate:1},
-    {d:"2026-11-20",n:"Sponsor call 5: pilot results and staff feedback"},
-    {d:"2026-12-04",n:"Sponsor call 6: final presentation and project plan v2"},
-    {d:"2026-12-11",n:"Turnover: SOPs handed in, sponsor feedback review"}
+    {d:"2026-10-23",n:"CPM diagram and risk register due to Prof. Sridar"},
+    {d:"2026-10-30",n:"Sponsor call 3; project plan v1 submitted"},
+    {d:"2026-11-20",n:"Sponsor call 4: in-kind and outgoing feasibility memos; pilot results and staff feedback",gate:1},
+    {d:"2026-12-11",n:"Sponsor call 5: final presentation and project plan v2; turnover: SOPs handed in, sponsor feedback review"}
   ]
 };
 const SKEY = {"Not started":"todo","Working on it":"working","Waiting":"waiting","Stuck":"stuck","Done":"done"};
@@ -1164,7 +1162,7 @@ function teamView(){
   }
   h += '<div class="why"><h3>Scoring the team, not just the tasks</h3><ul>'+
     '<li>Board = execution: on-time rate, overdue count, stuck count. Review it before every Friday call.</li>'+
-    '<li>Sponsor satisfaction is 20% of the grade. Ask Kelly for a 1-5 pulse at the end of each bi-weekly call.</li>'+
+    '<li>Sponsor satisfaction is 20% of the grade. Ask Kelly for a 1-5 pulse at the end of each sponsor call (every three weeks).</li>'+
     '<li>Pilot outcome: % of check/DAF gifts acknowledged, and days from deposit to thank-you, old vs new.</li>'+
     '<li>Peer feedback is graded. Tasks-done per person shows who is carrying weight before it becomes a problem.</li></ul></div>';
   return h;

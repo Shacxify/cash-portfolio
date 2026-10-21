@@ -35,13 +35,11 @@ const MILESTONES = [
   { d: "2026-09-30", n: "High-level presentation to class (10 to 12 minutes)" },
   { d: "2026-10-02", n: "Phase 2.0 exit: user requirements specs complete for all three processes" },
   { d: "2026-10-09", n: "Sponsor call 2: gap analysis and proposal deck", gate: true, call: true },
-  { d: "2026-10-23", n: "Sponsor call 3; CPM diagram and risk register due to Prof. Sridar", call: true },
-  { d: "2026-10-30", n: "Project plan v1 submitted" },
-  { d: "2026-11-06", n: "Sponsor call 4: in-kind and outgoing feasibility memos", gate: true, call: true },
+  { d: "2026-10-23", n: "CPM diagram and risk register due to Prof. Sridar" },
+  { d: "2026-10-30", n: "Sponsor call 3; project plan v1 submitted", call: true },
   { d: "2026-11-13", n: "High-level presentation week (class schedule)" },
-  { d: "2026-11-20", n: "Sponsor call 5: pilot results and staff feedback", call: true },
-  { d: "2026-12-04", n: "Sponsor call 6: final presentation and project plan v2", call: true },
-  { d: "2026-12-11", n: "Turnover: SOPs handed in, sponsor feedback review" },
+  { d: "2026-11-20", n: "Sponsor call 4: in-kind and outgoing feasibility memos; pilot results and staff feedback", gate: true, call: true },
+  { d: "2026-12-11", n: "Sponsor call 5: final presentation and project plan v2; turnover: SOPs handed in, sponsor feedback review", call: true },
 ];
 
 // ---- date helpers (everything in America/Los_Angeles) ----------------------
