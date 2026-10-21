@@ -39,7 +39,7 @@ export function HeroSection() {
     >
       {/* Inline aurora blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <ParallaxLayer x={x} y={y} depth={120}>
+        <ParallaxLayer x={x} y={y} depth={300}>
           <div
             className="absolute aurora-blob-1"
             style={{
@@ -54,7 +54,7 @@ export function HeroSection() {
             }}
           />
         </ParallaxLayer>
-        <ParallaxLayer x={x} y={y} depth={-90}>
+        <ParallaxLayer x={x} y={y} depth={-220}>
           <div
             className="absolute aurora-blob-2"
             style={{
@@ -69,7 +69,7 @@ export function HeroSection() {
             }}
           />
         </ParallaxLayer>
-        <ParallaxLayer x={x} y={y} depth={160}>
+        <ParallaxLayer x={x} y={y} depth={400}>
           <div
             className="absolute aurora-blob-3"
             style={{

@@ -63,7 +63,8 @@ export const professional: Entry[] = [
   {
     date: "Jan 2025 — Aug 2026",
     title: "Director of Events @ LinkedIn Campus Ambassador Program",
-    subtitle: "Promoted from LinkedIn Ambassador · SJSU",
+    subtitle:
+      "Director since Dec 2025 · Promoted from LinkedIn Ambassador (Jan to Dec 2025) · SJSU",
     location: "San José, California",
     href: "https://sjsulinkedin.com/",
     bullets: [
@@ -102,13 +103,30 @@ export const professional: Entry[] = [
     tools: ["Asana", "Google Workspace", "Slack"],
     learned: ["Editorial project management", "Long-horizon reliability"],
   },
+  {
+    date: "Aug 2018 – Jan 2020",
+    title: "Sales & Business Relationship Specialist @ Apple",
+    location: "Los Gatos, California",
+    href: "https://www.apple.com/",
+  },
+  {
+    date: "Jan 2016 – Jun 2019",
+    title: "Founder @ CodeMoney",
+    subtitle: "Mobile game studio",
+    location: "San Francisco Bay Area, California",
+    bullets: [
+      "Shipped beCAREFUL to the Apple App Store and Google Play at 16, generating $20K+ in revenue in its first 3 months.",
+    ],
+    learned: ["Shipping a product end to end", "Mobile app publishing"],
+  },
 ];
 
 export const organizational: Entry[] = [
   {
     date: "Jul 2024 — Jan 2026",
     title: "President @ SJSU Marketing Association",
-    subtitle: "Lucas College of Business · 250+ members, 45+ year legacy",
+    subtitle:
+      "President since May 2025, promoted from Outreach Specialist and Community Relations Director · 250+ members, 45+ year legacy",
     location: "San José, California",
     href: "https://www.linkedin.com/company/sjsumarketingassociation/",
     bullets: [

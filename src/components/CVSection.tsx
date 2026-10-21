@@ -336,7 +336,7 @@ export function CVSection() {
                 counselor queue into an action plan in seconds. Alongside that, I spent over a year
                 as a <strong>Project Management Intern at Centene</strong>, where I learned how to
                 move quickly and thoughtfully within a{" "}
-                <strong>highly regulated healthcare environment</strong>, and as{" "}
+                <strong>highly regulated healthcare environment</strong>, and earned a promotion to{" "}
                 <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>. I
                 graduated in 2026 with a{" "}
                 <strong>
