@@ -3,10 +3,15 @@ import { Toaster } from "sonner";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
-
+import { StatsStrip } from "@/components/StatsStrip";
 import { ProjectsSection } from "@/components/ProjectsSection";
+import { SkillsSection } from "@/components/SkillsSection";
 import { CVSection } from "@/components/CVSection";
 import { Footer } from "@/components/Footer";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { CommandPalette } from "@/components/CommandPalette";
+import { AskCash } from "@/components/AskCash";
+import { EasterEgg } from "@/components/EasterEgg";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -94,15 +99,21 @@ function Home() {
   return (
     <div className="relative min-h-screen text-foreground" style={{ background: "#FAFAF9" }}>
       <AuroraBackground />
+      <ScrollProgress />
       <Navbar />
       <main className="relative z-10 pt-14">
         <HeroSection />
+        <StatsStrip />
         <ProjectsSection />
+        <SkillsSection />
         <CVSection />
       </main>
       <div className="relative z-10">
         <Footer />
       </div>
+      <CommandPalette />
+      <AskCash />
+      <EasterEgg />
       <Toaster position="bottom-right" />
     </div>
   );

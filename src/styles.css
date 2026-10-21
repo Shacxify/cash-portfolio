@@ -120,3 +120,10 @@ html { scroll-behavior: smooth; }
 .aurora-blob-1 { animation: aurora-1 12s ease-in-out infinite; }
 .aurora-blob-2 { animation: aurora-2 15s ease-in-out infinite; }
 .aurora-blob-3 { animation: aurora-3 10s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .aurora-blob-1,
+  .aurora-blob-2,
+  .aurora-blob-3 { animation: none; }
+}
