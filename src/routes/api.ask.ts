@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { ASK_SYSTEM_PROMPT } from "@/lib/ask-context";
 
-// Set ANTHROPIC_API_KEY in the deployment environment. Without it the route
-// answers 503 and the chat panel tells visitors to email instead.
-const MODEL = "claude-opus-5-5";
+// Runs on the Gemini API free tier. Create a key at aistudio.google.com and set
+// GEMINI_API_KEY in the deployment environment; without it the route answers
+// 503 and the chat panel tells visitors to email instead. GEMINI_MODEL is
+// optional and defaults to Google's rolling alias for the current Flash model.
+const DEFAULT_MODEL = "gemini-flash-latest";
 
 const bodySchema = z.object({
   messages: z
@@ -20,8 +21,8 @@ const bodySchema = z.object({
     .max(12),
 });
 
-// Best-effort abuse guard. It is per isolate, so it slows a single noisy
-// visitor but is not a hard global cap; set a spend limit on the API key too.
+// Best-effort abuse guard so one visitor can't burn the free tier's daily
+// quota. It is per instance, so it slows a noisy visitor but is not global.
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_PER_WINDOW = 15;
 const hits = new Map<string, number[]>();
@@ -41,12 +42,18 @@ const json = (data: unknown, status = 200) =>
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
 
+type GeminiResponse = {
+  candidates?: { content?: { parts?: { text?: string }[] }; finishReason?: string }[];
+  promptFeedback?: { blockReason?: string };
+};
+
 export const Route = createFileRoute("/api/ask")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = process.env.ANTHROPIC_API_KEY;
+        const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) return json({ error: "unavailable" }, 503);
+        const model = process.env.GEMINI_MODEL || DEFAULT_MODEL;
 
         const ip =
           (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
@@ -58,45 +65,52 @@ export const Route = createFileRoute("/api/ask")({
         const parsed = bodySchema.safeParse(await request.json().catch(() => null));
         if (!parsed.success) return json({ error: "bad_request" }, 400);
 
-        // The API needs the conversation to open with a user turn and end on one.
+        // The conversation must open with a user turn and end on one.
         const messages = parsed.data.messages.slice(-10);
         while (messages.length && messages[0].role !== "user") messages.shift();
         if (!messages.length || messages[messages.length - 1].role !== "user") {
           return json({ error: "bad_request" }, 400);
         }
 
-        const client = new Anthropic({ apiKey, maxRetries: 1, timeout: 30_000 });
         try {
-          const response = await client.beta.messages.create({
-            model: MODEL,
-            // A small ceiling keeps cost predictable on a public endpoint.
-            max_tokens: 2048,
-            output_config: { effort: "low" },
-            betas: ["server-side-fallback-2026-07-01"],
-            fallbacks: "default",
-            system: [
-              { type: "text", text: ASK_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
-            ],
-            messages,
-          });
+          const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+              signal: AbortSignal.timeout(30_000),
+              body: JSON.stringify({
+                systemInstruction: { parts: [{ text: ASK_SYSTEM_PROMPT }] },
+                contents: messages.map((m) => ({
+                  role: m.role === "assistant" ? "model" : "user",
+                  parts: [{ text: m.content }],
+                })),
+                generationConfig: { maxOutputTokens: 2048, temperature: 0.4 },
+              }),
+            },
+          );
 
-          if (response.stop_reason === "refusal") {
+          // Free-tier quota exhausted, or Google is shedding load.
+          if (res.status === 429 || res.status === 503) return json({ error: "busy" }, 429);
+          if (!res.ok) {
+            console.error("ask: Gemini API error", res.status, await res.text().catch(() => ""));
+            return json({ error: "upstream" }, 502);
+          }
+
+          const data = (await res.json()) as GeminiResponse;
+          const candidate = data.candidates?.[0];
+          if (data.promptFeedback?.blockReason || candidate?.finishReason === "SAFETY") {
             return json({
               reply: "I can only help with questions about Cash's work and experience.",
             });
           }
-          const reply = response.content
-            .flatMap((b) => (b.type === "text" ? [b.text] : []))
+          const reply = (candidate?.content?.parts ?? [])
+            .map((p) => p.text ?? "")
             .join("")
             .trim();
           return json({ reply: reply || "Sorry, I lost my train of thought. Try asking again?" });
         } catch (error) {
-          if (error instanceof Anthropic.RateLimitError) return json({ error: "busy" }, 429);
-          if (error instanceof Anthropic.APIError) {
-            console.error("ask: Claude API error", error.status, error.message);
-          } else {
-            console.error("ask: request failed", error);
-          }
+          console.error("ask: request failed", error);
           return json({ error: "upstream" }, 502);
         }
       },

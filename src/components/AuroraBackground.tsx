@@ -1,3 +1,5 @@
+import { CursorGlow } from "./CursorGlow";
+
 export function AuroraBackground() {
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -49,6 +51,7 @@ export function AuroraBackground() {
           opacity: 0.15,
         }}
       />
+      <CursorGlow />
     </div>
   );
 }

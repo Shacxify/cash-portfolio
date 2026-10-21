@@ -320,30 +320,36 @@ export function CVSection() {
               style={{ color: "rgba(0,0,0,0.78)" }}
             >
               <p>
-                I’m <strong>Cash Johnson</strong>, a{" "}
-                <strong>Silicon Valley operations and project manager</strong> who enjoys working
-                where{" "}
+                I’m <strong>Cash Johnson</strong>, an{" "}
+                <strong>AI Solutions Architect in Silicon Valley</strong> who designs{" "}
+                <strong>AI-powered products and automations</strong> where{" "}
                 <strong>enterprise operations, partnerships, and go-to-market strategy</strong>{" "}
                 meet. Give me an <strong>ambiguous, cross-functional problem</strong>, and I’ll turn
-                it into a <strong>clear plan that can actually ship</strong>.
+                it into an <strong>AI solution that can actually ship</strong>.
               </p>
               <p>
-                I’m currently a <strong>Project Management Intern at Centene</strong>, where I’m
-                learning how to move quickly and thoughtfully within a{" "}
-                <strong>highly regulated healthcare environment</strong>. I also serve as{" "}
-                <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>,
-                leading events from <strong>initial idea through execution</strong>. Alongside that,
-                I’m finishing my{" "}
+                Most recently, I architected and built <strong>VNTG OS</strong>, a production retail
+                platform with an <strong>AI resale pricing engine</strong> that replaced 100% of a
+                client’s manual inventory operations, and led development of{" "}
+                <strong>Sammy’s Source</strong>, a{" "}
+                <strong>multilingual AI financial-aid assistant</strong> that turns a 3 to 5 day
+                counselor queue into an action plan in seconds. Alongside that, I spent over a year
+                as a <strong>Project Management Intern at Centene</strong>, where I learned how to
+                move quickly and thoughtfully within a{" "}
+                <strong>highly regulated healthcare environment</strong>, and earned a promotion to{" "}
+                <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>. I
+                graduated in 2026 with a{" "}
                 <strong>
                   B.S. in Business Administration with a concentration in Management Information
-                  Systems at San José State University
+                  Systems from San José State University
                 </strong>
                 .
               </p>
               <p>
                 I bring a{" "}
-                <strong>business mindset, technical instincts, and a practical approach</strong> to
-                getting things done. Outside of work and school, I’m usually{" "}
+                <strong>business mindset, technical instincts, and a builder’s habit</strong> to
+                getting things done (I shipped my first app to the App Store at 16). Outside of
+                work, I’m usually{" "}
                 <strong>
                   fishing, rock climbing, surfing, playing guitar, or making a mess with my
                   watercolor set
