@@ -15,8 +15,7 @@ export const COFFEE_CHAT_MAILTO = `mailto:${EMAIL}?subject=${encodeURIComponent(
   "Coffee chat?",
 )}&body=${encodeURIComponent("Hi Cash,\n\nI came across your portfolio and would love to chat about ")}`;
 
-// Fired on window so any button can open the palette or the chat without
+// Fired on window so any button can open the palette without
 // threading state through the page.
 export const OPEN_PALETTE_EVENT = "cj:open-palette";
-export const OPEN_ASK_EVENT = "cj:open-ask";
 export const CELEBRATE_EVENT = "cj:celebrate";

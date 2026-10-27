@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ApiAskRouteImport } from './routes/api.ask'
 import { Route as ApiVisitRouteImport } from './routes/api.visit'
 import { Route as BlogHowToDocumentSopsRouteImport } from './routes/blog.how-to-document-sops'
 import { Route as BlogOperationsAndProjectManagementRouteImport } from './routes/blog.operations-and-project-management'
@@ -32,11 +31,6 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAskRoute = ApiAskRouteImport.update({
-  id: '/api/ask',
-  path: '/api/ask',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiVisitRoute = ApiVisitRouteImport.update({
@@ -71,7 +65,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/ask': typeof ApiAskRoute
   '/api/visit': typeof ApiVisitRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
@@ -82,7 +75,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/ask': typeof ApiAskRoute
   '/api/visit': typeof ApiVisitRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
@@ -94,7 +86,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/ask': typeof ApiAskRoute
   '/api/visit': typeof ApiVisitRoute
   '/blog/how-to-document-sops': typeof BlogHowToDocumentSopsRoute
   '/blog/operations-and-project-management': typeof BlogOperationsAndProjectManagementRoute
@@ -107,7 +98,6 @@ export interface FileRouteTypes {
     | '/'
     | '/projects'
     | '/sitemap.xml'
-    | '/api/ask'
     | '/api/visit'
     | '/blog/how-to-document-sops'
     | '/blog/operations-and-project-management'
@@ -118,7 +108,6 @@ export interface FileRouteTypes {
     | '/'
     | '/projects'
     | '/sitemap.xml'
-    | '/api/ask'
     | '/api/visit'
     | '/blog/how-to-document-sops'
     | '/blog/operations-and-project-management'
@@ -129,7 +118,6 @@ export interface FileRouteTypes {
     | '/'
     | '/projects'
     | '/sitemap.xml'
-    | '/api/ask'
     | '/api/visit'
     | '/blog/how-to-document-sops'
     | '/blog/operations-and-project-management'
@@ -141,7 +129,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProjectsRoute: typeof ProjectsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiAskRoute: typeof ApiAskRoute
   ApiVisitRoute: typeof ApiVisitRoute
   BlogHowToDocumentSopsRoute: typeof BlogHowToDocumentSopsRoute
   BlogOperationsAndProjectManagementRoute: typeof BlogOperationsAndProjectManagementRoute
@@ -170,13 +157,6 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/ask': {
-      id: '/api/ask'
-      path: '/api/ask'
-      fullPath: '/api/ask'
-      preLoaderRoute: typeof ApiAskRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/visit': {
@@ -221,7 +201,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProjectsRoute: ProjectsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiAskRoute: ApiAskRoute,
   ApiVisitRoute: ApiVisitRoute,
   BlogHowToDocumentSopsRoute: BlogHowToDocumentSopsRoute,
   BlogOperationsAndProjectManagementRoute:

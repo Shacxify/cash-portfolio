@@ -20,7 +20,6 @@ import {
   COFFEE_CHAT_MAILTO,
   EMAIL,
   LINKEDIN_URL,
-  OPEN_ASK_EVENT,
   RESUME_URL,
 } from "@/lib/site";
 
@@ -64,15 +63,6 @@ function ContactKit() {
           Download résumé
         </a>
       )}
-      <button
-        type="button"
-        onClick={() => window.dispatchEvent(new Event(OPEN_ASK_EVENT))}
-        className={kitButton}
-        style={{ border: `1px solid ${ACCENT}`, background: "rgba(134,163,151,0.12)" }}
-      >
-        <Sparkles size={16} strokeWidth={1.75} />
-        Ask my AI a question
-      </button>
     </div>
   );
 }
