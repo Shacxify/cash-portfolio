@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useTransform, type MotionValue } from "framer-motion";
 import { Layers, Linkedin, User, Youtube } from "lucide-react";
 import { useCursorParallax } from "@/hooks/use-cursor-parallax";
@@ -8,12 +8,20 @@ import { NowBuilding } from "./NowBuilding";
 const ease = [0.16, 1, 0.3, 1] as const;
 
 // Easter egg: hovering the tagline swaps the title for one of the alternates.
-// Index 0 is the real title; the rest cycle in order on each hover.
+// Index 0 is the real title; each hover picks a random alternate, never the
+// same one twice in a row.
 const TITLES = [
   { lead: "I'm an", accent: "AI Solutions Architect" },
   { lead: "I'm a", accent: "Good Guy" },
   { lead: "I'm a", accent: "Watercolor Enthusiast" },
   { lead: "I'm the", accent: "Guy You Need" },
+  { lead: "I'm a", accent: "PM Who Actually Ships" },
+  { lead: "I'm a", accent: "Closer" },
+  { lead: "I'm a", accent: "First-Gen Builder" },
+  { lead: "I'm a", accent: "Weekend Angler" },
+  { lead: "I'm a", accent: "Guitarist in Progress" },
+  { lead: "I'm a", accent: "Calculated Risk-Taker" },
+  { lead: "I'm a", accent: "Downtown San Jose Kid" },
 ];
 
 // Wraps one aurora blob so it drifts toward the cursor. The blob keeps its own
@@ -53,11 +61,14 @@ function ParallaxLayer({
 export function HeroSection() {
   const { x, y } = useCursorParallax();
   const [activeTitle, setActiveTitle] = useState(0);
-  const [nextTitle, setNextTitle] = useState(1);
+  const lastTitle = useRef(0);
 
   const showNextTitle = () => {
-    setActiveTitle(nextTitle);
-    setNextTitle((n) => (n % (TITLES.length - 1)) + 1);
+    // Pick from 1..length-1, skipping whichever alternate showed last.
+    let pick = 1 + Math.floor(Math.random() * (TITLES.length - 1));
+    if (pick === lastTitle.current) pick = (pick % (TITLES.length - 1)) + 1;
+    lastTitle.current = pick;
+    setActiveTitle(pick);
   };
 
   return (

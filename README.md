@@ -1,6 +1,6 @@
 # cash-portfolio
 
-### cashjohnson.net · TanStack Start on Cloudflare Workers
+### cashjohnson.net · TanStack Start on Vercel
 
 > Personal site, project index, CV, and operations blog. Server-rendered, edge-deployed, and built to be readable by recruiters and crawlers alike.
 
@@ -8,7 +8,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript)
 ![TanStack](https://img.shields.io/badge/TanStack-Start_+_Router-EF4444?style=flat-square)
 ![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat-square&logo=tailwindcss)
-![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-F38020?style=flat-square&logo=cloudflare)
+![Vercel](https://img.shields.io/badge/Vercel-Hosting-000000?style=flat-square&logo=vercel)
 
 **Live:** [cashjohnson.net](https://cashjohnson.net)
 
@@ -45,7 +45,7 @@ A portfolio that does three jobs at once:
 | Framework | TanStack Start, TanStack Router 1.x | File-based routing with full type safety and SSR at the edge |
 | UI | React 19, Tailwind CSS v4, Radix primitives, shadcn-style components | Modern rendering, zero-config styling pipeline |
 | Motion | Framer Motion 12 | Aurora background and section transitions |
-| Server | Nitro on Cloudflare Workers via `@cloudflare/vite-plugin` and Wrangler | Global edge delivery, no cold-start penalty |
+| Server | Nitro on Vercel | SSR on Vercel's network, with a production deploy on every merge to `main` |
 | Analytics | Vercel Analytics, Speed Insights | Real-user performance and traffic data |
 | Tooling | Vite 7, ESLint 9, Prettier, TypeScript 5.8 | Fast builds, enforced formatting |
 
@@ -83,12 +83,9 @@ bun run dev
 
 **Deploy**
 
-```sh
-bun run build
-wrangler deploy
-```
+Vercel deploys automatically from GitHub. Every merge to `main` ships to production at [cashjohnson.net](https://cashjohnson.net), and every pushed branch gets a preview deployment. There is no manual deploy step.
 
-Worker configuration lives in `wrangler.jsonc` with `nodejs_compat` enabled and `@tanstack/react-start/server-entry` as the entry point.
+`wrangler.jsonc` is left over from the earlier Cloudflare Workers setup and is not used by production.
 
 ---
 
