@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion, useTransform, type MotionValue } from "framer-motion";
 import { Layers, Linkedin, Sparkles, User, Youtube } from "lucide-react";
 import { useCursorParallax } from "@/hooks/use-cursor-parallax";
@@ -5,6 +6,15 @@ import { LINKEDIN_URL, OPEN_ASK_EVENT, YOUTUBE_URL } from "@/lib/site";
 import { NowBuilding } from "./NowBuilding";
 
 const ease = [0.16, 1, 0.3, 1] as const;
+
+// Easter egg: hovering the tagline swaps the title for one of the alternates.
+// Index 0 is the real title; the rest cycle in order on each hover.
+const TITLES = [
+  { lead: "I'm an", accent: "AI Solutions Architect" },
+  { lead: "I'm a", accent: "Good Guy" },
+  { lead: "I'm a", accent: "Watercolor Enthusiast" },
+  { lead: "I'm the", accent: "Guy You Need" },
+];
 
 // Wraps one aurora blob so it drifts toward the cursor. The blob keeps its own
 // CSS keyframe animation; the parallax lives on this wrapper so the two
@@ -31,6 +41,13 @@ function ParallaxLayer({
 
 export function HeroSection() {
   const { x, y } = useCursorParallax();
+  const [activeTitle, setActiveTitle] = useState(0);
+  const [nextTitle, setNextTitle] = useState(1);
+
+  const showNextTitle = () => {
+    setActiveTitle(nextTitle);
+    setNextTitle((n) => (n % (TITLES.length - 1)) + 1);
+  };
 
   return (
     <section
@@ -106,15 +123,32 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.15, ease }}
-          className="mt-3 text-foreground/80 text-balance"
+          onMouseEnter={showNextTitle}
+          onMouseLeave={() => setActiveTitle(0)}
+          onClick={showNextTitle}
+          className="mt-3 text-foreground/80 text-balance cursor-default"
           style={{
             fontSize: "clamp(2.25rem, 5.4vw, 5.25rem)",
             lineHeight: 1.15,
             letterSpacing: "-0.02em",
           }}
         >
-          I'm an <span style={{ color: "#86A397" }}>AI Solutions Architect</span> based in Silicon
-          Valley.
+          {/* All titles share one grid cell so the line never reflows on swap */}
+          <span className="inline-grid">
+            {TITLES.map((title, i) => (
+              <motion.span
+                key={title.accent}
+                aria-hidden={i !== 0 || undefined}
+                initial={false}
+                animate={{ opacity: i === activeTitle ? 1 : 0 }}
+                transition={{ duration: 0.25 }}
+                className={`[grid-area:1/1] ${i === activeTitle ? "" : "pointer-events-none"}`}
+              >
+                {title.lead} <span style={{ color: "#86A397" }}>{title.accent}</span>
+              </motion.span>
+            ))}
+          </span>{" "}
+          based in Silicon Valley.
         </motion.p>
 
         <motion.div
