@@ -1,5 +1,5 @@
-// Featured project copy. Cover images stay in ProjectsSection so this file can be
-// imported server-side (the Ask Cash route) without pulling in image assets.
+// Featured project copy. Cover images stay in ProjectsSection so this file stays
+// free of image assets.
 
 export type Project = {
   title: string;

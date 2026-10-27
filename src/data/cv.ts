@@ -1,5 +1,5 @@
-// Single source for CV content. The CV section, skills cloud, command palette,
-// and the Ask Cash assistant all read from here so they never drift apart.
+// Single source for CV content. The CV section, skills cloud, and command palette
+// all read from here so they never drift apart.
 
 export type Entry = {
   date: string;

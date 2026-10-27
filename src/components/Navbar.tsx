@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, Search, Sparkles, X } from "lucide-react";
-import { OPEN_ASK_EVENT, OPEN_PALETTE_EVENT } from "@/lib/site";
+import { Menu, Search, X } from "lucide-react";
+import { OPEN_PALETTE_EVENT } from "@/lib/site";
 
 const links = [
   { label: "Work", href: "#work" },
@@ -144,17 +144,6 @@ export function Navbar() {
                 style={{ border: "1px solid rgba(0,0,0,0.15)" }}
               >
                 <Search size={16} /> Search
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  window.dispatchEvent(new Event(OPEN_ASK_EVENT));
-                }}
-                className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[15px] text-white"
-                style={{ background: "#361D2E" }}
-              >
-                <Sparkles size={16} /> Ask my AI
               </button>
             </div>
           </motion.div>
