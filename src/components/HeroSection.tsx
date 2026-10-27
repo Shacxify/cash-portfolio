@@ -31,7 +31,7 @@ function ParallaxLayer({
   // Grow slightly the further the cursor is from the center, in either axis.
   const scale = useTransform([x, y] as const, ([vx, vy]: number[]) => {
     const reach = Math.min(1, Math.hypot(vx, vy) * 2);
-    return 1 + reach * 0.06;
+    return 1 + reach * 0.12;
   });
   return (
     <motion.div className="absolute inset-0" style={{ x: tx, y: ty, rotate, scale }}>
@@ -50,7 +50,7 @@ export function HeroSection() {
     >
       {/* Inline aurora blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <ParallaxLayer x={x} y={y} depth={190} swirl={8}>
+        <ParallaxLayer x={x} y={y} depth={340} swirl={12}>
           <div
             className="absolute aurora-blob-1"
             style={{
@@ -59,13 +59,13 @@ export function HeroSection() {
               width: "700px",
               height: "700px",
               background: "radial-gradient(circle, #E1B07E 0%, #E5BE9E 60%, transparent 70%)",
-              filter: "blur(64px)",
-              opacity: 0.4,
+              filter: "blur(54px)",
+              opacity: 0.48,
               transform: "translate(20%, -25%)",
             }}
           />
         </ParallaxLayer>
-        <ParallaxLayer x={x} y={y} depth={-150} swirl={-10}>
+        <ParallaxLayer x={x} y={y} depth={-300} swirl={-14}>
           <div
             className="absolute aurora-blob-2"
             style={{
@@ -74,13 +74,13 @@ export function HeroSection() {
               width: "550px",
               height: "550px",
               background: "radial-gradient(circle, #86A397 0%, #CBC0AD 60%, transparent 70%)",
-              filter: "blur(74px)",
-              opacity: 0.32,
+              filter: "blur(62px)",
+              opacity: 0.4,
               transform: "translate(-20%, -20%)",
             }}
           />
         </ParallaxLayer>
-        <ParallaxLayer x={x} y={y} depth={110} swirl={6}>
+        <ParallaxLayer x={x} y={y} depth={-260} swirl={-10}>
           <div
             className="absolute aurora-blob-3"
             style={{
@@ -89,8 +89,8 @@ export function HeroSection() {
               width: "500px",
               height: "500px",
               background: "radial-gradient(circle, #361D2E 0%, #86A397 60%, transparent 70%)",
-              filter: "blur(92px)",
-              opacity: 0.2,
+              filter: "blur(88px)",
+              opacity: 0.22,
               transform: "translate(15%, 20%)",
             }}
           />

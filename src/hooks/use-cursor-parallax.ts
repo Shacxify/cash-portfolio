@@ -7,12 +7,13 @@ export function useCursorParallax(): { x: MotionValue<number>; y: MotionValue<nu
   const reduce = useReducedMotion();
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
-  // Soft, smoothed spring so the aurora *drifts* toward the cursor with an
-  // organic lag rather than snapping to it — snapping reads as a shadow glued
-  // under the pointer. The liveliness comes from the ambient keyframe drift
-  // plus the per-layer depth below, not from tracking the cursor quickly.
-  const x = useSpring(rawX, { stiffness: 55, damping: 20, mass: 1 });
-  const y = useSpring(rawY, { stiffness: 55, damping: 20, mass: 1 });
+  // Responsive but smooth spring: it follows the cursor promptly (settles in
+  // ~250ms) so the reaction is clearly visible, without snapping instantly —
+  // an instant follow reads as a shadow glued under the pointer. The boldness
+  // of the reaction comes from the large per-layer depth below; the dark blob
+  // moves *away* from the cursor so it can never pool into a shadow.
+  const x = useSpring(rawX, { stiffness: 130, damping: 18, mass: 0.6 });
+  const y = useSpring(rawY, { stiffness: 130, damping: 18, mass: 0.6 });
 
   useEffect(() => {
     if (reduce || !window.matchMedia("(pointer: fine)").matches) return;
