@@ -11,7 +11,6 @@ import {
   Linkedin,
   Mail,
   PartyPopper,
-  Sparkles,
   User,
   Wrench,
   Youtube,
@@ -33,7 +32,6 @@ import {
   COFFEE_CHAT_MAILTO,
   GITHUB_URL,
   LINKEDIN_URL,
-  OPEN_ASK_EVENT,
   OPEN_PALETTE_EVENT,
   RESUME_URL,
   YOUTUBE_URL,
@@ -87,12 +85,9 @@ export function CommandPalette() {
         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]]:px-2 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item][data-selected=true]]:bg-[rgba(134,163,151,0.16)]">
           <CommandInput placeholder="Where to? Try “VNTG”, “email”, or “CV”" />
           <CommandList className="max-h-[min(420px,60vh)]">
-            <CommandEmpty>Nothing here yet. Try “Ask my AI”.</CommandEmpty>
+            <CommandEmpty>Nothing here yet. Try “email” or “CV”.</CommandEmpty>
 
             <CommandGroup heading="Actions">
-              <CommandItem onSelect={fire(OPEN_ASK_EVENT)}>
-                <Sparkles className="mr-2 h-4 w-4" /> Ask my AI about me
-              </CommandItem>
               <CommandItem onSelect={run(copyEmail)}>
                 <Copy className="mr-2 h-4 w-4" /> Copy email address
               </CommandItem>

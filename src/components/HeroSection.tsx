@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion, useTransform, type MotionValue } from "framer-motion";
-import { Layers, Linkedin, Sparkles, User, Youtube } from "lucide-react";
+import { Layers, Linkedin, User, Youtube } from "lucide-react";
 import { useCursorParallax } from "@/hooks/use-cursor-parallax";
-import { LINKEDIN_URL, OPEN_ASK_EVENT, YOUTUBE_URL } from "@/lib/site";
+import { LINKEDIN_URL, YOUTUBE_URL } from "@/lib/site";
 import { NowBuilding } from "./NowBuilding";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -192,18 +192,6 @@ export function HeroSection() {
             <User size={18} strokeWidth={1.5} />
             More About Me
           </a>
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new Event(OPEN_ASK_EVENT))}
-            className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-[15px] font-medium text-white transition-all duration-200 hover:scale-105 active:scale-95"
-            style={{
-              border: "1px solid rgba(0,0,0,0.15)",
-              background: "#361D2E",
-            }}
-          >
-            <Sparkles size={18} strokeWidth={1.5} />
-            Ask My AI About Me
-          </button>
           <a
             href={LINKEDIN_URL}
             target="_blank"

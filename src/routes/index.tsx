@@ -10,7 +10,6 @@ import { CVSection } from "@/components/CVSection";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { CommandPalette } from "@/components/CommandPalette";
-import { AskCash } from "@/components/AskCash";
 import { EasterEgg } from "@/components/EasterEgg";
 
 export const Route = createFileRoute("/")({
@@ -112,7 +111,6 @@ function Home() {
         <Footer />
       </div>
       <CommandPalette />
-      <AskCash />
       <EasterEgg />
       <Toaster position="bottom-right" />
     </div>
