@@ -5,8 +5,6 @@ import { useCursorParallax } from "@/hooks/use-cursor-parallax";
 import { LINKEDIN_URL, YOUTUBE_URL } from "@/lib/site";
 import { NowBuilding } from "./NowBuilding";
 
-const ease = [0.16, 1, 0.3, 1] as const;
-
 // Easter egg: hovering the tagline swaps the title for one of the alternates.
 // Index 0 is the real title; each hover picks a random alternate, never the
 // same one twice in a row.
@@ -74,7 +72,7 @@ export function HeroSection() {
   return (
     <section
       id="top"
-      className="relative min-h-screen flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-32 md:pb-48"
+      className="relative min-h-svh flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-32 md:pb-48"
     >
       {/* Inline aurora blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -127,11 +125,8 @@ export function HeroSection() {
 
       <div className="relative z-10 max-w-6xl w-full text-left">
         <NowBuilding />
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease }}
-          className="font-bold tracking-tight text-foreground text-balance"
+        <h1
+          className="hero-rise font-bold tracking-tight text-foreground text-balance"
           style={{
             fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
             lineHeight: 1.05,
@@ -139,20 +134,18 @@ export function HeroSection() {
           }}
         >
           Hi, I'm Cash Johnson.
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.15, ease }}
+        <p
           onMouseEnter={showNextTitle}
           onMouseLeave={() => setActiveTitle(0)}
           onClick={showNextTitle}
-          className="mt-3 text-foreground/80 text-balance cursor-default"
+          className="hero-rise mt-3 text-foreground/80 text-balance cursor-default"
           style={{
             fontSize: "clamp(2.25rem, 5.4vw, 5.25rem)",
             lineHeight: 1.15,
             letterSpacing: "-0.02em",
+            animationDelay: "0.15s",
           }}
         >
           {/* All titles share one grid cell so the line never reflows on swap */}
@@ -171,13 +164,11 @@ export function HeroSection() {
             ))}
           </span>{" "}
           based in Silicon Valley.
-        </motion.p>
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.3, ease }}
-          className="mt-10 md:mt-12 flex flex-wrap gap-3 max-w-[540px]"
+        <div
+          className="hero-rise mt-10 md:mt-12 flex flex-wrap gap-3 max-w-[540px]"
+          style={{ animationDelay: "0.3s" }}
         >
           <a
             href="#work"
@@ -232,7 +223,7 @@ export function HeroSection() {
           >
             <Youtube size={20} strokeWidth={1.5} />
           </a>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
