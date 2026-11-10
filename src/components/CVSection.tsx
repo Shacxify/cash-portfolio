@@ -311,31 +311,35 @@ export function CVSection() {
             >
               <p>
                 I’m <strong>Cash Johnson</strong>, a{" "}
-                <strong>Silicon Valley operations and project manager</strong> who enjoys working
-                where{" "}
-                <strong>enterprise operations, partnerships, and go-to-market strategy</strong>{" "}
-                meet. Give me an <strong>ambiguous, cross-functional problem</strong>, and I’ll turn
-                it into a <strong>clear plan that can actually ship</strong>.
+                <strong>Silicon Valley builder who puts AI to work inside real operations</strong>.
+                I like working where <strong>product, operations, and go-to-market</strong> meet.
+                Show me the workflow that’s slowing your team down, and I’ll design the{" "}
+                <strong>AI or automation that fixes it</strong>, then stay with it until people
+                actually use it.
               </p>
               <p>
-                Most recently I was an{" "}
-                <strong>Operations Project Management Intern at Centene</strong>, where I learned
-                how to move quickly and thoughtfully within a{" "}
-                <strong>highly regulated healthcare environment</strong> across 9 states. I also
-                served as{" "}
-                <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>,
-                leading events from <strong>initial idea through execution</strong>. Now I’m
-                finishing my{" "}
+                At <strong>Centene</strong>, I was the operations project manager behind{" "}
+                <strong>healthcare plan operations across 9 states</strong>. I cut PM
+                troubleshooting time by <strong>up to 50%</strong> with a real-time executive
+                dashboard, then designed a <strong>4-agent AI reporting platform</strong> that VP
+                leadership asked to scale org-wide. On my own time, I’ve shipped{" "}
+                <strong>VNTG OS</strong>, an AI-powered retail platform for a live client, and{" "}
+                <strong>Sammy’s Source</strong>, a multilingual AI financial-aid assistant.
+              </p>
+              <p>
+                I’ve also closed <strong>$200K+ in sponsorships</strong> at The Intern Ship and led
+                LinkedIn’s SJSU events for <strong>25,000+ attendees</strong>, so I’m just as
+                comfortable in front of customers as I am in the build. I’m finishing my{" "}
                 <strong>
                   B.S. in Business Administration with a concentration in Management Information
                   Systems at San José State University
-                </strong>{" "}
-                (graduating December 2026).
+                </strong>
+                , and I’m looking for{" "}
+                <strong>strategy & operations, product, and AI deployment roles</strong> where AI
+                meets the customer.
               </p>
               <p>
-                I bring a{" "}
-                <strong>business mindset, technical instincts, and a practical approach</strong> to
-                getting things done. Outside of work and school, I’m usually{" "}
+                Outside of work and school, I’m usually{" "}
                 <strong>
                   fishing, rock climbing, surfing, playing guitar, or making a mess with my
                   watercolor set
