@@ -101,7 +101,7 @@ function Home() {
       <AuroraBackground />
       <ScrollProgress />
       <Navbar />
-      <main className="relative z-10 pt-14">
+      <main className="relative z-10">
         <HeroSection />
         <StatsStrip />
         <ProjectsSection />

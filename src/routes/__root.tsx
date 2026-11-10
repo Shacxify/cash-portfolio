@@ -108,5 +108,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  // Turn on smooth scrolling only after the first frame, so the router's scroll
+  // restoration on load jumps straight to its position instead of animating.
+  useEffect(() => {
+    const id = requestAnimationFrame(() => document.documentElement.classList.add("smooth-scroll"));
+    return () => cancelAnimationFrame(id);
+  }, []);
   return <Outlet />;
 }

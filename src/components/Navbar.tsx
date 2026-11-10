@@ -17,7 +17,7 @@ const SPY_IDS = ["work", "skills", "cv"];
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [isMac, setIsMac] = useState(true);
 
@@ -27,7 +27,7 @@ export function Navbar() {
 
   useEffect(() => {
     const onScroll = () => {
-      setVisible(window.scrollY > 80);
+      setScrolled(window.scrollY > 80);
       const line = window.innerHeight * 0.4;
       let current: string | null = null;
       for (const id of SPY_IDS) {
@@ -44,23 +44,17 @@ export function Navbar() {
   const openPalette = () => window.dispatchEvent(new Event(OPEN_PALETTE_EVENT));
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : -10 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 h-14 flex items-center px-6 md:px-10 pointer-events-none"
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 h-14 flex items-center px-6 md:px-10 transition-[background-color,border-color] duration-300"
       style={{
-        background: "rgba(255,255,255,0.6)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        borderBottom: "1px solid rgba(0,0,0,0.05)",
+        // Transparent over the hero; frosted once the page scrolls under it.
+        background: scrolled ? "rgba(255,255,255,0.6)" : "transparent",
+        backdropFilter: scrolled ? "blur(12px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
+        borderBottom: `1px solid ${scrolled ? "rgba(0,0,0,0.05)" : "transparent"}`,
       }}
     >
-      <div
-        className={`flex items-center justify-between w-full max-w-6xl mx-auto ${
-          visible ? "pointer-events-auto" : ""
-        }`}
-      >
+      <div className="flex items-center justify-between w-full max-w-6xl mx-auto">
         <a href="#top" className="text-[14px] font-semibold tracking-tight text-foreground">
           Cash Johnson
         </a>
@@ -149,6 +143,6 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </nav>
   );
 }
