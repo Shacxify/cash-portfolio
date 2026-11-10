@@ -15,10 +15,10 @@ const stats = [
     detail: "From real-time dashboards rolled out to Centene PMs",
   },
   {
-    value: 85,
+    value: 80,
     suffix: "%",
-    label: "Pipeline converted",
-    detail: "Of partner pipeline turned into active sponsorships",
+    label: "Partner conversion lift",
+    detail: "From Power BI lead scoring on A/B-tested campaigns",
   },
   {
     value: 72,
