@@ -59,10 +59,6 @@ export const Route = createFileRoute("/")({
               addressRegion: "CA",
               addressCountry: "US",
             },
-            worksFor: [
-              { "@type": "Organization", name: "Centene", url: "https://www.centene.com/" },
-              { "@type": "Organization", name: "LinkedIn", url: "https://www.linkedin.com/" },
-            ],
             alumniOf: [
               {
                 "@type": "CollegeOrUniversity",

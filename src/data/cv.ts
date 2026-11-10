@@ -14,7 +14,7 @@ export type Entry = {
 
 export const education: Entry[] = [
   {
-    date: "",
+    date: "2026",
     title: "San José State University",
     subtitle: "B.S. Business Administration, MIS · GPA 3.5",
     location: "San José, California",
@@ -42,26 +42,26 @@ export const education: Entry[] = [
 
 export const professional: Entry[] = [
   {
-    date: "May 2025 — Present",
+    date: "May 2025 — Aug 2026",
     title: "Operations PM Intern @ Centene",
     subtitle: "St. Louis, MO · Hybrid · Enterprise Operations",
     location: "Hybrid",
     href: "https://www.centene.com/",
     bullets: [
-      "Cut PM troubleshooting time by up to 50% by deploying real-time dashboards and standardized reporting.",
-      "Selected as a core PM for Centene's Duals initiative, orchestrating healthcare plan operations across 9 states.",
-      "Designed a Smartsheet Lessons Learned tracker adopted as the legacy operations model, slated for company-wide rollout.",
+      "Managed healthcare plan operations delivery across 9 states as the Ops Testing team's project manager.",
+      "Cut PM troubleshooting time by up to 50% with a real-time executive dashboard built on production operations data.",
+      "Designed and pitched PM Pulse AI, a 4-agent PM-reporting platform projected to save 110+ hours per PM per month; presented to VP-level leadership, and the VP of Operations asked to scale it org-wide.",
       "Aligned Compliance, IT, and Operations stakeholders to unblock execution and streamline workflows.",
     ],
-    tools: ["Smartsheet", "Power BI", "Jira", "Confluence", "SharePoint"],
+    tools: ["Smartsheet", "Power BI", "Power Automate", "Copilot", "SharePoint", "Python"],
     learned: [
       "Enterprise PMO governance",
       "Cross-functional stakeholder alignment",
-      "RAID & risk registers",
+      "Human-in-the-loop AI design",
     ],
   },
   {
-    date: "Jan 2025 — Present",
+    date: "Jan 2025 — Aug 2026",
     title: "Director of Events @ LinkedIn Campus Ambassador Program",
     subtitle: "Promoted from LinkedIn Ambassador · SJSU",
     location: "San José, California",
@@ -82,9 +82,10 @@ export const professional: Entry[] = [
     location: "San José, California",
     href: "https://internship.beehiiv.com/",
     bullets: [
-      "Converted ~85% of a 20+ monthly partner pipeline into active sponsorships, driving GTM across 10+ event formats.",
+      "Secured 5 brand and venue partnerships (Salesforce, Figma, Supercell, and others), closing $200K+ in sponsorship revenue.",
+      "Lifted partner conversion by 80% with Power BI lead scoring on A/B-tested email, Luma, and LinkedIn campaigns.",
+      "Led GTM operations for a 4-city tech community (SF, Seattle, Toronto, NYC).",
       "Led flagship events (Tech Intern Bus Mixer, Intern Ship Games) drawing 300+ attendees at 90%+ venue capacity.",
-      "Automated Power BI lead scoring; A/B tested email, Luma, and LinkedIn campaigns to lift partner conversion.",
     ],
     tools: ["Power BI", "Luma", "Salesforce", "Power Automate", "Excel"],
     learned: ["GTM pipeline management", "A/B testing & lead scoring", "Sponsorship negotiation"],
@@ -96,11 +97,27 @@ export const professional: Entry[] = [
     location: "San José, California (Remote)",
     href: "https://sanjosespotlight.com/",
     bullets: [
-      "Managed content production for 4+ years, delivering every issue on deadline.",
-      "Drove 24-hour editorial turnarounds across 4+ monthly stories with zero missed deadlines over a 4-year run.",
+      "Managed end-to-end delivery of 100+ weekly releases over 4 years across a 5-stage lifecycle with a 100% on-time rate.",
+      "Led 3 cross-functional teams, driving 68% audience growth at 98% listener satisfaction.",
     ],
     tools: ["Asana", "Google Workspace", "Slack"],
     learned: ["Editorial project management", "Long-horizon reliability"],
+  },
+  {
+    date: "Aug 2018 — Jan 2020",
+    title: "Sales & Business Relationship Specialist @ Apple",
+    location: "Los Gatos, California",
+    href: "https://www.apple.com/",
+  },
+  {
+    date: "Jan 2016 — Jun 2019",
+    title: "Founder & Developer @ CodeMoney",
+    subtitle: "beCAREFUL · Apple App Store & Google Play",
+    location: "San Francisco Bay Area",
+    bullets: [
+      "Built, shipped, and monetized the consumer mobile game beCAREFUL end to end at 16, generating $20K+ in revenue in its first 3 months.",
+    ],
+    learned: ["Shipping a product end to end", "App store monetization"],
   },
 ];
 

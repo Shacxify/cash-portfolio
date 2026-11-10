@@ -318,17 +318,19 @@ export function CVSection() {
                 it into a <strong>clear plan that can actually ship</strong>.
               </p>
               <p>
-                I’m currently a <strong>Project Management Intern at Centene</strong>, where I’m
-                learning how to move quickly and thoughtfully within a{" "}
-                <strong>highly regulated healthcare environment</strong>. I also serve as{" "}
+                Most recently I was an{" "}
+                <strong>Operations Project Management Intern at Centene</strong>, where I learned
+                how to move quickly and thoughtfully within a{" "}
+                <strong>highly regulated healthcare environment</strong> across 9 states. I also
+                served as{" "}
                 <strong>Director of Events for LinkedIn’s SJSU Campus Ambassador program</strong>,
-                leading events from <strong>initial idea through execution</strong>. Alongside that,
-                I’m finishing my{" "}
+                leading events from <strong>initial idea through execution</strong>. Now I’m
+                finishing my{" "}
                 <strong>
                   B.S. in Business Administration with a concentration in Management Information
                   Systems at San José State University
-                </strong>
-                .
+                </strong>{" "}
+                (graduating December 2026).
               </p>
               <p>
                 I bring a{" "}
