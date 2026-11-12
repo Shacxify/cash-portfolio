@@ -3,10 +3,14 @@ import { Toaster } from "sonner";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
-
+import { StatsStrip } from "@/components/StatsStrip";
 import { ProjectsSection } from "@/components/ProjectsSection";
+import { SkillsSection } from "@/components/SkillsSection";
 import { CVSection } from "@/components/CVSection";
 import { Footer } from "@/components/Footer";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { CommandPalette } from "@/components/CommandPalette";
+import { EasterEgg } from "@/components/EasterEgg";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -16,13 +20,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Cash Johnson is an AI Solutions Architect based in Silicon Valley, designing AI-powered products and automations that streamline operations, partnerships, and go-to-market.",
+          "Cash Johnson is a Silicon Valley builder who puts AI to work inside real operations, across product, strategy and operations, and AI deployment.",
       },
       { property: "og:title", content: "Cash Johnson - AI Solutions Architect" },
       {
         property: "og:description",
         content:
-          "Portfolio of Cash Johnson - AI-powered products and automation, plus operations and growth work across Centene, LinkedIn, and The Intern Ship.",
+          "Portfolio of Cash Johnson: AI products and automations, plus operations work across Centene, LinkedIn, and The Intern Ship.",
       },
       { property: "og:url", content: "https://cashjohnson.net/" },
       { property: "og:image", content: "https://cashjohnson.net/og-home.jpg" },
@@ -48,17 +52,13 @@ export const Route = createFileRoute("/")({
             image: "https://cashjohnson.net/og-home.jpg",
             email: "mailto:me@cashjohnson.net",
             description:
-              "Cash Johnson is an AI Solutions Architect based in Silicon Valley who designs AI-powered products and automations at the intersection of enterprise operations, partnerships, and go-to-market strategy.",
+              "Cash Johnson is a Silicon Valley builder who designs AI products and automations that fix real operational workflows, working where product, operations, and go-to-market meet.",
             address: {
               "@type": "PostalAddress",
               addressLocality: "San José",
               addressRegion: "CA",
               addressCountry: "US",
             },
-            worksFor: [
-              { "@type": "Organization", name: "Centene", url: "https://www.centene.com/" },
-              { "@type": "Organization", name: "LinkedIn", url: "https://www.linkedin.com/" },
-            ],
             alumniOf: [
               {
                 "@type": "CollegeOrUniversity",
@@ -68,13 +68,14 @@ export const Route = createFileRoute("/")({
               { "@type": "CollegeOrUniversity", name: "West Valley College" },
             ],
             knowsAbout: [
-              "Sales Development",
-              "Data Analytics",
-              "Operations Management",
-              "Project Management",
+              "AI Deployment",
+              "AI Agents & Automation",
+              "Product Operations",
+              "Product Management",
+              "Strategy & Operations",
               "Go-to-Market Strategy",
-              "Partnerships",
-              "Event Operations",
+              "Project Management",
+              "Data Analytics",
               "Management Information Systems",
             ],
             sameAs: [
@@ -94,15 +95,20 @@ function Home() {
   return (
     <div className="relative min-h-screen text-foreground" style={{ background: "#FAFAF9" }}>
       <AuroraBackground />
+      <ScrollProgress />
       <Navbar />
-      <main className="relative z-10 pt-14">
+      <main className="relative z-10">
         <HeroSection />
+        <StatsStrip />
         <ProjectsSection />
+        <SkillsSection />
         <CVSection />
       </main>
       <div className="relative z-10">
         <Footer />
       </div>
+      <CommandPalette />
+      <EasterEgg />
       <Toaster position="bottom-right" />
     </div>
   );

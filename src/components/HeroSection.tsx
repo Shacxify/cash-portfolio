@@ -1,66 +1,132 @@
-import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useTransform, type MotionValue } from "framer-motion";
 import { Layers, Linkedin, User, Youtube } from "lucide-react";
+import { useCursorParallax } from "@/hooks/use-cursor-parallax";
+import { LINKEDIN_URL, YOUTUBE_URL } from "@/lib/site";
+import { NowBuilding } from "./NowBuilding";
 
-const ease = [0.16, 1, 0.3, 1] as const;
+// Easter egg: hovering the tagline swaps the title for one of the alternates.
+// Index 0 is the real title; each hover picks a random alternate, never the
+// same one twice in a row.
+const TITLES = [
+  { lead: "I'm an", accent: "AI Solutions Architect" },
+  { lead: "I'm a", accent: "Good Guy" },
+  { lead: "I'm a", accent: "Watercolor Enthusiast" },
+  { lead: "I'm the", accent: "Guy You Need" },
+  { lead: "I'm a", accent: "PM Who Actually Ships" },
+  { lead: "I'm a", accent: "Closer" },
+  { lead: "I'm a", accent: "First-Gen Builder" },
+  { lead: "I'm a", accent: "Weekend Angler" },
+  { lead: "I'm a", accent: "Guitarist in Progress" },
+  { lead: "I'm a", accent: "Calculated Risk-Taker" },
+  { lead: "I'm a", accent: "Downtown San Jose Kid" },
+];
+
+// Wraps one aurora blob so it drifts toward the cursor. The blob keeps its own
+// CSS keyframe animation; the parallax lives on this wrapper so the two
+// transforms never fight. Larger |depth| = closer to the viewer = moves
+// further; a negative depth makes the layer counter-move for real parallax.
+// On top of the drift the layer swirls and breathes a little as the cursor
+// sweeps across, so the whole field feels alive rather than merely shifting.
+function ParallaxLayer({
+  x,
+  y,
+  depth,
+  swirl = 0,
+  children,
+}: {
+  x: MotionValue<number>;
+  y: MotionValue<number>;
+  depth: number;
+  swirl?: number;
+  children: React.ReactNode;
+}) {
+  const tx = useTransform(x, (v) => v * depth);
+  const ty = useTransform(y, (v) => v * depth);
+  const rotate = useTransform(x, (v) => v * swirl);
+  // Grow slightly the further the cursor is from the center, in either axis.
+  const scale = useTransform([x, y] as const, ([vx, vy]: number[]) => {
+    const reach = Math.min(1, Math.hypot(vx, vy) * 2);
+    return 1 + reach * 0.12;
+  });
+  return (
+    <motion.div className="absolute inset-0" style={{ x: tx, y: ty, rotate, scale }}>
+      {children}
+    </motion.div>
+  );
+}
 
 export function HeroSection() {
+  const { x, y } = useCursorParallax();
+  const [activeTitle, setActiveTitle] = useState(0);
+  const lastTitle = useRef(0);
 
+  const showNextTitle = () => {
+    // Pick from 1..length-1, skipping whichever alternate showed last.
+    let pick = 1 + Math.floor(Math.random() * (TITLES.length - 1));
+    if (pick === lastTitle.current) pick = (pick % (TITLES.length - 1)) + 1;
+    lastTitle.current = pick;
+    setActiveTitle(pick);
+  };
 
   return (
-
     <section
       id="top"
-      className="relative min-h-screen flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-32 md:pb-48"
+      className="relative min-h-svh flex flex-col justify-end overflow-hidden px-6 md:px-10 pb-32 md:pb-48"
     >
       {/* Inline aurora blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="absolute aurora-blob-1"
-          style={{
-            top: 0,
-            right: 0,
-            width: "700px",
-            height: "700px",
-            background: "radial-gradient(circle, #E1B07E 0%, #E5BE9E 60%, transparent 70%)",
-            filter: "blur(60px)",
-            opacity: 0.35,
-            transform: "translate(20%, -25%)",
-          }}
-        />
-        <div
-          className="absolute aurora-blob-2"
-          style={{
-            top: 0,
-            left: 0,
-            width: "550px",
-            height: "550px",
-            background: "radial-gradient(circle, #86A397 0%, #CBC0AD 60%, transparent 70%)",
-            filter: "blur(70px)",
-            opacity: 0.3,
-            transform: "translate(-20%, -20%)",
-          }}
-        />
-        <div
-          className="absolute aurora-blob-3"
-          style={{
-            bottom: 0,
-            right: 0,
-            width: "500px",
-            height: "500px",
-            background: "radial-gradient(circle, #361D2E 0%, #86A397 60%, transparent 70%)",
-            filter: "blur(80px)",
-            opacity: 0.25,
-            transform: "translate(15%, 20%)",
-          }}
-        />
+        <ParallaxLayer x={x} y={y} depth={340} swirl={12}>
+          <div
+            className="absolute aurora-blob-1"
+            style={{
+              top: 0,
+              right: 0,
+              width: "700px",
+              height: "700px",
+              background: "radial-gradient(circle, #E1B07E 0%, #E5BE9E 60%, transparent 70%)",
+              filter: "blur(54px)",
+              opacity: 0.48,
+              transform: "translate(20%, -25%)",
+            }}
+          />
+        </ParallaxLayer>
+        <ParallaxLayer x={x} y={y} depth={-300} swirl={-14}>
+          <div
+            className="absolute aurora-blob-2"
+            style={{
+              top: 0,
+              left: 0,
+              width: "550px",
+              height: "550px",
+              background: "radial-gradient(circle, #86A397 0%, #CBC0AD 60%, transparent 70%)",
+              filter: "blur(62px)",
+              opacity: 0.4,
+              transform: "translate(-20%, -20%)",
+            }}
+          />
+        </ParallaxLayer>
+        <ParallaxLayer x={x} y={y} depth={-260} swirl={-10}>
+          <div
+            className="absolute aurora-blob-3"
+            style={{
+              bottom: 0,
+              right: 0,
+              width: "500px",
+              height: "500px",
+              background: "radial-gradient(circle, #361D2E 0%, #86A397 60%, transparent 70%)",
+              filter: "blur(88px)",
+              opacity: 0.22,
+              transform: "translate(15%, 20%)",
+            }}
+          />
+        </ParallaxLayer>
       </div>
 
       <div className="relative z-10 max-w-6xl w-full text-left">
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease }}
-          className="font-bold tracking-tight text-foreground text-balance"
+        <NowBuilding />
+        <h1
+          className="hero-rise font-bold tracking-tight text-foreground text-balance"
           style={{
             fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
             lineHeight: 1.05,
@@ -68,30 +134,41 @@ export function HeroSection() {
           }}
         >
           Hi, I'm Cash Johnson.
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.15, ease }}
-          className="mt-3 text-foreground/80 text-balance"
+        <p
+          onMouseEnter={showNextTitle}
+          onMouseLeave={() => setActiveTitle(0)}
+          onClick={showNextTitle}
+          className="hero-rise mt-3 text-foreground/80 text-balance cursor-default"
           style={{
             fontSize: "clamp(2.25rem, 5.4vw, 5.25rem)",
             lineHeight: 1.15,
             letterSpacing: "-0.02em",
+            animationDelay: "0.15s",
           }}
         >
-          I'm an{" "}
-          <span style={{ color: "#86A397" }}>AI Solutions Architect</span>{" "}
+          {/* All titles share one grid cell so the line never reflows on swap */}
+          <span className="inline-grid">
+            {TITLES.map((title, i) => (
+              <motion.span
+                key={title.accent}
+                aria-hidden={i !== 0 || undefined}
+                initial={false}
+                animate={{ opacity: i === activeTitle ? 1 : 0 }}
+                transition={{ duration: 0.25 }}
+                className={`[grid-area:1/1] ${i === activeTitle ? "" : "pointer-events-none"}`}
+              >
+                {title.lead} <span style={{ color: "#86A397" }}>{title.accent}</span>
+              </motion.span>
+            ))}
+          </span>{" "}
           based in Silicon Valley.
-        </motion.p>
+        </p>
 
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.3, ease }}
-          className="mt-10 md:mt-12 flex flex-wrap gap-3 max-w-[540px]"
+        <div
+          className="hero-rise mt-10 md:mt-12 flex flex-wrap gap-3 max-w-[540px]"
+          style={{ animationDelay: "0.3s" }}
         >
           <a
             href="#work"
@@ -118,7 +195,7 @@ export function HeroSection() {
             More About Me
           </a>
           <a
-            href="https://www.linkedin.com/in/cash-johnson/"
+            href={LINKEDIN_URL}
             target="_blank"
             rel="noreferrer"
             aria-label="LinkedIn"
@@ -133,7 +210,7 @@ export function HeroSection() {
           </a>
 
           <a
-            href="https://www.youtube.com/@Cash-Johnson"
+            href={YOUTUBE_URL}
             target="_blank"
             rel="noreferrer"
             aria-label="YouTube"
@@ -146,11 +223,7 @@ export function HeroSection() {
           >
             <Youtube size={20} strokeWidth={1.5} />
           </a>
-
-
-        </motion.div>
-
-
+        </div>
       </div>
     </section>
   );
