@@ -41,10 +41,12 @@ export function EasterEgg() {
   const runningRef = useRef(false);
 
   useEffect(() => {
-    const burst = () => {
+    // A CELEBRATE_EVENT may carry { title, description } to customize the toast.
+    const burst = (e?: Event) => {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      toast("You found the easter egg 🎉", {
-        description: "Thanks for poking around. Say hi: me@cashjohnson.net",
+      const detail = (e as CustomEvent<{ title?: string; description?: string }> | undefined)?.detail;
+      toast(detail?.title ?? "You found the easter egg 🎉", {
+        description: detail?.description ?? "Thanks for poking around. Say hi: me@cashjohnson.net",
       });
       const canvas = canvasRef.current;
       if (reduce || !canvas || runningRef.current) return;
