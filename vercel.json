@@ -1,4 +1,16 @@
 {
+  "redirects": [
+    {
+      "source": "/:p((?!MissionControl)[Mm][Ii][Ss][Ss][Ii][Oo][Nn][Cc][Oo][Nn][Tt][Rr][Oo][Ll])",
+      "destination": "/MissionControl/",
+      "permanent": true
+    },
+    {
+      "source": "/:p((?!MissionControl)[Mm][Ii][Ss][Ss][Ii][Oo][Nn][Cc][Oo][Nn][Tt][Rr][Oo][Ll])/:rest*",
+      "destination": "/MissionControl/:rest*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/MissionControl", "destination": "https://mission-control-six-livid.vercel.app/MissionControl/" },
     { "source": "/MissionControl/:path*", "destination": "https://mission-control-six-livid.vercel.app/MissionControl/:path*" }
