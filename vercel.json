@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/MissionControl", "destination": "https://mission-control-six-livid.vercel.app/MissionControl/" },
+    { "source": "/MissionControl/:path*", "destination": "https://mission-control-six-livid.vercel.app/MissionControl/:path*" }
+  ]
+}
